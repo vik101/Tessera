@@ -40,6 +40,10 @@ final class AutoTiler {
         var fits: Bool
     }
     private var plans: [String: ScreenPlan] = [:]
+    /// Windows asked for a little less than their tile because they round their size up.
+    private var nudged: Set<CGWindowID> = []
+    /// How many points a window may come up short of its tile (Terminal sizes itself in whole characters).
+    private static let slack: CGFloat = 16
 
     private var running = false
     private var pendingAfterMouse = false
@@ -364,7 +368,7 @@ final class AutoTiler {
             for (id, frame) in zip(active, plan.frames) {
                 guard let window = windows[id] else { continue }
                 planned[id] = frame
-                mover.move(window, to: frame, within: display.visibleFrame)
+                mover.move(window, to: frame, within: display.visibleFrame, slack: Self.slack)
                 moved.append(id)
             }
         }
@@ -395,6 +399,11 @@ final class AutoTiler {
                 suspects.append(id)
                 continue
             }
+            // A few points over is an app rounding to whole characters, not a minimum size.
+            if actual.width <= target.width + Self.slack && actual.height <= target.height + Self.slack,
+               nudged.contains(id) {
+                continue
+            }
             let old = minimums[id] ?? .zero
             let new = CGSize(
                 width: tooWide ? max(old.width, actual.width) : old.width,
@@ -408,7 +417,18 @@ final class AutoTiler {
         }
         if !suspects.isEmpty {
             for id in suspects {
-                if let window = registry.window(id), let target = planned[id] { mover.move(window, to: target) }
+                guard let window = registry.window(id), let target = planned[id], let actual = window.frame else { continue }
+                let overWide = max(0, actual.width - target.width)
+                let overTall = max(0, actual.height - target.height)
+                if overWide <= Self.slack && overTall <= Self.slack {
+                    // Just over: ask for a little less, so an app that rounds up lands inside its tile.
+                    nudged.insert(id)
+                    let smaller = CGRect(x: target.minX, y: target.minY,
+                                         width: target.width - overWide, height: target.height - overTall)
+                    mover.move(window, to: smaller)
+                } else {
+                    mover.move(window, to: target)
+                }
             }
             after(0.4) { [weak self] in self?.learnMinimums(suspects, confirming: true) }
         }
@@ -462,6 +482,7 @@ final class AutoTiler {
         floating.remove(id)
         pinned[id] = nil
         minimums[id] = nil
+        nudged.remove(id)
         planned[id] = nil
         kind[id] = nil
         mover.forget(id)

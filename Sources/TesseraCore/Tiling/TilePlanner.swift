@@ -101,7 +101,12 @@ public enum TilePlanner {
 
         var best: (frames: [CGRect], overflow: CGFloat)?
         for arrangement in candidates(count, style: style, shape: shape, area: area, mainRatio: mainRatio) {
-            for order in assignments(arrangement, minimums: minimums, area: area, gap: gap) {
+            // Auto may move a window that can't shrink to a roomier slot. A chosen style keeps
+            // your window order, so the main window stays main and columns stay in order.
+            let orders = style == .auto
+                ? assignments(arrangement, minimums: minimums, area: area, gap: gap)
+                : [Array(0..<count)]
+            for order in orders {
                 let frames = build(arrangement, order: order, minimums: minimums, in: area, gap: gap)
                 let over = overflow(frames, minimums)
                 if over == 0 { return Plan(frames: frames, fits: true) }

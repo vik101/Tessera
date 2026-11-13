@@ -12,9 +12,17 @@ final class WindowMover {
     ///
     /// If the app won't shrink the window that far, the window is nudged back inside
     /// `visible`, so it never hangs off the screen.
+    ///
+    /// - Parameter slack: a window this many points smaller than `frame` (at the right spot) counts
+    ///   as already there. Apps like Terminal size themselves in whole characters.
     @discardableResult
-    func move(_ window: TrackedWindow, to frame: CGRect, within visible: CGRect? = nil) -> CGRect? {
-        if let current = window.element.frame, current.isClose(to: frame, tolerance: 1) { return current }
+    func move(_ window: TrackedWindow, to frame: CGRect, within visible: CGRect? = nil, slack: CGFloat = 0) -> CGRect? {
+        if let current = window.element.frame {
+            let placed = abs(current.minX - frame.minX) <= 1 && abs(current.minY - frame.minY) <= 1
+            let wide = current.width <= frame.width + 1 && current.width >= frame.width - max(slack, 1)
+            let tall = current.height <= frame.height + 1 && current.height >= frame.height - max(slack, 1)
+            if placed && wide && tall { return current }
+        }
         ownMoves[window.id] = Date().addingTimeInterval(0.8)
 
         // Apps with "enhanced user interface" on (set by some assistive tools) animate every move. Pause it.

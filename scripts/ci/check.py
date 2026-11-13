@@ -135,9 +135,13 @@ def gapped(rect, vis, gap):
 
 
 def overlap(a, b):
+    """Points two windows share. A sliver of 8 points or less doesn't count: some apps
+    (Terminal, Chrome) round their size to whole characters or even numbers."""
     w = min(a[0] + a[2], b[0] + b[2]) - max(a[0], b[0])
     h = min(a[1] + a[3], b[1] + b[3]) - max(a[1], b[1])
-    return max(0, w) * max(0, h)
+    if w <= 8 or h <= 8:
+        return 0
+    return w * h
 
 
 def inside(r, vis, tol=1):
@@ -300,8 +304,8 @@ def check_layout(label, style, count=None):
     time.sleep(1.8)
     d = dump()
     plan = screen_plan(d)
-    chosen = list(d.get("layouts", {}).values())
-    record(f"{label}: style is {STYLE_NAMES[style]}", bool(chosen) and chosen[0] == style and plan is not None and plan["style"] == style,
+    chosen = list(d.get("layouts", {}).values()) or ["auto"]   # nothing chosen yet means Auto
+    record(f"{label}: style is {STYLE_NAMES[style]}", chosen[0] == style and plan is not None and plan["style"] == style,
            f"setting {chosen}, arranged as {plan and plan['style']}")
     if not plan:
         return d, None
@@ -317,13 +321,18 @@ def check_layout(label, style, count=None):
         actual = cg.get(wid)
         if actual is None:
             wrong.append(f"{wid} not on screen")
-        elif close(actual, f, 2):
             continue
-        elif actual[2] > f[2] + 2 or actual[3] > f[3] + 2:
-            at_minimum += 1          # the app won't go that small
-        elif actual[2] <= f[2] and actual[3] <= f[3] and f[2] - actual[2] <= 20 and f[3] - actual[3] <= 20:
-            continue                 # Terminal sizes in whole characters
-        else:
+        sizes_ok, held = True, False
+        for i in (2, 3):
+            diff = actual[i] - f[i]
+            if diff > 16:
+                held = True          # the app won't go that small
+            elif diff < -16:
+                sizes_ok = False     # smaller than asked: wrong
+        spot_ok = held or (near(actual[0], f[0], 2) and near(actual[1], f[1], 2))
+        if held:
+            at_minimum += 1
+        if not (sizes_ok and spot_ok):
             wrong.append(f"{wid} at {actual}, planned {f}")
     note = f" ({at_minimum} held at their app's minimum size)" if at_minimum else ""
     record(f"{label}: windows are where planned", not wrong, "; ".join(wrong[:3]) + note)
@@ -513,7 +522,7 @@ def main():
 
     # --- The menu, clicked through Accessibility like a person would ---
     trusted = keys("trusted").strip() == "yes"
-    record("Test helper may read menus", trusted, "no Accessibility for /tmp/keys", warn=not trusted)
+    record("Test helper may read menus", trusted, "" if trusted else "no Accessibility for /tmp/keys", warn=not trusted)
     if trusted:
         post("menu", 1.5)
         shot("menu-layouts")
