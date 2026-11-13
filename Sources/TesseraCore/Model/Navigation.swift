@@ -5,6 +5,15 @@ import CoreGraphics
 
 /// Finds neighbours among rectangles (tiles, screens, Tab View items).
 /// Coordinates: origin top-left, y grows downward.
+/// A candidate neighbour with the facts used to rank it.
+private struct Scored<K> {
+    let key: K
+    let overlaps: Bool
+    let distance: Double
+    let crossDistance: Double
+    let order: Double
+}
+
 public enum Navigation {
     /// The best rectangle in `direction` from `source`, or nil.
     ///
@@ -17,7 +26,6 @@ public enum Navigation {
         among candidates: [Key: CGRect],
         tolerance: Double = 4
     ) -> Key? {
-        struct Scored<K> { let key: K; let overlaps: Bool; let distance: Double; let crossDistance: Double; let order: Double }
         var scored: [Scored<Key>] = []
         for (key, rect) in candidates {
             if rect == source { continue }
