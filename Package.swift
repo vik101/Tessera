@@ -1,6 +1,6 @@
 // swift-tools-version: 6.0
 //
-// Tessera — automatic window tiling for macOS.
+// Tessera — Rectangle-style window snapping plus adaptive auto-tiling for macOS.
 //
 // Build:   swift build                (debug binary)
 //          ./scripts/build-app.sh     (assembles Tessera.app)
@@ -15,22 +15,14 @@ let package = Package(
         .executable(name: "Tessera", targets: ["Tessera"]),
         .library(name: "TesseraCore", targets: ["TesseraCore"]),
     ],
-    dependencies: [
-        // Signed, user-approved updates.
-        .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.6.4"),
-    ],
     targets: [
-        // Pure Swift logic: layout maths, window model, shortcuts, setups.
-        // No AppKit, so it is fast to test and easy to reason about.
+        // Pure maths: where snaps and tiles go, shortcuts. No AppKit, so it's quick to test.
         .target(name: "TesseraCore"),
 
-        // The macOS app: Accessibility, overlays, menu bar, Settings.
+        // The macOS app: Accessibility, hotkeys, menu bar, Settings.
         .executableTarget(
             name: "Tessera",
-            dependencies: [
-                "TesseraCore",
-                .product(name: "Sparkle", package: "Sparkle"),
-            ],
+            dependencies: ["TesseraCore"],
             linkerSettings: [
                 .linkedFramework("AppKit"),
                 .linkedFramework("ApplicationServices"),

@@ -1,23 +1,10 @@
 import AppKit
 import os
 
-// MARK: - Localization
-
-/// Looks up a user-facing string. Every visible string goes through `L` so the
-/// extractor script (scripts/strings.py) can find it.
-func L(_ key: String) -> String {
-    NSLocalizedString(key, comment: "")
-}
-
-/// Looks up a format string and fills it in. Use %@ for text and %ld for whole numbers.
-func L(_ key: String, _ args: CVarArg...) -> String {
-    String(format: NSLocalizedString(key, comment: ""), locale: Locale.current, arguments: args)
-}
-
 // MARK: - Logging
 
-/// Logs to the unified log and keeps a short in-memory trail for problem reports.
-/// Never logs window titles.
+/// Logs to the macOS unified log (Console app, subsystem com.vikram.Tessera).
+/// Keeps the last 200 lines for the debug dump. Never logs window titles.
 @MainActor
 enum Log {
     static let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "Tessera", category: "app")
@@ -53,7 +40,7 @@ func after(_ seconds: Double, _ work: @escaping @MainActor () -> Void) -> Task<V
     }
 }
 
-/// Collapses bursts of calls into one, after a quiet period.
+/// Collapses a burst of calls into one call after a quiet moment.
 @MainActor
 final class Debouncer {
     private var task: Task<Void, Never>?
@@ -72,7 +59,7 @@ final class Debouncer {
     }
 }
 
-/// A repeating timer that calls back on the main actor.
+/// Calls back on the main actor every few seconds until stopped.
 @MainActor
 final class RepeatingTimer {
     private var task: Task<Void, Never>?
@@ -94,65 +81,26 @@ final class RepeatingTimer {
     }
 }
 
-// MARK: - Geometry
-
-extension CGRect {
-    func isClose(to other: CGRect, tolerance: CGFloat = 2) -> Bool {
-        abs(minX - other.minX) <= tolerance && abs(minY - other.minY) <= tolerance &&
-            abs(width - other.width) <= tolerance && abs(height - other.height) <= tolerance
-    }
-
-    var center: CGPoint { CGPoint(x: midX, y: midY) }
-
-    func intersectionArea(_ other: CGRect) -> CGFloat {
-        let i = intersection(other)
-        return i.isNull ? 0 : i.width * i.height
-    }
-
-    /// A rect of `size` centred in this rect.
-    func centered(size: CGSize) -> CGRect {
-        CGRect(x: midX - size.width / 2, y: midY - size.height / 2, width: size.width, height: size.height).integral
-    }
-}
-
-extension CGPoint {
-    func distance(to other: CGPoint) -> CGFloat { hypot(x - other.x, y - other.y) }
-}
-
-// MARK: - Colors
-
-extension NSColor {
-    convenience init?(hex: String) {
-        var text = hex.trimmingCharacters(in: .whitespaces)
-        if text.hasPrefix("#") { text.removeFirst() }
-        guard text.count == 6, let value = UInt32(text, radix: 16) else { return nil }
-        self.init(
-            srgbRed: CGFloat((value >> 16) & 0xFF) / 255,
-            green: CGFloat((value >> 8) & 0xFF) / 255,
-            blue: CGFloat(value & 0xFF) / 255,
-            alpha: 1
-        )
-    }
-
-    var hexString: String {
-        guard let c = usingColorSpace(.sRGB) else { return "#000000" }
-        return String(format: "#%02X%02X%02X", Int(c.redComponent * 255), Int(c.greenComponent * 255), Int(c.blueComponent * 255))
-    }
-}
-
 // MARK: - Apps
 
 extension NSRunningApplication {
     var displayName: String { localizedName ?? bundleIdentifier ?? "App" }
 }
 
-enum AppIcons {
+/// Other window managers that use the same default shortcuts.
+enum ConflictingApps {
+    static let known: [String: String] = [
+        "com.knollsoft.Rectangle": "Rectangle",
+        "com.knollsoft.Hookshot": "Rectangle Pro",
+        "com.divisiblebyzero.Spectacle": "Spectacle",
+        "com.crowdcafe.windowmagnet": "Magnet",
+    ]
+
+    /// Running apps that will fight Tessera for shortcuts.
     @MainActor
-    static func icon(bundleID: String?, pid: pid_t? = nil) -> NSImage {
-        if let pid, let app = NSRunningApplication(processIdentifier: pid), let icon = app.icon { return icon }
-        if let bundleID, let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleID) {
-            return NSWorkspace.shared.icon(forFile: url.path)
+    static var running: [NSRunningApplication] {
+        NSWorkspace.shared.runningApplications.filter { app in
+            app.bundleIdentifier.map { known[$0] != nil } ?? false
         }
-        return NSImage(systemSymbolName: "app", accessibilityDescription: nil) ?? NSImage()
     }
 }

@@ -14,7 +14,6 @@ struct DisplayInfo: Equatable, Identifiable {
     let isMain: Bool
 
     var id: String { stableID }
-    var shape: ScreenShape { ScreenShape.of(width: frame.width, height: frame.height) }
 }
 
 @MainActor

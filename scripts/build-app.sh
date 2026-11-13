@@ -22,62 +22,25 @@ BIN_DIR="$(swift build "${ARGS[@]}" --show-bin-path)"
 APP="build/${CONFIG}/${APP_NAME}.app"
 echo "› Assembling $APP"
 rm -rf "$APP"
-mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources" "$APP/Contents/Frameworks"
+mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$BIN_DIR/Tessera" "$APP/Contents/MacOS/$APP_NAME"
-
-# Sparkle.framework (SwiftPM puts it next to the binary; fall back to the downloaded artifact).
-SPARKLE="$BIN_DIR/Sparkle.framework"
-if [[ ! -d "$SPARKLE" ]]; then
-  SPARKLE="$(find .build/artifacts -type d -name Sparkle.framework -path '*macos*' | head -1)"
-fi
-if [[ -z "$SPARKLE" || ! -d "$SPARKLE" ]]; then
-  echo "error: Sparkle.framework not found. Run 'swift package resolve' and try again." >&2
-  exit 1
-fi
-ditto "$SPARKLE" "$APP/Contents/Frameworks/Sparkle.framework"
-install_name_tool -add_rpath "@executable_path/../Frameworks" "$APP/Contents/MacOS/$APP_NAME" 2>/dev/null || true
-
 python3 scripts/make_plist.py > "$APP/Contents/Info.plist"
 cp Resources/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
-python3 scripts/strings.py compile Resources/Localizable.xcstrings "$APP/Contents/Resources"
 
-# Signing: a real identity keeps macOS's Accessibility permission across rebuilds.
+# Signing. A real certificate keeps macOS's Accessibility permission across updates.
 IDENTITY="${SIGN_IDENTITY:-}"
 if [[ -z "$IDENTITY" ]]; then
   IDENTITY="$(security find-identity -v -p codesigning 2>/dev/null | grep -E '"(Developer ID Application|Apple Development)' | head -1 | sed -E 's/.*"(.*)"/\1/' || true)"
 fi
 if [[ -z "$IDENTITY" ]]; then
-  IDENTITY="-"
-  echo "! No signing identity found; signing ad-hoc. Re-allow Accessibility after each rebuild."
-fi
-echo "› Signing with: $IDENTITY"
-
-# Hardened runtime (required for notarizing) only with a real certificate. With ad-hoc
-# signing it turns on library validation, and macOS then refuses to load Sparkle.
-if [[ "$IDENTITY" == "-" ]]; then
-  sign() { codesign --force --timestamp=none --sign "$IDENTITY" "$@"; }
+  echo "! No signing certificate found; signing ad-hoc."
+  codesign --force --timestamp=none --sign - "$APP"
 elif [[ "$CONFIG" == "release" ]]; then
-  sign() { codesign --force --options runtime --timestamp --sign "$IDENTITY" "$@"; }
+  echo "› Signing with: $IDENTITY"
+  codesign --force --options runtime --timestamp --sign "$IDENTITY" "$APP"
 else
-  sign() { codesign --force --options runtime --timestamp=none --sign "$IDENTITY" "$@"; }
+  echo "› Signing with: $IDENTITY"
+  codesign --force --options runtime --timestamp=none --sign "$IDENTITY" "$APP"
 fi
 
-FW="$APP/Contents/Frameworks/Sparkle.framework"
-# Sign Sparkle's helpers inside-out, as Sparkle's docs describe.
-for helper in \
-  "$FW/Versions/B/XPCServices/Installer.xpc" \
-  "$FW/Versions/B/XPCServices/Downloader.xpc" \
-  "$FW/Versions/B/Autoupdate" \
-  "$FW/Versions/B/Updater.app"; do
-  if [[ -e "$helper" ]]; then
-    if [[ "$helper" == *Downloader.xpc ]]; then
-      sign --preserve-metadata=entitlements "$helper"
-    else
-      sign "$helper"
-    fi
-  fi
-done
-sign "$FW"
-sign "$APP"
-
-codesign --verify --deep --strict "$APP" && echo "✓ Built $APP"
+codesign --verify --strict "$APP" && echo "✓ Built $APP"

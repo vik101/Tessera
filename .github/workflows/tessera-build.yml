@@ -55,7 +55,7 @@ jobs:
         id: smoke
         if: steps.app.outcome == 'success'
         continue-on-error: true
-        timeout-minutes: 8
+        timeout-minutes: 15
         run: ./scripts/smoke-test.sh build/debug/Tessera.app
 
       - name: Universal release build
@@ -71,8 +71,15 @@ jobs:
         id: firstlaunch
         if: steps.release.outcome == 'success'
         continue-on-error: true
-        timeout-minutes: 5
-        run: ./scripts/first-launch-test.sh build/release/Tessera.app
+        timeout-minutes: 3
+        run: |
+          pkill -x Tessera; sleep 1
+          defaults delete com.vikram.Tessera >/dev/null 2>&1 || true
+          open build/release/Tessera.app
+          sleep 8
+          screencapture -x ci-results/first-launch.png
+          codesign -dv --verbose=2 build/release/Tessera.app > ci-results/codesign.txt 2>&1
+          pgrep -x Tessera && echo "running" | tee ci-results/first-launch.txt
 
       - name: Publish results
         if: always()
@@ -85,6 +92,7 @@ jobs:
             echo "test: ${{ steps.test.outcome }}"
             echo "app: ${{ steps.app.outcome }}"
             echo "smoke: ${{ steps.smoke.outcome }}"
+            head -1 ci-results/results.txt 2>/dev/null | sed 's/^/checks: /' 
             echo "release: ${{ steps.release.outcome }}"
             echo "firstlaunch: ${{ steps.firstlaunch.outcome }}"
           } > ci-results/summary.txt

@@ -43,6 +43,8 @@ enum WindowEvent {
 /// Watches every regular app's windows through Accessibility.
 @MainActor
 final class WindowRegistry: NSObject {
+    static let shared = WindowRegistry()
+
     private struct TrackedApp {
         let app: NSRunningApplication
         let element: AXElement
@@ -107,11 +109,24 @@ final class WindowRegistry: NSObject {
 
     var trackedPIDs: [pid_t] { Array(apps.keys) }
 
-    /// The focused window of the frontmost app.
-    func focusedWindowID() -> CGWindowID? {
-        guard let front = NSWorkspace.shared.frontmostApplication, let tracked = apps[front.processIdentifier] else { return nil }
-        guard let element = tracked.element.element(kAXFocusedWindowAttribute) else { return nil }
-        return register(element, pid: front.processIdentifier)?.id
+    /// The window you're working in: the focused window of the frontmost app.
+    func focusedWindow() -> TrackedWindow? {
+        guard let front = NSWorkspace.shared.frontmostApplication, front.processIdentifier != getpid() else { return nil }
+        let pid = front.processIdentifier
+        let app = apps[pid]?.element ?? AXElement.application(pid)
+        let candidates = [app.element(kAXFocusedWindowAttribute), app.element(kAXMainWindowAttribute)]
+            + app.elements(kAXWindowsAttribute).map(Optional.some)
+        for case let element? in candidates {
+            guard element.role == kAXWindowRole, !element.isMinimized else { continue }
+            if let window = register(element, pid: pid) { return window }
+        }
+        return nil
+    }
+
+    /// The window under a point on screen (Accessibility coordinates).
+    func window(at point: CGPoint) -> TrackedWindow? {
+        guard let element = AXElement.element(at: point)?.window, let pid = element.pid, pid != getpid() else { return nil }
+        return register(element, pid: pid)
     }
 
     /// Re-reads every app's window list. Picks up windows we missed.
