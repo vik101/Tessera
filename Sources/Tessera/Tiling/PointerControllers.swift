@@ -53,6 +53,7 @@ final class DragController {
         if id == nil { id = tiling.tileHit(at: point)?.window }
         guard let id, tiling.isTiled(id), let frame = tiling.tileFrame(of: id) else { return }
         candidate = Candidate(id: id, startFrame: frame)
+        Log.info("Drag: pressed on tiled window \(id)")
     }
 
     private func mouseDragged() {
@@ -68,7 +69,10 @@ final class DragController {
             } else if moved {
                 mode = .moving
             }
-            if mode != .none { tiling.dragInProgress = candidate.id }
+            if mode != .none {
+                tiling.dragInProgress = candidate.id
+                Log.info("Drag: \(mode == .resizing ? "resizing" : "moving") window \(candidate.id)")
+            }
         }
         if mode == .moving { updateHighlight() }
     }
@@ -108,12 +112,14 @@ final class DragController {
             DropHighlight.shared.hide()
         }
         guard let candidate, mode != .none else {
+            if candidate != nil { Log.info("Drag: released without moving") }
             tiling.dragInProgress = nil
             return
         }
         let flags = NSEvent.modifierFlags
         let point = Screens.mouseLocation
         let resized = mode == .resizing
+        Log.info("Drag: released (\(resized ? "resize" : "move"), ⌘ \(flags.contains(.command)), ⌥ \(flags.contains(.option)))")
         // Give the window a moment to settle at its final spot.
         after(0.06) { [weak self] in
             guard self != nil else { return }

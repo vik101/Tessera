@@ -864,6 +864,7 @@ final class TilingController {
         let targetDisplay = Screens.display(containing: point, in: displays) ?? display
         let targetKey = key(for: targetDisplay)
         let hit = tileHit(at: point)
+        Log.info("Drag finished: window \(id) from tile \(sourceTile), drop on \(hit.map { "tile \($0.tile) (window \($0.window))" } ?? "no tile")")
 
         if command {
             if let hit, hit.window != id, !isFloating(hit.window) {
