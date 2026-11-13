@@ -392,13 +392,16 @@ final class AutoTiler {
                 if actual.height < known.height - 4 { known.height = actual.height }
                 minimums[id] = known
             }
-            let tooWide = actual.width > target.width + 4
-            let tooTall = actual.height > target.height + 4
-            guard tooWide || tooTall else { continue }
+            // Any overshoot gets a second try (an app rounding up even 2 points would poke into
+            // its neighbour). Only a window still well over after that has a real minimum size.
+            guard actual.width > target.width + 1 || actual.height > target.height + 1 else { continue }
             guard confirming else {
                 suspects.append(id)
                 continue
             }
+            let tooWide = actual.width > target.width + 4
+            let tooTall = actual.height > target.height + 4
+            guard tooWide || tooTall else { continue }
             // A few points over is an app rounding to whole characters, not a minimum size.
             if actual.width <= target.width + Self.slack && actual.height <= target.height + Self.slack,
                nudged.contains(id) {

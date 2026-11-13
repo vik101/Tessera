@@ -299,10 +299,26 @@ def shape_problems(style, frames, area):
     return problems
 
 
+def settled_dump():
+    """Waits until Tessera has finished arranging (two looks in a row agree), then returns its state."""
+    time.sleep(1.0)
+    last, d = None, {}
+    for _ in range(14):
+        d = dump()
+        plan = screen_plan(d)
+        cg = {w["id"]: w["frame"] for w in windows()["windows"]}
+        now = json.dumps([plan and plan["frames"], [cg.get(i) for i in (plan or {}).get("ids", [])]])
+        if now == last:
+            return d
+        last = now
+        time.sleep(0.5)
+    print("did not settle", flush=True)
+    return d
+
+
 def check_layout(label, style, count=None):
     """After a layout change: right style, right shape, windows really there, no overlaps when they fit."""
-    time.sleep(1.8)
-    d = dump()
+    d = settled_dump()
     plan = screen_plan(d)
     chosen = list(d.get("layouts", {}).values()) or ["auto"]   # nothing chosen yet means Auto
     record(f"{label}: style is {STYLE_NAMES[style]}", chosen[0] == style and plan is not None and plan["style"] == style,
