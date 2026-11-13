@@ -104,3 +104,29 @@ enum ConflictingApps {
         }
     }
 }
+
+/// macOS 15's own window tiling. Its "drag to screen edge" fights Tessera's drag-to-snap,
+/// so Tessera offers to turn it off (the same switch as System Settings › Desktop & Dock ›
+/// "Drag windows to screen edges to tile").
+enum MacTiling {
+    private static let domain = "com.apple.WindowManager"
+    private static let keys = ["EnableTilingByEdgeDrag", "EnableTopTilingByEdgeDrag"]
+
+    /// True if macOS also snaps windows dragged to a screen edge. A missing setting means on.
+    static var edgeDragIsOn: Bool {
+        let defaults = UserDefaults(suiteName: domain)
+        return keys.contains { defaults?.object(forKey: $0) as? Bool ?? true }
+    }
+
+    static func turnOffEdgeDrag() {
+        let defaults = UserDefaults(suiteName: domain)
+        for key in keys { defaults?.set(false, forKey: key) }
+    }
+
+    @MainActor
+    static func openSettings() {
+        if let url = URL(string: "x-apple.systempreferences:com.apple.Desktop-Settings.extension") {
+            NSWorkspace.shared.open(url)
+        }
+    }
+}

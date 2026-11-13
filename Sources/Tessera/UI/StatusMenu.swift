@@ -43,6 +43,10 @@ final class StatusMenu: NSObject, NSMenuDelegate {
             menu.addItem(quit)
             warnings = true
         }
+        if settings.dragToSnap, MacTiling.edgeDragIsOn {
+            menu.addItem(item("⚠︎ Turn Off macOS Edge Tiling (it fights drag-to-snap)", #selector(turnOffMacTiling)))
+            warnings = true
+        }
         if !Shortcuts.shared.failed.isEmpty {
             menu.addItem(item("⚠︎ Some shortcuts are taken by another app…", #selector(showSettings)))
             warnings = true
@@ -172,6 +176,11 @@ final class StatusMenu: NSObject, NSMenuDelegate {
     }
 
     @objc private func showPermission() { PermissionWindow.shared.show() }
+
+    @objc private func turnOffMacTiling() {
+        MacTiling.turnOffEdgeDrag()
+        Notice.shared.show("macOS edge tiling off")
+    }
     @objc private func showSettings() { SettingsWindow.shared.show() }
 
     @objc private func showAbout() {

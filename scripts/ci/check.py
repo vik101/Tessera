@@ -285,6 +285,10 @@ def main():
         snap_check(f"{name} Restore", CO, K["delete"], first, tol=2)
 
     # --- Drag to a screen edge ---
+    record("macOS edge tiling was on at the start", d.get("macEdgeTiling") is True)
+    post("fix-mac-tiling", 1.0)
+    out = subprocess.run(["defaults", "read", "com.apple.WindowManager", "EnableTilingByEdgeDrag"], capture_output=True, text=True).stdout.strip()
+    record("Tessera turns off macOS edge tiling", out == "0", f"EnableTilingByEdgeDrag = {out!r}")
     keys("activate", "com.apple.TextEdit")
     cur, _ = front()
     grab = (cur[0] + 100, cur[1] + 12)

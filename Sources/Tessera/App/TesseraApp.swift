@@ -30,7 +30,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         PermissionWindow.shared.onGranted = { [weak self] in self?.startEngine() }
         PermissionWindow.shared.begin()
 
-        if !TestHooks.shared.isOn { after(0.8) { [weak self] in self?.warnAboutConflicts() } }
+        if !TestHooks.shared.isOn {
+            after(0.8) { [weak self] in
+                self?.warnAboutConflicts()
+                self?.offerToTurnOffMacTiling()
+            }
+        }
         Log.info("Tessera \(AppInfo.version) started")
     }
 
@@ -72,6 +77,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if alert.runModal() == .alertFirstButtonReturn {
             app.terminate()
             after(1.5) { Shortcuts.shared.reload() }
+        }
+    }
+
+    /// macOS's own drag-to-edge tiling grabs the same drags as Tessera. Ask once.
+    private func offerToTurnOffMacTiling() {
+        let asked = "askedAboutMacTiling"
+        guard Settings.shared.dragToSnap, MacTiling.edgeDragIsOn, !UserDefaults.standard.bool(forKey: asked) else { return }
+        UserDefaults.standard.set(true, forKey: asked)
+        let alert = NSAlert()
+        alert.messageText = "Turn off macOS's own edge tiling?"
+        alert.informativeText = "macOS also snaps windows you drag to a screen edge. The two get in each other's way. Tessera can turn off the macOS version (System Settings › Desktop & Dock › Drag windows to screen edges to tile)."
+        alert.addButton(withTitle: "Turn It Off")
+        alert.addButton(withTitle: "Keep Both")
+        NSApp.activate()
+        if alert.runModal() == .alertFirstButtonReturn {
+            MacTiling.turnOffEdgeDrag()
         }
     }
 

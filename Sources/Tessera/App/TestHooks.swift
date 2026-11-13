@@ -35,6 +35,7 @@ final class TestHooks: NSObject {
         case "settings": SettingsWindow.shared.show()
         case "close-settings": SettingsWindow.shared.close()
         case "permission": PermissionWindow.shared.show()
+        case "fix-mac-tiling": MacTiling.turnOffEdgeDrag()
         default:
             if command.hasPrefix("run:"), let target = Command(id: String(command.dropFirst(4))) {
                 Shortcuts.run(target)
@@ -71,6 +72,7 @@ final class TestHooks: NSObject {
         let focused = WindowRegistry.shared.focusedWindow()
         let dump: [String: Any] = [
             "trusted": AccessibilityPermission.isTrusted,
+            "macEdgeTiling": MacTiling.edgeDragIsOn,
             "displays": Screens.all().map { ["id": $0.stableID, "name": $0.name, "frame": rect($0.frame), "visible": rect($0.visibleFrame)] },
             "focused": focused.map { Int($0.id) } ?? 0,
             "windows": windows,

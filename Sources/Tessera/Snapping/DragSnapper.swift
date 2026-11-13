@@ -14,6 +14,7 @@ final class DragSnapper {
     private var window: TrackedWindow?
     private var startFrame: CGRect?
     private var isMoving = false
+    private var lastSample: CGRect?
     private var lastCheck = Date.distantPast
     private var zone: (action: SnapAction, display: DisplayInfo)?
     private let settings = Settings.shared
@@ -37,6 +38,7 @@ final class DragSnapper {
     private func mouseDown() {
         isMouseDown = true
         isMoving = false
+        lastSample = nil
         zone = nil
         window = nil
         startFrame = nil
@@ -54,9 +56,13 @@ final class DragSnapper {
         lastCheck = Date()
 
         if !isMoving {
+            // A move changes the position but not the size between two looks.
+            // (macOS may resize a window once as a drag starts, so compare with the last look, not the start.)
             guard let frame = window.element.frame else { return }
-            let moved = abs(frame.minX - startFrame.minX) > 2 || abs(frame.minY - startFrame.minY) > 2
-            let resized = abs(frame.width - startFrame.width) > 2 || abs(frame.height - startFrame.height) > 2
+            let previous = lastSample ?? startFrame
+            lastSample = frame
+            let moved = abs(frame.minX - previous.minX) > 2 || abs(frame.minY - previous.minY) > 2
+            let resized = abs(frame.width - previous.width) > 2 || abs(frame.height - previous.height) > 2
             guard moved, !resized else { return }
             isMoving = true
             restoreSizeIfSnapped(window, frame: frame)
