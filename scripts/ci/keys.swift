@@ -14,6 +14,8 @@ func flags(_ text: String) -> CGEventFlags {
         case "opt": result.insert(.maskAlternate)
         case "shift": result.insert(.maskShift)
         case "cmd": result.insert(.maskCommand)
+        case "fn": result.insert(.maskSecondaryFn)
+        case "num": result.insert(.maskNumericPad)
         default: break
         }
     }

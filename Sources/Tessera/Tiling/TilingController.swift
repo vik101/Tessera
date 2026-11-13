@@ -310,9 +310,10 @@ final class TilingController {
         }
         // A stack whose top window changed (after a swap, say) brings that window forward.
         let showing = state.showingWindows
-        let before = Set(lastShowing[key] ?? [])
-        for tile in state.tiles where tile.isStack {
-            if let top = tile.showing, !before.contains(top), top != raiseID, let window = registry.window(top) {
+        let before = lastShowing[key] ?? []
+        for (index, tile) in state.tiles.enumerated() where tile.isStack {
+            let previous = before.indices.contains(index) ? before[index] : nil
+            if let top = tile.showing, top != previous, top != raiseID, let window = registry.window(top) {
                 applier.raise(window)
             }
         }

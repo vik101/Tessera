@@ -58,6 +58,9 @@ if [[ "${CI:-}" == "true" ]] && swiftc -O scripts/ci/keys.swift -o /tmp/keys 2>"
   press ctrl,opt,shift 0x13;  dump state-4-columns.txt               # ⌃⌥⇧2 Columns
   press ctrl,opt 0x24;        dump state-5-make-primary.txt          # ⌃⌥↩ primary
   press ctrl,opt 0x7C;        dump state-6-swap-right.txt            # ⌃⌥→ swap
+  press ctrl,opt,fn,num 0x7C; dump state-6b-swap-right-fn.txt        # ⌃⌥→ as a real keyboard sends it
+  press ctrl,opt,fn,num 0x7B; dump state-6c-swap-left-fn.txt         # ⌃⌥←
+  press ctrl,opt 0x1E;        dump state-6d-next-window.txt          # ⌃⌥] next window
   press ctrl,opt 0x06;        screencapture -x "$OUT/4-focus-mode.png"; dump state-7-focus.txt   # ⌃⌥Z
   press ctrl,opt 0x06
   press ctrl,opt 0x02;        screencapture -x "$OUT/5-no-peek.png"  # ⌃⌥D
