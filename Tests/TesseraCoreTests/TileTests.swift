@@ -91,6 +91,44 @@ struct TileTests {
         #expect(frames[0].intersectionArea(frames[1]) == 0)
     }
 
+    @Test func neighboursMakeRoomForAWindowThatCannotShrink() {
+        // A small screen. Safari won't go below 574 wide; Finder below 460.
+        let small = CGRect(x: 0, y: 25, width: 1024, height: 685)
+        let plan = TilePlanner.plan(count: 4, in: small, style: .auto,
+                                    minimumSizes: [nil, CGSize(width: 574, height: 248), CGSize(width: 460, height: 252), nil])
+        #expect(plan.fits)
+        #expect(plan.frames[1].width >= 574 && plan.frames[2].width >= 460)
+        for (i, a) in plan.frames.enumerated() {
+            #expect(small.contains(a))
+            for b in plan.frames[(i + 1)...] { #expect(a.intersectionArea(b) == 0) }
+        }
+    }
+
+    @Test func aStyleThatCannotFitFallsBackInsteadOfHidingWindows() {
+        let wide = CGSize(width: 1000, height: 300)
+        let plan = TilePlanner.plan(count: 2, in: standard, style: .columns, minimumSizes: [wide, wide])
+        #expect(plan.fits)
+        #expect(plan.frames.allSatisfy { $0.width >= 1000 })
+    }
+
+    @Test func whenNothingFitsItStillPlacesEveryWindow() {
+        let huge = CGSize(width: 900, height: 500)
+        let plan = TilePlanner.plan(count: 3, in: laptop, style: .auto, minimumSizes: [huge, huge, huge])
+        #expect(!plan.fits)
+        #expect(plan.frames.count == 3)
+        #expect(plan.frames.allSatisfy { laptop.contains($0) && $0.width > 0 })
+    }
+
+    @Test func partitionsListEverySplit() {
+        #expect(TilePlanner.partitions(4) == [[1, 1, 1, 1], [1, 1, 2], [1, 3], [2, 2], [4]])
+    }
+
+    @Test func waterFillGivesNeedsFirst() {
+        #expect(TilePlanner.waterFill(1000, needs: [0, 600], weights: [1, 1]) == [400, 600])
+        #expect(TilePlanner.waterFill(1000, needs: [0, 0], weights: [3, 1]) == [750, 250])
+        #expect(TilePlanner.waterFill(1000, needs: [800, 800], weights: [1, 1]) == [500, 500])
+    }
+
     @Test func gapsAreEven() {
         let frames = plan(2, standard, .columns, gap: 10)
         #expect(frames[0].minX == 10)

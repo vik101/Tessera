@@ -35,14 +35,33 @@ public enum LayoutStyle: String, CaseIterable, Codable, Sendable {
 /// Works out where each tiled window goes. Pure maths, no AppKit.
 ///
 /// Every window always gets its own slot: auto-tile never hides a window.
+///
+/// Layouts are built from "lines": rows stacked top to bottom, or columns side by side,
+/// each holding some windows. Space is shared out evenly, except that a window an app
+/// won't shrink gets at least its minimum size and its neighbours share the rest.
 public enum TilePlanner {
     /// The cell shape we aim for in Auto and Grid: a little wider than tall, like most windows.
     static let idealAspect: CGFloat = 4.0 / 3.0
 
+    /// The result of planning one screen.
+    public struct Plan: Equatable, Sendable {
+        /// One frame per window, in window order.
+        public var frames: [CGRect]
+        /// False if some window can't get its minimum size in any arrangement.
+        public var fits: Bool
+    }
+
+    /// One way to arrange windows.
+    struct Arrangement: Equatable {
+        /// True: lines are rows, stacked top to bottom. False: lines are columns, side by side.
+        var rows: Bool
+        /// Windows per line, in order.
+        var counts: [Int]
+        /// Relative line sizes; nil shares equally.
+        var weights: [CGFloat]?
+    }
+
     /// Frames for `count` windows in `area`, in window order. The first window is the main one.
-    ///
-    /// - Parameter minimumSizes: sizes some windows refuse to go below. Auto and Grid pick
-    ///   the best arrangement in which every window fits. If none fits, they use the best one anyway.
     public static func frames(
         count: Int,
         in area: CGRect,
@@ -51,115 +70,223 @@ public enum TilePlanner {
         mainRatio: CGFloat = 0.5,
         minimumSizes: [CGSize?] = []
     ) -> [CGRect] {
-        guard count > 0, area.width > 0, area.height > 0 else { return [] }
+        plan(count: count, in: area, style: style, gap: gap, mainRatio: mainRatio, minimumSizes: minimumSizes).frames
+    }
+
+    /// Plans a screen.
+    ///
+    /// - Parameter minimumSizes: sizes some windows refuse to go below. Tessera picks the best
+    ///   arrangement in which every window fits. If a chosen style (say Columns) can't fit them,
+    ///   it falls back to Auto rather than hide a window. If nothing fits, it overlaps the least.
+    public static func plan(
+        count: Int,
+        in area: CGRect,
+        style: LayoutStyle,
+        gap: CGFloat = 0,
+        mainRatio: CGFloat = 0.5,
+        minimumSizes: [CGSize?] = []
+    ) -> Plan {
+        guard count > 0, area.width > 0, area.height > 0 else { return Plan(frames: [], fits: true) }
         let shape = ScreenShape.of(area.size)
-        let ratio = min(max(mainRatio, 0.2), 0.8)
+        let minimums = (0..<count).map { $0 < minimumSizes.count ? minimumSizes[$0] ?? .zero : .zero }
 
-        let candidates: [[UnitRect]]
+        if style == .auto, count == 1, shape == .ultrawide, minimums[0].width <= area.width * 2 / 3 {
+            // One window on a very wide screen: centred, not stretched edge to edge.
+            let frame = area.part(UnitRect(x: 1.0 / 6, y: 0, width: 2.0 / 3, height: 1))
+            return Plan(frames: [applyGap(frame, in: area, gap: gap)], fits: true)
+        }
+
+        let chosen = candidates(count, style: style, shape: shape, area: area, mainRatio: mainRatio)
+        let fallback = style == .auto ? [] : candidates(count, style: .auto, shape: shape, area: area, mainRatio: mainRatio)
+        var best: (frames: [CGRect], overflow: CGFloat)?
+        for arrangement in chosen + fallback {
+            for order in assignments(arrangement, minimums: minimums, area: area, gap: gap) {
+                let frames = build(arrangement, order: order, minimums: minimums, in: area, gap: gap)
+                let over = overflow(frames, minimums)
+                if over == 0 { return Plan(frames: frames, fits: true) }
+                if best == nil || over < best!.overflow { best = (frames, over) }
+            }
+        }
+        return Plan(frames: best?.frames ?? [], fits: false)
+    }
+
+    // MARK: Candidates
+
+    /// Arrangements for a style, best first.
+    static func candidates(_ n: Int, style: LayoutStyle, shape: ScreenShape, area: CGRect, mainRatio: CGFloat) -> [Arrangement] {
         switch style {
-        case .columns: candidates = [columns(count)]
-        case .rows: candidates = [rows(count)]
-        case .mainAndSide: candidates = [mainAndSide(count, ratio: ratio, portrait: shape == .portrait)]
-        case .grid: candidates = ranked(grids(count), in: area)
+        case .columns:
+            return [Arrangement(rows: true, counts: [n])]
+        case .rows:
+            return [Arrangement(rows: false, counts: [n])]
+        case .mainAndSide:
+            guard n > 1 else { return [Arrangement(rows: true, counts: [1])] }
+            let ratio = min(max(mainRatio, 0.2), 0.8)
+            return [Arrangement(rows: shape == .portrait, counts: [1, n - 1], weights: [ratio, 1 - ratio])]
+        case .grid:
+            return ranked(grids(n), in: area)
         case .auto:
-            if count == 1, shape == .ultrawide {
-                // One window on a very wide screen: centred, not stretched edge to edge.
-                candidates = [[UnitRect(x: 1.0 / 6, y: 0, width: 2.0 / 3, height: 1)], [.full]]
-            } else {
-                var options = grids(count) + [columns(count), rows(count)]
-                if count >= 3 { options.append(mainAndSide(count, ratio: ratio, portrait: shape == .portrait)) }
-                candidates = ranked(options, in: area)
+            // Every way to split the windows into rows or columns (fewer windows in earlier lines).
+            // Above 12 windows that gets slow, so stick to grids.
+            let options = n <= 12
+                ? partitions(n).flatMap { [Arrangement(rows: true, counts: $0), Arrangement(rows: false, counts: $0)] }
+                : grids(n)
+            return ranked(options, in: area)
+        }
+    }
+
+    /// Even grids with `c` windows per row. A shorter row goes first, so its windows get more room.
+    static func grids(_ n: Int) -> [Arrangement] {
+        (1...n).map { c in
+            let lines = Int((Double(n) / Double(c)).rounded(.up))
+            let first = n - c * (lines - 1)
+            return Arrangement(rows: true, counts: [first] + Array(repeating: c, count: lines - 1))
+        }
+    }
+
+    /// Ways to write n as a sum of whole numbers in rising order: 4 = 1+1+2 = 2+2 = 1+3 = 4 …
+    static func partitions(_ n: Int) -> [[Int]] {
+        var result: [[Int]] = []
+        func build(_ remaining: Int, _ smallest: Int, _ current: [Int]) {
+            if remaining == 0 {
+                result.append(current)
+                return
+            }
+            guard smallest <= remaining else { return }
+            for part in smallest...remaining {
+                build(remaining - part, part, current + [part])
             }
         }
-
-        let planned = candidates.map { units in units.map { applyGap(area.part($0), in: area, gap: gap) } }
-        let fitting = planned.first { frames in
-            frames.indices.allSatisfy { index in
-                guard index < minimumSizes.count, let minimum = minimumSizes[index] else { return true }
-                return frames[index].width + 1 >= minimum.width && frames[index].height + 1 >= minimum.height
-            }
-        }
-        return fitting ?? planned[0]
-    }
-
-    // MARK: Shapes
-
-    static func columns(_ n: Int) -> [UnitRect] {
-        (0..<n).map { UnitRect(x: CGFloat($0) / CGFloat(n), y: 0, width: 1 / CGFloat(n), height: 1) }
-    }
-
-    static func rows(_ n: Int) -> [UnitRect] {
-        (0..<n).map { UnitRect(x: 0, y: CGFloat($0) / CGFloat(n), width: 1, height: 1 / CGFloat(n)) }
-    }
-
-    /// Main window on the left (or top, on a portrait screen); the rest share the other part.
-    static func mainAndSide(_ n: Int, ratio: CGFloat, portrait: Bool) -> [UnitRect] {
-        guard n > 1 else { return [.full] }
-        var units = [UnitRect(x: 0, y: 0, width: ratio, height: 1)]
-        let others = n - 1
-        for index in 0..<others {
-            units.append(UnitRect(
-                x: ratio,
-                y: CGFloat(index) / CGFloat(others),
-                width: 1 - ratio,
-                height: 1 / CGFloat(others)
-            ))
-        }
-        return portrait ? units.map(\.transposed) : units
-    }
-
-    /// Every grid with `columns` cells per row. The last row's windows widen to fill it, so there are no holes.
-    static func grid(_ n: Int, columns: Int) -> [UnitRect] {
-        let rowCount = Int((Double(n) / Double(columns)).rounded(.up))
-        var units: [UnitRect] = []
-        for row in 0..<rowCount {
-            let inRow = row == rowCount - 1 ? n - columns * (rowCount - 1) : columns
-            for col in 0..<inRow {
-                units.append(UnitRect(
-                    x: CGFloat(col) / CGFloat(inRow),
-                    y: CGFloat(row) / CGFloat(rowCount),
-                    width: 1 / CGFloat(inRow),
-                    height: 1 / CGFloat(rowCount)
-                ))
-            }
-        }
-        return units
-    }
-
-    static func grids(_ n: Int) -> [[UnitRect]] {
-        (1...n).map { grid(n, columns: $0) }
+        build(n, 1, [])
+        return result
     }
 
     // MARK: Scoring
 
     /// Lower is better: how far the cells are from a comfortable window shape.
-    /// The worst cell counts extra, so no window gets a silly strip.
-    static func score(_ units: [UnitRect], in area: CGRect) -> CGFloat {
+    /// The worst cell counts extra, so no window gets a silly strip. Mixed line lengths cost a little.
+    static func score(_ arrangement: Arrangement, in area: CGRect) -> CGFloat {
+        let n = arrangement.counts.reduce(0, +)
+        let frames = build(arrangement, order: Array(0..<n), minimums: Array(repeating: .zero, count: n), in: area, gap: 0)
         let ideal = log(idealAspect)
-        var costs: [CGFloat] = []
-        var heights = Set<Int>()
-        var widths = Set<Int>()
-        for unit in units {
-            let w = unit.width * area.width
-            let h = unit.height * area.height
-            costs.append(abs(log(max(w, 1) / max(h, 1)) - ideal))
-            heights.insert(Int((unit.height * 1000).rounded()))
-            widths.insert(Int((unit.width * 1000).rounded()))
-        }
+        let costs = frames.map { abs(log(max($0.width, 1) / max($0.height, 1)) - ideal) }
         let mean = costs.reduce(0, +) / CGFloat(costs.count)
-        // A grid whose last row is shorter (equal heights, mixed widths) costs a little more.
-        let uneven: CGFloat = widths.count > 1 && heights.count == 1 ? 0.15 : 0
+        let uneven = CGFloat(Set(arrangement.counts).count - 1) * 0.1
         return 0.7 * mean + 0.3 * (costs.max() ?? 0) + uneven
     }
 
-    static func ranked(_ options: [[UnitRect]], in area: CGRect) -> [[UnitRect]] {
-        options.enumerated()
+    static func ranked(_ options: [Arrangement], in area: CGRect) -> [Arrangement] {
+        options.map { ($0, score($0, in: area)) }
+            .enumerated()
             .sorted { lhs, rhs in
-                let a = score(lhs.element, in: area)
-                let b = score(rhs.element, in: area)
+                let a = lhs.element.1
+                let b = rhs.element.1
                 return abs(a - b) > 0.0001 ? a < b : lhs.offset < rhs.offset
             }
-            .map(\.element)
+            .map(\.element.0)
+    }
+
+    // MARK: Building frames
+
+    /// Which window goes in which slot. First try window order; if some line can't hold its
+    /// windows' minimum sizes, also try spreading the demanding windows across lines.
+    static func assignments(_ arrangement: Arrangement, minimums: [CGSize], area: CGRect, gap: CGFloat) -> [[Int]] {
+        let n = minimums.count
+        let identity = Array(0..<n)
+        guard minimums.contains(where: { $0 != .zero }) else { return [identity] }
+        let length = arrangement.rows ? area.width : area.height
+        func demand(_ i: Int) -> CGFloat { (arrangement.rows ? minimums[i].width : minimums[i].height) + 2 * gap }
+        var lines = arrangement.counts.map { (free: $0, used: CGFloat(0), windows: [Int]()) }
+        for window in identity.sorted(by: { demand($0) > demand($1) }) {
+            guard let line = lines.indices.filter({ lines[$0].free > 0 })
+                .max(by: { length - lines[$0].used < length - lines[$1].used }) else { break }
+            lines[line].free -= 1
+            lines[line].used += demand(window)
+            lines[line].windows.append(window)
+        }
+        let spread = lines.flatMap { $0.windows.sorted() }
+        return spread == identity ? [identity] : [identity, spread]
+    }
+
+    /// Frames for an arrangement, returned in window order. `order[slot]` is the window in that slot.
+    static func build(_ arrangement: Arrangement, order: [Int], minimums: [CGSize], in area: CGRect, gap: CGFloat) -> [CGRect] {
+        let rows = arrangement.rows
+        var lines: [[Int]] = []
+        var next = 0
+        for count in arrangement.counts {
+            lines.append(Array(order[next..<min(next + count, order.count)]))
+            next += count
+        }
+        func need(_ window: Int, across: Bool) -> CGFloat {
+            // `across` = along the line; otherwise the line's thickness.
+            let size = minimums[window]
+            let value = rows == across ? size.width : size.height
+            // A window alone on a line loses a full gap on both sides, so allow for two.
+            return value > 0 ? value + 2 * gap : 0
+        }
+        let thickness = waterFill(
+            rows ? area.height : area.width,
+            needs: lines.map { line in line.map { need($0, across: false) }.max() ?? 0 },
+            weights: arrangement.weights ?? Array(repeating: 1, count: lines.count)
+        )
+        var frames = [CGRect](repeating: .zero, count: order.count)
+        var lineStart = rows ? area.minY : area.minX
+        for (line, size) in zip(lines, thickness) {
+            let lineEnd = lineStart + size
+            let lengths = waterFill(
+                rows ? area.width : area.height,
+                needs: line.map { need($0, across: true) },
+                weights: Array(repeating: 1, count: line.count)
+            )
+            var start = rows ? area.minX : area.minY
+            for (window, length) in zip(line, lengths) {
+                let end = start + length
+                let rect = rows
+                    ? CGRect(x: start.rounded(), y: lineStart.rounded(), width: end.rounded() - start.rounded(), height: lineEnd.rounded() - lineStart.rounded())
+                    : CGRect(x: lineStart.rounded(), y: start.rounded(), width: lineEnd.rounded() - lineStart.rounded(), height: end.rounded() - start.rounded())
+                frames[window] = applyGap(rect, in: area, gap: gap)
+                start = end
+            }
+            lineStart = lineEnd
+        }
+        return frames
+    }
+
+    /// Shares `length` by `weights`, but gives every item at least its need.
+    /// If the needs don't fit at all, shares by need instead.
+    static func waterFill(_ length: CGFloat, needs: [CGFloat], weights: [CGFloat]) -> [CGFloat] {
+        var sizes = [CGFloat?](repeating: nil, count: needs.count)
+        while true {
+            let free = sizes.indices.filter { sizes[$0] == nil }
+            if free.isEmpty { break }
+            let rest = length - sizes.compactMap { $0 }.reduce(0, +)
+            let totalWeight = free.map { weights[$0] }.reduce(0, +)
+            var changed = false
+            for i in free where needs[i] > rest * weights[i] / totalWeight {
+                sizes[i] = needs[i]
+                changed = true
+            }
+            if !changed {
+                for i in free { sizes[i] = rest * weights[i] / totalWeight }
+                break
+            }
+        }
+        let result = sizes.map { $0 ?? 0 }
+        let totalNeed = needs.reduce(0, +)
+        if result.reduce(0, +) > length + 0.5, totalNeed > 0 {
+            return needs.map { length * $0 / totalNeed }
+        }
+        return result
+    }
+
+    /// How badly windows fail to fit their frames (0 = they all fit).
+    static func overflow(_ frames: [CGRect], _ minimums: [CGSize]) -> CGFloat {
+        zip(frames, minimums).reduce(0) { total, pair in
+            let (frame, minimum) = pair
+            let wide = max(0, minimum.width - frame.width - 1) * frame.height
+            let tall = max(0, minimum.height - frame.height - 1) * frame.width
+            return total + wide + tall
+        }
     }
 
     // MARK: Space left by snapped windows

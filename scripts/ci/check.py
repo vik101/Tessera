@@ -133,10 +133,31 @@ def inside(r, vis, tol=1):
             r[0] + r[2] <= vis[0] + vis[2] + tol and r[1] + r[3] <= vis[1] + vis[3] + tol)
 
 
-def snap_check(label, mods, code, expect, tol=1, warn=False):
+def fits_or_minimum(got, want, vis, tol=1):
+    """Right spot, or as close as the app allows: bigger than asked (its minimum size),
+    still on screen, and lined up with the same screen edge."""
+    if got is None:
+        return False
+    for start, size in ((0, 2), (1, 3)):
+        g0, g1 = got[start], got[start] + got[size]
+        w0, w1 = want[start], want[start] + want[size]
+        if abs(g0 - w0) <= tol and abs(g1 - w1) <= tol:
+            continue
+        if got[size] > want[size] and (abs(g0 - w0) <= tol or abs(g1 - w1) <= tol) and inside(got, vis, tol):
+            continue
+        return False
+    return True
+
+
+VISIBLE = [0, 0, 0, 0]
+
+
+def snap_check(label, mods, code, expect, tol=1, warn=False, allow_minimum=False):
     press(mods, code)
     got, _ = front()
-    record(label, close(got, expect, tol), f"got {got}, want {expect}", warn=warn)
+    ok = close(got, expect, tol) or (allow_minimum and fits_or_minimum(got, expect, VISIBLE, tol))
+    note = "" if close(got, expect, tol) else " (app minimum size)"
+    record(label, ok, f"got {got}, want {expect}{note if ok else ''}", warn=warn)
     return got
 
 
@@ -168,7 +189,9 @@ def check_tiling(label, strict=True, ignore=()):
             area = overlap(frames[a], frames[b])
             if area > 4:
                 pairs.append(f"{a}/{b} {area}px²")
-    record(f"{label}: no overlaps", not pairs, "; ".join(pairs), warn=not strict)
+    crowded = bool(d["autoTile"].get("crowded"))
+    record(f"{label}: no overlaps", not pairs, "; ".join(pairs) + (" — apps' minimum sizes can't all fit" if crowded else ""),
+           warn=(not strict) or crowded)
     # Hidden check: how much of each tiled window is not covered by windows above it.
     order = [w["id"] for w in windows()["windows"]]
     for w in tiled:
@@ -177,7 +200,7 @@ def check_tiling(label, strict=True, ignore=()):
         covered = sum(overlap(r, a) for a in above)
         share = 1 - min(1, covered / max(1, r[2] * r[3]))
         if share < 0.3:
-            record(f"{label}: {w['app']} {w['id']} is visible", False, f"only {share:.0%} visible")
+            record(f"{label}: {w['app']} {w['id']} is visible", False, f"only {share:.0%} visible", warn=crowded)
     shot("tile-" + label.lower().replace(" ", "-").replace("+", "plus").replace(",", ""))
     return d, frames
 
@@ -195,6 +218,7 @@ def main():
     record("Accessibility allowed", d.get("trusted") is True)
     record("All shortcuts registered", not d.get("failedShortcuts"), ", ".join(d.get("failedShortcuts", [])))
     V = d["displays"][0]["visible"]
+    VISIBLE[:] = V
     print("visible frame:", V, flush=True)
     F = lambda x, y, w, h: part(V, x, y, w, h)
 
@@ -253,9 +277,10 @@ def main():
         if not win:
             record(f"{name} has a window in front", False)
             continue
-        snap_check(f"{name} Left Half", CO, K["left"], F(0, 0, .5, 1))
-        snap_check(f"{name} Right Half", CO, K["right"], F(.5, 0, .5, 1))
-        snap_check(f"{name} Top Left", CO, K["u"], F(0, 0, .5, .5), warn=True)
+        snap_check(f"{name} Left Half", CO, K["left"], F(0, 0, .5, 1), allow_minimum=True)
+        snap_check(f"{name} Right Half", CO, K["right"], F(.5, 0, .5, 1), allow_minimum=True)
+        snap_check(f"{name} Top Left", CO, K["u"], F(0, 0, .5, .5), allow_minimum=True)
+        snap_check(f"{name} Last Third", CO, K["g"], F(2 / 3, 0, 1 / 3, 1), allow_minimum=True)
         snap_check(f"{name} Maximise", CO, K["ret"], F(0, 0, 1, 1))
         snap_check(f"{name} Restore", CO, K["delete"], first, tol=2)
 
@@ -314,7 +339,7 @@ def main():
 
     # Snap by hand while tiling: Chrome takes the left half, the rest share the right half.
     keys("activate", "com.google.Chrome")
-    chrome = snap_check("Auto-tile: Chrome ⌃⌥← keeps the left half", CO, K["left"], F(0, 0, .5, 1))
+    chrome = snap_check("Auto-tile: Chrome ⌃⌥← keeps the left half", CO, K["left"], F(0, 0, .5, 1), allow_minimum=True)
     _, cw = front()
     d, frames = check_tiling("Others fill the right half", ignore=(cw["id"],) if cw else ())
     right = [r for r in frames.values() if r[0] < V[0] + V[2] / 2 - 2]

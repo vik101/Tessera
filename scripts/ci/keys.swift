@@ -37,6 +37,7 @@ func key(_ code: CGKeyCode, down: Bool, _ flags: CGEventFlags) {
 
 func mouse(_ type: CGEventType, _ x: Double, _ y: Double) {
     let event = CGEvent(mouseEventSource: source, mouseType: type, mouseCursorPosition: CGPoint(x: x, y: y), mouseButton: .left)!
+    event.flags = []   // No leftover ⌃ from earlier key presses: ⌃-click is a right-click.
     event.post(tap: .cghidEventTap)
 }
 
@@ -104,6 +105,21 @@ case "drag" where args.count >= 5:
     }
     mouse(.leftMouseUp, x2, y2)
     usleep(150_000)
+
+case "resolution":
+    // Make the test screen bigger if the virtual display allows it.
+    let display = CGMainDisplayID()
+    let options = [kCGDisplayShowDuplicateLowResolutionModes: kCFBooleanTrue] as CFDictionary
+    let modes = (CGDisplayCopyAllDisplayModes(display, options) as? [CGDisplayMode]) ?? []
+    for mode in modes { print("mode \(mode.width)x\(mode.height) usable=\(mode.isUsableForDesktopGUI())") }
+    if let best = modes.filter({ $0.isUsableForDesktopGUI() && $0.width <= 1920 && $0.height <= 1200 })
+        .max(by: { $0.width * $0.height < $1.width * $1.height }) {
+        var config: CGDisplayConfigRef?
+        CGBeginDisplayConfiguration(&config)
+        CGConfigureDisplayWithDisplayMode(config, display, best, nil)
+        let result = CGCompleteDisplayConfiguration(config, .permanently)
+        print("set \(best.width)x\(best.height): \(result.rawValue)")
+    }
 
 default:
     print("usage: keys press|windows|activate|post|click|drag …")

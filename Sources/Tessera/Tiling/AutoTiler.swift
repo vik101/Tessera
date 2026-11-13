@@ -28,6 +28,8 @@ final class AutoTiler {
     /// Windows known to be normal and resizable, cached to save Accessibility calls.
     private var kind: [CGWindowID: Bool] = [:]
     private var rescannedFor: Set<CGWindowID> = []
+    /// Screens where some app's minimum window size makes overlap unavoidable.
+    private var crowded: Set<String> = []
 
     private var running = false
     private var pendingAfterMouse = false
@@ -306,7 +308,7 @@ final class AutoTiler {
             guard !active.isEmpty else { continue }
 
             let style = settings.layout(for: screen)
-            let frames = TilePlanner.frames(
+            let plan = TilePlanner.plan(
                 count: active.count,
                 in: freeArea(on: display),
                 style: style,
@@ -314,7 +316,8 @@ final class AutoTiler {
                 mainRatio: style == .mainAndSide ? CGFloat(settings.mainRatio) : 0.5,
                 minimumSizes: active.map { minimums[$0] }
             )
-            for (id, frame) in zip(active, frames) {
+            if plan.fits { crowded.remove(screen) } else { crowded.insert(screen) }
+            for (id, frame) in zip(active, plan.frames) {
                 guard let window = windows[id] else { continue }
                 planned[id] = frame
                 mover.move(window, to: frame, within: display.visibleFrame)
@@ -406,6 +409,7 @@ final class AutoTiler {
             "order": order.mapValues { $0.map(Int.init) },
             "floating": floating.map(Int.init),
             "pinned": Dictionary(uniqueKeysWithValues: pinned.map { (String($0.key), NSStringFromRect($0.value)) }),
+            "crowded": Array(crowded),
             "minimums": Dictionary(uniqueKeysWithValues: minimums.map { (String($0.key), NSStringFromSize($0.value)) }),
         ]
     }

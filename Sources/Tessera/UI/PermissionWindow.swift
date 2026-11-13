@@ -34,6 +34,7 @@ final class PermissionWindow: ObservableObject {
         }
         NSApp.activate()
         window?.makeKeyAndOrderFront(nil)
+        window?.orderFrontRegardless()
         timer.start(every: 1) { [weak self] in
             if AccessibilityPermission.isTrusted { self?.grant() }
         }

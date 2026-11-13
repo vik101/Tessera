@@ -24,6 +24,10 @@ if [[ "${CI:-}" == "true" ]]; then
   done
 fi
 defaults delete "$BUNDLE_ID" >/dev/null 2>&1
+# Chrome on the runner is quarantined, so macOS would ask before opening it.
+[[ "${CI:-}" == "true" ]] && sudo xattr -dr com.apple.quarantine "/Applications/Google Chrome.app"
+limit 20 /tmp/keys resolution > "$OUT/resolution.txt" 2>&1
+sleep 2
 defaults write "$BUNDLE_ID" TesseraTestHooks -bool YES
 
 

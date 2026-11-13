@@ -23,6 +23,7 @@ final class SettingsWindow {
         }
         NSApp.activate()
         window?.makeKeyAndOrderFront(nil)
+        window?.orderFrontRegardless()
     }
 
     func close() { window?.close() }
