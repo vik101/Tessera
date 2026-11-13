@@ -28,6 +28,11 @@ final class LicenseManager {
     // MARK: Start
 
     func start() {
+        // With licensing off (the default), never touch the Keychain: no password prompts.
+        guard AppConfig.licensingEnabled else {
+            AppModel.shared.licenseState = .unlicensedBuild
+            return
+        }
         if Keychain.read(service: service, account: "firstLaunch") == nil {
             let stamp = String(Date().timeIntervalSince1970)
             Keychain.write(stamp, service: service, account: "firstLaunch")
@@ -47,6 +52,7 @@ final class LicenseManager {
     }
 
     func recompute() {
+        guard AppConfig.licensingEnabled else { return }
         var state = LicenseState.compute(
             licensingEnabled: AppConfig.licensingEnabled,
             firstLaunch: firstLaunch,
