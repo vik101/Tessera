@@ -65,6 +65,7 @@ jobs:
         run: |
           ./scripts/build-app.sh release 2>&1 | tee ci-results/release.log
           lipo -info build/release/Tessera.app/Contents/MacOS/Tessera | tee -a ci-results/release.log
+          ditto -c -k --keepParent build/release/Tessera.app ci-results/Tessera-release.zip
 
       - name: Publish results
         if: always()

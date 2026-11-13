@@ -68,10 +68,15 @@ python3 scripts/strings.py check   Resources/Localizable.xcstrings   # lists mis
 ## Test
 
 ```bash
-swift test
+swift test                                   # 51 unit tests for the core
+./scripts/smoke-test.sh build/debug/Tessera.app   # drives the real app against TextEdit windows
 ```
 
-The tests cover the core: layouts, the solver (the part that fits windows with minimum sizes), stacks, swaps, navigation, shortcuts, setups and the trial clock. App code that talks to macOS is checked by running it.
+The unit tests cover the core: layouts, the solver (the part that fits windows with minimum sizes), stacks, swaps, navigation, shortcuts, setups and the trial clock.
+
+The smoke test runs the app for real. It opens TextEdit windows, presses Tessera's shortcuts, drags windows, and saves Tessera's state and a screenshot after each step to `ci-results/`.
+
+On GitHub, `.github/workflows/tessera-build.yml` runs all of this on a Mac for every push. It also builds the universal app and checks the newest Xcode. Results land on the `tessera-ci` branch.
 
 ## Ship a release
 
