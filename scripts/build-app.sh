@@ -52,9 +52,14 @@ if [[ -z "$IDENTITY" ]]; then
 fi
 echo "› Signing with: $IDENTITY"
 
-sign() { codesign --force --options runtime --timestamp=none --sign "$IDENTITY" "$@"; }
-if [[ "$CONFIG" == "release" && "$IDENTITY" != "-" ]]; then
+# Hardened runtime (required for notarizing) only with a real certificate. With ad-hoc
+# signing it turns on library validation, and macOS then refuses to load Sparkle.
+if [[ "$IDENTITY" == "-" ]]; then
+  sign() { codesign --force --timestamp=none --sign "$IDENTITY" "$@"; }
+elif [[ "$CONFIG" == "release" ]]; then
   sign() { codesign --force --options runtime --timestamp --sign "$IDENTITY" "$@"; }
+else
+  sign() { codesign --force --options runtime --timestamp=none --sign "$IDENTITY" "$@"; }
 fi
 
 FW="$APP/Contents/Frameworks/Sparkle.framework"

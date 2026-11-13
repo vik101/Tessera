@@ -67,6 +67,13 @@ jobs:
           lipo -info build/release/Tessera.app/Contents/MacOS/Tessera | tee -a ci-results/release.log
           ditto -c -k --keepParent build/release/Tessera.app ci-results/Tessera-release.zip
 
+      - name: First launch of the downloadable app
+        id: firstlaunch
+        if: steps.release.outcome == 'success'
+        continue-on-error: true
+        timeout-minutes: 5
+        run: ./scripts/first-launch-test.sh build/release/Tessera.app
+
       - name: Publish results
         if: always()
         env:
@@ -79,6 +86,7 @@ jobs:
             echo "app: ${{ steps.app.outcome }}"
             echo "smoke: ${{ steps.smoke.outcome }}"
             echo "release: ${{ steps.release.outcome }}"
+            echo "firstlaunch: ${{ steps.firstlaunch.outcome }}"
           } > ci-results/summary.txt
           grep -E "(error|warning):" ci-results/build.log | sort -u > ci-results/diagnostics.txt || true
           rm -rf ci-results/.git
