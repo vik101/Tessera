@@ -51,6 +51,21 @@ jobs:
           ./scripts/build-app.sh debug 2>&1 | tee ci-results/app.log
           ditto -c -k --keepParent build/debug/Tessera.app ci-results/Tessera-debug.zip
 
+      - name: Run against real windows
+        id: smoke
+        if: steps.app.outcome == 'success'
+        continue-on-error: true
+        timeout-minutes: 5
+        run: ./scripts/smoke-test.sh build/debug/Tessera.app
+
+      - name: Universal release build
+        id: release
+        if: steps.build.outcome == 'success'
+        continue-on-error: true
+        run: |
+          ./scripts/build-app.sh release 2>&1 | tee ci-results/release.log
+          lipo -info build/release/Tessera.app/Contents/MacOS/Tessera | tee -a ci-results/release.log
+
       - name: Publish results
         if: always()
         env:
@@ -61,8 +76,11 @@ jobs:
             echo "build: ${{ steps.build.outcome }}"
             echo "test: ${{ steps.test.outcome }}"
             echo "app: ${{ steps.app.outcome }}"
+            echo "smoke: ${{ steps.smoke.outcome }}"
+            echo "release: ${{ steps.release.outcome }}"
           } > ci-results/summary.txt
           grep -E "(error|warning):" ci-results/build.log | sort -u > ci-results/diagnostics.txt || true
+          rm -rf ci-results/.git
           cd ci-results
           git init -q -b tessera-ci
           git config user.name "Tessera CI"
@@ -70,3 +88,31 @@ jobs:
           git add -A
           git commit -qm "CI results for ${GITHUB_SHA}"
           git push -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" tessera-ci
+
+  latest-xcode:
+    # The newest macOS image, to catch problems with the newest Swift.
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and test
+        id: check
+        continue-on-error: true
+        run: |
+          mkdir -p ci-latest
+          { sw_vers; xcodebuild -version; swift --version; } > ci-latest/toolchain.txt 2>&1
+          swift build 2>&1 | tee ci-latest/build.log
+          swift test 2>&1 | tee ci-latest/test.log
+      - name: Publish results
+        if: always()
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          { echo "commit: ${GITHUB_SHA}"; echo "latest: ${{ steps.check.outcome }}"; } > ci-latest/summary.txt
+          cd ci-latest
+          git init -q -b tessera-ci-latest
+          git config user.name "Tessera CI"
+          git config user.email "ci@users.noreply.github.com"
+          git add -A
+          git commit -qm "Latest-Xcode results for ${GITHUB_SHA}"
+          git push -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" tessera-ci-latest

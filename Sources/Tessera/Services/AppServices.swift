@@ -191,9 +191,9 @@ enum Diagnostics {
     static func hardwareModel() -> String {
         var size = 0
         sysctlbyname("hw.model", nil, &size, nil, 0)
-        var buffer = [CChar](repeating: 0, count: max(size, 1))
+        var buffer = [UInt8](repeating: 0, count: max(size, 1))
         sysctlbyname("hw.model", &buffer, &size, nil, 0)
-        return String(cString: buffer)
+        return String(decoding: buffer.prefix { $0 != 0 }, as: UTF8.self)
     }
 
     enum Mailer { case appleMail, gmail, outlook }
