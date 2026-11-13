@@ -127,6 +127,9 @@ struct ShortcutTests {
         #expect(set.combo(for: .snap(.leftHalf)) == KeyCombo(KeyCode.leftArrow, [.control, .option]))
         #expect(set.combo(for: .snap(.restore)) == KeyCombo(KeyCode.delete, [.control, .option]))
         #expect(set.combo(for: .snap(.maximise))?.description == "⌃⌥↩")
+        #expect(set.combo(for: .layout(.auto))?.description == "⌃⌥1")
+        #expect(set.combo(for: .layout(.mainAndSide))?.description == "⌃⌥5")
+        #expect(set.combo(for: .tile(.previousLayout))?.description == "⌃⌥⇧L")
     }
 
     @Test func assigningATakenComboMovesIt() {

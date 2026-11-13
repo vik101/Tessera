@@ -22,7 +22,7 @@ concurrency:
 jobs:
   build:
     runs-on: macos-15
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
 
@@ -55,7 +55,7 @@ jobs:
         id: smoke
         if: steps.app.outcome == 'success'
         continue-on-error: true
-        timeout-minutes: 14
+        timeout-minutes: 22
         run: ./scripts/smoke-test.sh build/debug/Tessera.app
 
       - name: Universal release build

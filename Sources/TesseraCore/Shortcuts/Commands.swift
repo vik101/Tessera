@@ -2,12 +2,13 @@ import Foundation
 
 /// Auto-tile commands.
 public enum TileCommand: String, CaseIterable, Codable, Sendable {
-    case toggleAutoTile, nextLayout, swapWithMain, toggleFloat, retile
+    case toggleAutoTile, nextLayout, previousLayout, swapWithMain, toggleFloat, retile
 
     public var title: String {
         switch self {
         case .toggleAutoTile: "Auto-Tile"
         case .nextLayout: "Next Layout"
+        case .previousLayout: "Previous Layout"
         case .swapWithMain: "Swap with Main"
         case .toggleFloat: "Float or Tile Window"
         case .retile: "Retile"
@@ -20,6 +21,7 @@ public enum TileCommand: String, CaseIterable, Codable, Sendable {
         switch self {
         case .toggleAutoTile: return KeyCombo(KeyCode.a, co)
         case .nextLayout: return KeyCombo(KeyCode.l, co)
+        case .previousLayout: return KeyCombo(KeyCode.l, co.union(.shift))
         case .swapWithMain: return KeyCombo(KeyCode.m, co)
         case .toggleFloat: return KeyCombo(KeyCode.w, co)
         case .retile: return nil
@@ -27,13 +29,24 @@ public enum TileCommand: String, CaseIterable, Codable, Sendable {
     }
 }
 
+extension LayoutStyle {
+    /// ⌃⌥1 to ⌃⌥5, in menu order.
+    public var defaultShortcut: KeyCombo? {
+        guard let index = Self.allCases.firstIndex(of: self), index < KeyCode.digits.count else { return nil }
+        return KeyCombo(KeyCode.digits[index], [.control, .option])
+    }
+}
+
 /// Anything a shortcut can trigger.
 public enum Command: Hashable, Sendable {
     case snap(SnapAction)
     case tile(TileCommand)
+    /// Switch this screen to one layout style.
+    case layout(LayoutStyle)
 
     public static var allCases: [Command] {
         SnapAction.allCases.map(Command.snap) + TileCommand.allCases.map(Command.tile)
+            + LayoutStyle.allCases.map(Command.layout)
     }
 
     /// Stable name used in saved settings.
@@ -41,6 +54,7 @@ public enum Command: Hashable, Sendable {
         switch self {
         case .snap(let action): "snap." + action.rawValue
         case .tile(let command): "tile." + command.rawValue
+        case .layout(let style): "layout." + style.rawValue
         }
     }
 
@@ -49,6 +63,8 @@ public enum Command: Hashable, Sendable {
             self = .snap(action)
         } else if id.hasPrefix("tile."), let command = TileCommand(rawValue: String(id.dropFirst(5))) {
             self = .tile(command)
+        } else if id.hasPrefix("layout."), let style = LayoutStyle(rawValue: String(id.dropFirst(7))) {
+            self = .layout(style)
         } else {
             return nil
         }
@@ -58,6 +74,7 @@ public enum Command: Hashable, Sendable {
         switch self {
         case .snap(let action): action.title
         case .tile(let command): command.title
+        case .layout(let style): style.title
         }
     }
 
@@ -65,6 +82,7 @@ public enum Command: Hashable, Sendable {
         switch self {
         case .snap(let action): action.defaultShortcut
         case .tile(let command): command.defaultShortcut
+        case .layout(let style): style.defaultShortcut
         }
     }
 }

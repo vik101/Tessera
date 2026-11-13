@@ -156,6 +156,7 @@ struct SettingsView: View {
             )
         }
         groups.append(ShortcutGroup(title: "Auto-Tile", commands: TileCommand.allCases.map(Command.tile)))
+        groups.append(ShortcutGroup(title: "Layouts", commands: LayoutStyle.allCases.map(Command.layout)))
         return groups
     }()
 }

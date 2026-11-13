@@ -104,11 +104,55 @@ struct TileTests {
         }
     }
 
-    @Test func aStyleThatCannotFitFallsBackInsteadOfHidingWindows() {
+    @Test func aChosenStyleKeepsItsShapeEvenWhenWindowsCannotShrink() {
+        // Columns stays columns: side by side, full height, in order. It just can't fit.
         let wide = CGSize(width: 1000, height: 300)
         let plan = TilePlanner.plan(count: 2, in: standard, style: .columns, minimumSizes: [wide, wide])
-        #expect(plan.fits)
-        #expect(plan.frames.allSatisfy { $0.width >= 1000 })
+        #expect(!plan.fits)
+        #expect(plan.frames.allSatisfy { $0.height == standard.height && $0.minY == standard.minY })
+        #expect(plan.frames[0].maxX == plan.frames[1].minX)
+        // Auto finds an arrangement that does fit.
+        let auto = TilePlanner.plan(count: 2, in: standard, style: .auto, minimumSizes: [wide, wide])
+        #expect(auto.fits && auto.frames.allSatisfy { $0.width >= 1000 })
+    }
+
+    /// The bug from version 2.0.0: with real apps, every chosen style looked like Auto.
+    @Test(arguments: LayoutStyle.allCases)
+    func everyStyleKeepsItsShapeWithRealAppSizes(style: LayoutStyle) {
+        // Seven windows on a laptop: Safari and Chrome won't go below 574 wide, Finder 460.
+        let minimums: [CGSize?] = [nil, CGSize(width: 574, height: 248), CGSize(width: 574, height: 300),
+                                   CGSize(width: 460, height: 252), nil, nil, CGSize(width: 300, height: 150)]
+        let frames = TilePlanner.frames(count: 7, in: laptop, style: style, minimumSizes: minimums)
+        #expect(frames.count == 7)
+        switch style {
+        case .columns:
+            #expect(frames.allSatisfy { $0.minY == laptop.minY && $0.height == laptop.height })
+            #expect(zip(frames, frames.dropFirst()).allSatisfy { $0.maxX == $1.minX })
+        case .rows:
+            #expect(frames.allSatisfy { $0.minX == laptop.minX && $0.width == laptop.width })
+            #expect(zip(frames, frames.dropFirst()).allSatisfy { $0.maxY == $1.minY })
+        case .mainAndSide:
+            #expect(frames[0].minX == laptop.minX && frames[0].height == laptop.height)
+            #expect(frames.dropFirst().allSatisfy { $0.minX == frames[0].maxX && $0.maxX == laptop.maxX })
+        case .grid:
+            let rows = Dictionary(grouping: frames, by: \.minY)
+            #expect(rows.count > 1 && rows.count < 7)
+            #expect(rows.values.allSatisfy { row in Set(row.map(\.height)).count == 1 })
+        case .auto:
+            #expect(frames.map { $0.width * $0.height }.reduce(0, +) == laptop.width * laptop.height)
+        }
+    }
+
+    @Test func layoutsCycleBothWays() {
+        var style = LayoutStyle.auto
+        var seen: [LayoutStyle] = []
+        for _ in 0..<LayoutStyle.allCases.count {
+            style = style.next
+            seen.append(style)
+        }
+        #expect(seen == [.columns, .rows, .grid, .mainAndSide, .auto])
+        #expect(LayoutStyle.auto.previous == .mainAndSide && LayoutStyle.columns.previous == .auto)
+        for style in LayoutStyle.allCases { #expect(style.next.previous == style) }
     }
 
     @Test func whenNothingFitsItStillPlacesEveryWindow() {
@@ -127,6 +171,9 @@ struct TileTests {
         #expect(TilePlanner.waterFill(1000, needs: [0, 600], weights: [1, 1]) == [400, 600])
         #expect(TilePlanner.waterFill(1000, needs: [0, 0], weights: [3, 1]) == [750, 250])
         #expect(TilePlanner.waterFill(1000, needs: [800, 800], weights: [1, 1]) == [500, 500])
+        // Too much asked for: a window with no minimum still gets a fair share, not zero.
+        let tight = TilePlanner.waterFill(1000, needs: [0, 900, 900], weights: [1, 1, 1])
+        #expect(abs(tight.reduce(0, +) - 1000) < 0.01 && tight[0] > 150)
     }
 
     @Test func gapsAreEven() {

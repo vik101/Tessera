@@ -21,6 +21,8 @@ if [[ "${CI:-}" == "true" ]]; then
   for db in "/Library/Application Support/com.apple.TCC/TCC.db" "$HOME/Library/Application Support/com.apple.TCC/TCC.db"; do
     sudo sqlite3 "$db" "INSERT OR REPLACE INTO access (service, client, client_type, auth_value, auth_reason, auth_version, csreq, policy_id, indirect_object_identifier_type, indirect_object_identifier, indirect_object_code_identity, flags, last_modified) VALUES ('kTCCServiceAccessibility', '$BUNDLE_ID', 0, 2, 4, 1, NULL, NULL, 0, 'UNUSED', NULL, 0, $(date +%s));" \
       && echo "accessibility granted in $db" || echo "could not write $db"
+    # The test helper also reads Tessera's menu through Accessibility, like a person clicking it.
+    sudo sqlite3 "$db" "INSERT OR REPLACE INTO access (service, client, client_type, auth_value, auth_reason, auth_version, csreq, policy_id, indirect_object_identifier_type, indirect_object_identifier, indirect_object_code_identity, flags, last_modified) VALUES ('kTCCServiceAccessibility', '/tmp/keys', 1, 2, 4, 1, NULL, NULL, 0, 'UNUSED', NULL, 0, $(date +%s));" || true
   done
 fi
 defaults delete "$BUNDLE_ID" >/dev/null 2>&1
@@ -35,7 +37,8 @@ mkdir -p /tmp/tessera-docs
 for i in 1 2 3; do echo "Tessera test document $i" > "/tmp/tessera-docs/doc$i.txt"; done
 echo "<html><body><h1>Tessera test page</h1></body></html>" > /tmp/tessera-docs/page.html
 
-limit 30 open -a TextEdit /tmp/tessera-docs/doc1.txt /tmp/tessera-docs/doc2.txt
+limit 30 open -a TextEdit /tmp/tessera-docs/doc1.txt /tmp/tessera-docs/doc2.txt /tmp/tessera-docs/doc3.txt
+limit 30 open -a Terminal
 limit 30 open /tmp/tessera-docs
 limit 30 open -a Safari /tmp/tessera-docs/page.html
 limit 30 open -na "Google Chrome" --args --no-first-run --no-default-browser-check --use-mock-keychain \
@@ -47,7 +50,7 @@ limit 30 open "$APP"
 sleep 6
 screencapture -x "$OUT/0-start.png"
 
-limit 660 python3 scripts/ci/check.py "$OUT" 2>&1 | tee "$OUT/check.log"
+limit 1000 python3 scripts/ci/check.py "$OUT" 2>&1 | tee "$OUT/check.log"
 status=${PIPESTATUS[0]}
 
 limit 90 log show --last 10m --info --style compact --predicate "subsystem == \"$BUNDLE_ID\"" > "$OUT/tessera.log" 2>&1

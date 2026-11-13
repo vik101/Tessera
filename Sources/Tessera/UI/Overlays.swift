@@ -51,13 +51,16 @@ final class SnapPreview {
     }
 }
 
-/// A short message near the bottom of the screen, like the volume HUD.
+/// A short message near the bottom of the screen, like the volume HUD. Can show a picture
+/// (for example, the layout you just picked).
 @MainActor
 final class Notice {
     static let shared = Notice()
 
     private let panel = OverlayPanel()
-    private let label = NSTextField(labelWithString: "")
+    private let label = NSTextField(wrappingLabelWithString: "")
+    private let imageView = NSImageView()
+    private let stack: NSStackView
     private var hideTask: Task<Void, Never>?
 
     private init() {
@@ -66,30 +69,44 @@ final class Notice {
         effect.state = .active
         effect.blendingMode = .behindWindow
         effect.wantsLayer = true
-        effect.layer?.cornerRadius = 12
+        effect.layer?.cornerRadius = 14
         label.font = .systemFont(ofSize: 15, weight: .semibold)
         label.alignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-        effect.addSubview(label)
+        label.preferredMaxLayoutWidth = 300
+        imageView.contentTintColor = .labelColor
+        imageView.imageScaling = .scaleNone
+        stack = NSStackView(views: [imageView, label])
+        stack.orientation = .vertical
+        stack.alignment = .centerX
+        stack.spacing = 10
+        stack.edgeInsets = NSEdgeInsets(top: 16, left: 20, bottom: 14, right: 20)
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        effect.addSubview(stack)
         NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: effect.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: effect.centerYAnchor),
+            stack.leadingAnchor.constraint(equalTo: effect.leadingAnchor),
+            stack.trailingAnchor.constraint(equalTo: effect.trailingAnchor),
+            stack.topAnchor.constraint(equalTo: effect.topAnchor),
+            stack.bottomAnchor.constraint(equalTo: effect.bottomAnchor),
         ])
         panel.contentView = effect
         panel.level = .statusBar
     }
 
-    /// Shows `text` for a moment on the screen with the mouse.
-    func show(_ text: String) {
+    /// Shows `text` (and an optional picture) for a moment on the screen with the mouse.
+    func show(_ text: String, picture: NSImage? = nil) {
         label.stringValue = text
-        let width = max(220, label.intrinsicContentSize.width + 48)
+        imageView.image = picture
+        imageView.isHidden = picture == nil
+        let size = stack.fittingSize
+        let width = max(220, size.width)
+        let height = size.height
         let screen = NSScreen.screens.first { $0.frame.contains(NSEvent.mouseLocation) } ?? NSScreen.main
         guard let area = screen?.visibleFrame else { return }
-        panel.setFrame(CGRect(x: area.midX - width / 2, y: area.minY + 120, width: width, height: 46), display: true)
+        panel.setFrame(CGRect(x: (area.midX - width / 2).rounded(), y: area.minY + 120, width: width, height: height), display: true)
         panel.alphaValue = 1
         panel.orderFrontRegardless()
         hideTask?.cancel()
-        hideTask = after(1.4) { [weak self] in
+        hideTask = after(picture == nil ? 1.4 : 1.8) { [weak self] in
             NSAnimationContext.runAnimationGroup { context in
                 context.duration = 0.25
                 self?.panel.animator().alphaValue = 0

@@ -31,6 +31,16 @@ final class AutoTiler {
     /// Screens where some app's minimum window size makes overlap unavoidable.
     private var crowded: Set<String> = []
 
+    /// What the last arrangement of each screen was, for the on-screen picture and the tests.
+    private struct ScreenPlan {
+        var style: LayoutStyle
+        var ids: [CGWindowID]
+        var frames: [CGRect]
+        var area: CGRect
+        var fits: Bool
+    }
+    private var plans: [String: ScreenPlan] = [:]
+
     private var running = false
     private var pendingAfterMouse = false
     private var lastSeen: Set<CGWindowID> = []
@@ -70,6 +80,8 @@ final class AutoTiler {
             pinned.removeAll()
             floating.removeAll()
             planned.removeAll()
+            plans.removeAll()
+            crowded.removeAll()
         } else {
             scheduleRetile()
         }
@@ -92,11 +104,41 @@ final class AutoTiler {
         setLayout(settings.layout(for: screen.stableID).next, for: screen)
     }
 
+    func previousLayout() {
+        guard let screen = currentScreen() else { return }
+        setLayout(settings.layout(for: screen.stableID).previous, for: screen)
+    }
+
+    /// Switches the screen you're working on to one style (⌃⌥1–5).
+    func chooseLayout(_ style: LayoutStyle) {
+        guard let screen = currentScreen() else { return }
+        setLayout(style, for: screen)
+    }
+
+    /// Sets a screen's style, turns auto-tile on, arranges the windows now and shows a picture of the result.
     func setLayout(_ style: LayoutStyle, for screen: DisplayInfo) {
+        guard AccessibilityPermission.isTrusted else {
+            PermissionWindow.shared.show()
+            return
+        }
         settings.layouts[screen.stableID] = style
         if !settings.autoTile { settings.autoTile = true }
-        Notice.shared.show("Layout: \(style.title)")
+        retile()
+        var text = style.title
+        if crowded.contains(screen.stableID) {
+            text += " — some windows can't get that small, so they overlap"
+        }
+        let picture: NSImage
+        if let plan = plans[screen.stableID], plan.style == style, !plan.frames.isEmpty {
+            picture = MenuIcons.picture(of: plan.frames, in: plan.area, height: 90)
+        } else {
+            picture = MenuIcons.layoutIcon(style, on: screen, count: 3, height: 90)
+        }
+        Notice.shared.show(text, picture: picture)
     }
+
+    /// How many windows are tiled on a screen now.
+    func tiledCount(on screen: DisplayInfo) -> Int { plans[screen.stableID]?.ids.count ?? 0 }
 
     /// Makes the focused window the main one (or swaps the main window with the next).
     func swapWithMain() {
@@ -300,6 +342,7 @@ final class AutoTiler {
         for display in displays {
             let screen = display.stableID
             let here = present[screen] ?? []
+            if here.isEmpty { plans[screen] = nil }
             // Keep the saved order (including windows on other Spaces); new windows join at the end.
             var list = (order[screen] ?? []).filter { registry.window($0) != nil && home[$0] == screen && pinned[$0] == nil && !floating.contains($0) }
             for id in here where !list.contains(id) { list.append(id) }
@@ -317,6 +360,7 @@ final class AutoTiler {
                 minimumSizes: active.map { minimums[$0] }
             )
             if plan.fits { crowded.remove(screen) } else { crowded.insert(screen) }
+            plans[screen] = ScreenPlan(style: style, ids: active, frames: plan.frames, area: freeArea(on: display), fits: plan.fits)
             for (id, frame) in zip(active, plan.frames) {
                 guard let window = windows[id] else { continue }
                 planned[id] = frame
@@ -330,21 +374,43 @@ final class AutoTiler {
     }
 
     /// Some windows can't get as small as their tile. Remember their size and arrange again so they fit.
-    private func learnMinimums(_ ids: [CGWindowID]) {
+    ///
+    /// A window still too big after 0.35 s gets asked again, and only counts if it refuses twice:
+    /// slow or animating apps would otherwise teach Tessera a size that's far too big.
+    /// A remembered size also shrinks if the window is ever seen smaller.
+    private func learnMinimums(_ ids: [CGWindowID], confirming: Bool = false) {
         var learned = false
+        var suspects: [CGWindowID] = []
         for id in ids {
             guard let window = registry.window(id), let target = planned[id], let actual = window.frame else { continue }
-            guard actual.width > target.width + 4 || actual.height > target.height + 4 else { continue }
+            if var known = minimums[id] {
+                if actual.width < known.width - 4 { known.width = actual.width }
+                if actual.height < known.height - 4 { known.height = actual.height }
+                minimums[id] = known
+            }
+            let tooWide = actual.width > target.width + 4
+            let tooTall = actual.height > target.height + 4
+            guard tooWide || tooTall else { continue }
+            guard confirming else {
+                suspects.append(id)
+                continue
+            }
             let old = minimums[id] ?? .zero
             let new = CGSize(
-                width: actual.width > target.width + 4 ? max(old.width, actual.width) : old.width,
-                height: actual.height > target.height + 4 ? max(old.height, actual.height) : old.height
+                width: tooWide ? max(old.width, actual.width) : old.width,
+                height: tooTall ? max(old.height, actual.height) : old.height
             )
             if new != old {
                 minimums[id] = new
                 learned = true
                 Log.info("Window \(id) (\(window.bundleID)) needs at least \(Int(new.width))×\(Int(new.height))")
             }
+        }
+        if !suspects.isEmpty {
+            for id in suspects {
+                if let window = registry.window(id), let target = planned[id] { mover.move(window, to: target) }
+            }
+            after(0.4) { [weak self] in self?.learnMinimums(suspects, confirming: true) }
         }
         if learned { retile() }
     }
@@ -410,6 +476,15 @@ final class AutoTiler {
             "floating": floating.map(Int.init),
             "pinned": Dictionary(uniqueKeysWithValues: pinned.map { (String($0.key), NSStringFromRect($0.value)) }),
             "crowded": Array(crowded),
+            "plans": plans.mapValues { plan -> [String: Any] in
+                [
+                    "style": plan.style.rawValue,
+                    "ids": plan.ids.map(Int.init),
+                    "frames": plan.frames.map { [$0.minX, $0.minY, $0.width, $0.height].map(Double.init) },
+                    "area": [plan.area.minX, plan.area.minY, plan.area.width, plan.area.height].map(Double.init),
+                    "fits": plan.fits,
+                ]
+            },
             "minimums": Dictionary(uniqueKeysWithValues: minimums.map { (String($0.key), NSStringFromSize($0.value)) }),
         ]
     }

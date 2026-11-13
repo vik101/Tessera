@@ -73,32 +73,31 @@ final class StatusMenu: NSObject, NSMenuDelegate {
         }
         menu.addItem(.separator())
 
-        // Auto-tile.
+        // Auto-tile: the switch, then each layout with a picture of what it would do here.
         let auto = commandItem(.tile(.toggleAutoTile), shortcuts: shortcuts, icon: nil)
         auto.state = settings.autoTile ? .on : .off
         menu.addItem(auto)
 
-        let layoutMenu = NSMenu()
-        layoutMenu.autoenablesItems = false
         let screen = tiler.currentLayoutScreen
         let current = screen.map { settings.layout(for: $0.stableID) } ?? .auto
         if let screen, Screens.all().count > 1 {
-            let header = NSMenuItem(title: "For \(screen.name)", action: nil, keyEquivalent: "")
+            let header = NSMenuItem(title: "Layout for \(screen.name)", action: nil, keyEquivalent: "")
             header.isEnabled = false
-            layoutMenu.addItem(header)
+            menu.addItem(header)
         }
+        // Pictures show the windows you have now (or three, as an example).
+        let tiled = screen.map { tiler.tiledCount(on: $0) } ?? 0
+        let count = tiled >= 2 ? min(tiled, 12) : 3
         for style in LayoutStyle.allCases {
-            let styleItem = item(style.title, #selector(setLayout(_:)))
-            styleItem.representedObject = style.rawValue
+            let styleItem = commandItem(.layout(style), shortcuts: shortcuts, icon: nil)
             styleItem.state = settings.autoTile && style == current ? .on : .off
-            styleItem.image = MenuIcons.image(for: style)
-            layoutMenu.addItem(styleItem)
+            styleItem.image = MenuIcons.layoutIcon(style, on: screen, count: count, height: 16)
+            styleItem.indentationLevel = 1
+            menu.addItem(styleItem)
         }
-        layoutMenu.addItem(.separator())
-        layoutMenu.addItem(commandItem(.tile(.nextLayout), shortcuts: shortcuts, icon: nil))
-        let layoutParent = NSMenuItem(title: "Layout: \(current.title)", action: nil, keyEquivalent: "")
-        layoutParent.submenu = layoutMenu
-        menu.addItem(layoutParent)
+        menu.addItem(commandItem(.tile(.nextLayout), shortcuts: shortcuts, icon: nil))
+        menu.addItem(commandItem(.tile(.previousLayout), shortcuts: shortcuts, icon: nil))
+        menu.addItem(.separator())
 
         let swap = commandItem(.tile(.swapWithMain), shortcuts: shortcuts, icon: nil)
         swap.isEnabled = tiler.isOn
@@ -157,12 +156,6 @@ final class StatusMenu: NSObject, NSMenuDelegate {
         Shortcuts.run(command)
     }
 
-    @objc private func setLayout(_ sender: NSMenuItem) {
-        guard let raw = sender.representedObject as? String, let style = LayoutStyle(rawValue: raw),
-              let screen = AutoTiler.shared.currentLayoutScreen else { return }
-        AutoTiler.shared.setLayout(style, for: screen)
-    }
-
     @objc private func toggleIgnore(_ sender: NSMenuItem) {
         guard let id = sender.representedObject as? String else { return }
         Settings.shared.toggleIgnored(id)
@@ -202,16 +195,42 @@ enum MenuIcons {
         }
     }
 
-    /// A small picture of a layout with three windows.
-    static func image(for style: LayoutStyle) -> NSImage {
-        let screen = CGRect(x: 0, y: 0, width: 16, height: 10)
-        let frames = TilePlanner.frames(count: 3, in: screen, style: style, gap: 0)
-        return image { inner in
-            for frame in frames {
-                let unit = UnitRect(x: frame.minX / 16, y: frame.minY / 10, width: frame.width / 16, height: frame.height / 10)
-                NSBezierPath(roundedRect: part(unit, of: inner).insetBy(dx: 0.5, dy: 0.5), xRadius: 0.5, yRadius: 0.5).fill()
-            }
+    /// A picture of what a layout style does with `count` windows on a screen.
+    static func layoutIcon(_ style: LayoutStyle, on screen: DisplayInfo?, count: Int, height: CGFloat) -> NSImage {
+        let area = screen?.visibleFrame ?? CGRect(x: 0, y: 0, width: 1600, height: 1000)
+        let ratio = CGFloat(Settings.shared.mainRatio)
+        let frames = TilePlanner.frames(count: count, in: area, style: style, mainRatio: style == .mainAndSide ? ratio : 0.5)
+        return picture(of: frames, in: area, height: height)
+    }
+
+    /// Draws windows (`frames`) inside a screen (`area`) as a small template picture.
+    static func picture(of frames: [CGRect], in area: CGRect, height: CGFloat) -> NSImage {
+        let aspect = area.height > 0 ? area.width / area.height : 1.6
+        let size = NSSize(width: (height * min(max(aspect, 0.6), 2.6)).rounded(), height: height)
+        let big = height > 30
+        let units = frames.map { frame in
+            UnitRect(
+                x: (frame.minX - area.minX) / area.width,
+                y: (frame.minY - area.minY) / area.height,
+                width: frame.width / area.width,
+                height: frame.height / area.height
+            )
         }
+        let image = NSImage(size: size, flipped: true) { rect in
+            NSColor.black.set()
+            let outer = rect.insetBy(dx: big ? 2 : 1, dy: big ? 2 : 1)
+            let screen = NSBezierPath(roundedRect: outer, xRadius: big ? 6 : 2, yRadius: big ? 6 : 2)
+            screen.lineWidth = big ? 2 : 1
+            screen.stroke()
+            let inner = outer.insetBy(dx: big ? 5 : 2, dy: big ? 5 : 2)
+            for unit in units {
+                let tile = part(unit, of: inner).insetBy(dx: big ? 2 : 0.6, dy: big ? 2 : 0.6)
+                NSBezierPath(roundedRect: tile, xRadius: big ? 3 : 0.8, yRadius: big ? 3 : 0.8).fill()
+            }
+            return true
+        }
+        image.isTemplate = true
+        return image
     }
 
     /// The menu bar icon: four tiles.

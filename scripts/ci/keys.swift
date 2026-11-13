@@ -6,6 +6,11 @@
 //   keys post dump                     send a test command to Tessera
 //   keys drag X1 Y1 X2 Y2              drag with the left button
 //   keys click X Y
+//   keys trusted                       does this tool have Accessibility? (needed for the next four)
+//   keys menu-list                     Tessera's open menu: titles and shortcut keys, as JSON
+//   keys menu-press "Columns"          click an item in Tessera's open menu
+//   keys unminimize com.apple.TextEdit un-minimise an app's windows
+//   keys unhide com.apple.finder       show a hidden app again
 import AppKit
 import CoreGraphics
 import Foundation
@@ -39,6 +44,33 @@ func mouse(_ type: CGEventType, _ x: Double, _ y: Double) {
     let event = CGEvent(mouseEventSource: source, mouseType: type, mouseCursorPosition: CGPoint(x: x, y: y), mouseButton: .left)!
     event.flags = []   // No leftover ⌃ from earlier key presses: ⌃-click is a right-click.
     event.post(tap: .cghidEventTap)
+}
+
+
+// MARK: Accessibility helpers (for checking Tessera's menu like a person would)
+
+func ax(_ element: AXUIElement, _ attribute: String) -> AnyObject? {
+    var value: CFTypeRef?
+    return AXUIElementCopyAttributeValue(element, attribute as CFString, &value) == .success ? value : nil
+}
+
+func axChildren(_ element: AXUIElement) -> [AXUIElement] {
+    (ax(element, kAXChildrenAttribute) as? [AXUIElement]) ?? []
+}
+
+/// The items of Tessera's menu, if it is open.
+func tesseraMenuItems() -> [AXUIElement] {
+    guard let app = NSRunningApplication.runningApplications(withBundleIdentifier: "com.vikram.Tessera").first else { return [] }
+    let element = AXUIElementCreateApplication(app.processIdentifier)
+    AXUIElementSetMessagingTimeout(element, 3)
+    guard let extras = ax(element, "AXExtrasMenuBar") else { return [] }
+    var items: [AXUIElement] = []
+    for barItem in axChildren(extras as! AXUIElement) {
+        for menu in axChildren(barItem) where (ax(menu, kAXRoleAttribute) as? String) == kAXMenuRole {
+            items += axChildren(menu)
+        }
+    }
+    return items
 }
 
 let args = Array(CommandLine.arguments.dropFirst())
@@ -105,6 +137,44 @@ case "drag" where args.count >= 5:
     }
     mouse(.leftMouseUp, x2, y2)
     usleep(150_000)
+
+case "trusted":
+    print(AXIsProcessTrusted() ? "yes" : "no")
+
+case "menu-list":
+    var out: [[String: Any]] = []
+    for item in tesseraMenuItems() {
+        out.append([
+            "title": ax(item, kAXTitleAttribute) as? String ?? "",
+            "key": ax(item, "AXMenuItemCmdChar") as? String ?? "",
+            "mods": (ax(item, "AXMenuItemCmdModifiers") as? Int) ?? -1,
+            "checked": (ax(item, "AXMenuItemMarkChar") as? String) ?? "",
+            "enabled": (ax(item, kAXEnabledAttribute) as? Bool) ?? false,
+        ])
+    }
+    let data = try! JSONSerialization.data(withJSONObject: out, options: [.sortedKeys])
+    print(String(decoding: data, as: UTF8.self))
+
+case "menu-press" where args.count >= 2:
+    if let item = tesseraMenuItems().first(where: { (ax($0, kAXTitleAttribute) as? String) == args[1] }) {
+        let result = AXUIElementPerformAction(item, kAXPressAction as CFString)
+        print("pressed \(args[1]): \(result.rawValue)")
+    } else {
+        print("not found: \(args[1])")
+    }
+
+case "unminimize" where args.count >= 2:
+    if let app = NSRunningApplication.runningApplications(withBundleIdentifier: args[1]).first {
+        let element = AXUIElementCreateApplication(app.processIdentifier)
+        for window in (ax(element, kAXWindowsAttribute) as? [AXUIElement]) ?? [] where (ax(window, kAXMinimizedAttribute) as? Bool) == true {
+            AXUIElementSetAttributeValue(window, kAXMinimizedAttribute as CFString, kCFBooleanFalse)
+            usleep(300_000)
+        }
+    }
+
+case "unhide" where args.count >= 2:
+    NSRunningApplication.runningApplications(withBundleIdentifier: args[1]).first?.unhide()
+    usleep(400_000)
 
 case "resolution":
     // Make the test screen bigger if the virtual display allows it.

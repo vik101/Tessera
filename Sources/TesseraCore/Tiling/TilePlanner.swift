@@ -26,9 +26,12 @@ public enum LayoutStyle: String, CaseIterable, Codable, Sendable {
         }
     }
 
-    public var next: LayoutStyle {
+    public var next: LayoutStyle { step(1) }
+    public var previous: LayoutStyle { step(-1) }
+
+    private func step(_ by: Int) -> LayoutStyle {
         let all = Self.allCases
-        return all[(all.firstIndex(of: self)! + 1) % all.count]
+        return all[(all.firstIndex(of: self)! + by + all.count) % all.count]
     }
 }
 
@@ -75,9 +78,9 @@ public enum TilePlanner {
 
     /// Plans a screen.
     ///
-    /// - Parameter minimumSizes: sizes some windows refuse to go below. Tessera picks the best
-    ///   arrangement in which every window fits. If a chosen style (say Columns) can't fit them,
-    ///   it falls back to Auto rather than hide a window. If nothing fits, it overlaps the least.
+    /// - Parameter minimumSizes: sizes some windows refuse to go below. Auto picks the best
+    ///   arrangement in which every window fits. A style you chose (say Columns) always keeps
+    ///   its shape: if the windows can't all fit, neighbours share the overlap and `fits` is false.
     public static func plan(
         count: Int,
         in area: CGRect,
@@ -96,10 +99,8 @@ public enum TilePlanner {
             return Plan(frames: [applyGap(frame, in: area, gap: gap)], fits: true)
         }
 
-        let chosen = candidates(count, style: style, shape: shape, area: area, mainRatio: mainRatio)
-        let fallback = style == .auto ? [] : candidates(count, style: .auto, shape: shape, area: area, mainRatio: mainRatio)
         var best: (frames: [CGRect], overflow: CGFloat)?
-        for arrangement in chosen + fallback {
+        for arrangement in candidates(count, style: style, shape: shape, area: area, mainRatio: mainRatio) {
             for order in assignments(arrangement, minimums: minimums, area: area, gap: gap) {
                 let frames = build(arrangement, order: order, minimums: minimums, in: area, gap: gap)
                 let over = overflow(frames, minimums)
@@ -253,7 +254,8 @@ public enum TilePlanner {
     }
 
     /// Shares `length` by `weights`, but gives every item at least its need.
-    /// If the needs don't fit at all, shares by need instead.
+    /// If the needs don't fit at all, shares by need, counting each item as needing at least
+    /// an equal share, so a window with no known minimum still gets a fair slice.
     static func waterFill(_ length: CGFloat, needs: [CGFloat], weights: [CGFloat]) -> [CGFloat] {
         var sizes = [CGFloat?](repeating: nil, count: needs.count)
         while true {
@@ -272,9 +274,11 @@ public enum TilePlanner {
             }
         }
         let result = sizes.map { $0 ?? 0 }
-        let totalNeed = needs.reduce(0, +)
-        if result.reduce(0, +) > length + 0.5, totalNeed > 0 {
-            return needs.map { length * $0 / totalNeed }
+        if result.reduce(0, +) > length + 0.5 {
+            let fair = length / CGFloat(needs.count)
+            let claims = needs.map { max($0, fair) }
+            let total = claims.reduce(0, +)
+            return claims.map { length * $0 / total }
         }
         return result
     }

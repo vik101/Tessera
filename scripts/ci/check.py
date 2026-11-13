@@ -217,6 +217,171 @@ def check_tiling(label, strict=True, ignore=()):
     return d, frames
 
 
+
+# ---------- layout shape checks ----------
+
+STYLES = ["auto", "columns", "rows", "grid", "mainAndSide"]
+STYLE_NAMES = {"auto": "Auto", "columns": "Columns", "rows": "Rows", "grid": "Grid", "mainAndSide": "Main + Side"}
+DIGIT = {"auto": "0x12", "columns": "0x13", "rows": "0x14", "grid": "0x15", "mainAndSide": "0x17"}
+
+
+def screen_plan(d):
+    plans = (d or {}).get("autoTile", {}).get("plans", {})
+    return next(iter(plans.values()), None) if plans else None
+
+
+def near(a, b, tol=1):
+    return abs(a - b) <= tol
+
+
+def stacked(frames, axis, start, end):
+    """Frames sit one after another along an axis (0 = x, 1 = y), from start to end, in order."""
+    problems = []
+    if not near(frames[0][axis], start):
+        problems.append(f"first one starts at {frames[0][axis]}, not {start}")
+    for a, b in zip(frames, frames[1:]):
+        if not near(a[axis] + a[axis + 2], b[axis]):
+            problems.append(f"gap or overlap between {a} and {b}")
+    if not near(frames[-1][axis] + frames[-1][axis + 2], end):
+        problems.append(f"last one ends at {frames[-1][axis] + frames[-1][axis + 2]}, not {end}")
+    return problems
+
+
+def shape_problems(style, frames, area):
+    """What is wrong with a layout's shape (an empty list means it looks right)."""
+    ax, ay, aw, ah = area
+    if not frames:
+        return ["no windows"]
+    if len(frames) == 1:
+        f = frames[0]
+        if style == "auto" and aw / ah >= 2.1:
+            return []
+        return [] if close(f, [ax, ay, aw, ah]) else [f"one window should fill the screen: {f}"]
+    problems = []
+    if style == "columns":
+        problems += [f"not full height: {f}" for f in frames if not (near(f[1], ay) and near(f[3], ah))]
+        problems += stacked(frames, 0, ax, ax + aw)
+    elif style == "rows":
+        problems += [f"not full width: {f}" for f in frames if not (near(f[0], ax) and near(f[2], aw))]
+        problems += stacked(frames, 1, ay, ay + ah)
+    elif style == "mainAndSide":
+        main, side = frames[0], frames[1:]
+        if not (near(main[0], ax) and near(main[1], ay) and near(main[3], ah)):
+            problems.append(f"main window isn't full height on the left: {main}")
+        problems += [f"side window isn't beside the main one: {f}" for f in side
+                     if not (near(f[0], main[0] + main[2]) and near(f[0] + f[2], ax + aw))]
+        problems += stacked(side, 1, ay, ay + ah)
+    elif style == "grid":
+        rows = {}
+        for f in frames:
+            rows.setdefault(f[1], []).append(f)
+        ys = sorted(rows)
+        if len(frames) >= 4 and (len(rows) == 1 or len(rows) == len(frames)):
+            problems.append(f"{len(rows)} rows for {len(frames)} windows is not a grid")
+        firsts = [sorted(rows[y], key=lambda f: f[0])[0] for y in ys]
+        problems += stacked(firsts, 1, ay, ay + ah)
+        for y in ys:
+            row = sorted(rows[y], key=lambda f: f[0])
+            problems += stacked(row, 0, ax, ax + aw)
+            if len({f[3] for f in row}) > 1:
+                problems.append(f"row at y={y} has mixed heights")
+        counts = [len(rows[y]) for y in ys]
+        if len(set(counts[1:])) > 1 or (len(counts) > 1 and counts[0] > counts[-1]):
+            problems.append(f"row sizes {counts} aren't even")
+    elif style == "auto":
+        total = sum(f[2] * f[3] for f in frames)
+        if abs(total - aw * ah) > 2 * (aw + ah):
+            problems.append(f"windows cover {total} of {aw * ah} points: holes or overlaps")
+    return problems
+
+
+def check_layout(label, style, count=None):
+    """After a layout change: right style, right shape, windows really there, no overlaps when they fit."""
+    time.sleep(1.8)
+    d = dump()
+    plan = screen_plan(d)
+    chosen = list(d.get("layouts", {}).values())
+    record(f"{label}: style is {STYLE_NAMES[style]}", bool(chosen) and chosen[0] == style and plan is not None and plan["style"] == style,
+           f"setting {chosen}, arranged as {plan and plan['style']}")
+    if not plan:
+        return d, None
+    frames = [[round(v) for v in f] for f in plan["frames"]]
+    standard = [w for w in d["windows"] if w["standard"]]
+    want = count if count is not None else len(standard)
+    record(f"{label}: all {want} windows tiled", len(frames) == want, f"tiled {len(frames)}")
+    problems = shape_problems(style, frames, [round(v) for v in plan["area"]])
+    record(f"{label}: looks like {STYLE_NAMES[style]}", not problems, "; ".join(problems[:3]))
+    cg = {w["id"]: [round(v) for v in w["frame"]] for w in windows()["windows"]}
+    wrong, at_minimum = [], 0
+    for wid, f in zip(plan["ids"], frames):
+        actual = cg.get(wid)
+        if actual is None:
+            wrong.append(f"{wid} not on screen")
+        elif close(actual, f, 2):
+            continue
+        elif actual[2] > f[2] + 2 or actual[3] > f[3] + 2:
+            at_minimum += 1          # the app won't go that small
+        elif actual[2] <= f[2] and actual[3] <= f[3] and f[2] - actual[2] <= 20 and f[3] - actual[3] <= 20:
+            continue                 # Terminal sizes in whole characters
+        else:
+            wrong.append(f"{wid} at {actual}, planned {f}")
+    note = f" ({at_minimum} held at their app's minimum size)" if at_minimum else ""
+    record(f"{label}: windows are where planned", not wrong, "; ".join(wrong[:3]) + note)
+    if plan["fits"]:
+        actual = [cg[i] for i in plan["ids"] if i in cg]
+        pairs = [(a, b) for i, a in enumerate(actual) for b in actual[i + 1:] if overlap(a, b) > 4]
+        record(f"{label}: no overlaps", not pairs, f"{pairs[:2]}")
+    else:
+        record(f"{label}: everything fits", False, "some apps can't get small enough for this layout", warn=True)
+    return d, frames
+
+
+def choose(style, label, count=None, picture=None):
+    """Press ⌃⌥1–5 for a style and check the result."""
+    press(CO, DIGIT[style], 0.5)
+    if picture:
+        shot(picture)
+    return check_layout(label, style, count)
+
+
+def layout_suite(name, count):
+    """Every style by its own key, then ⌃⌥L round twice, then ⌃⌥⇧L back."""
+    seen = {}
+    for style in STYLES[1:] + ["auto"]:
+        _, frames = choose(style, f"{name}: ⌃⌥{STYLES.index(style) + 1} {STYLE_NAMES[style]}", count,
+                           picture=f"layout-{name}-{style}".replace(" ", "-"))
+        seen[style] = frames
+    shapes = {s: tuple(map(tuple, f)) for s, f in seen.items() if f}
+    distinct = len({shapes[s] for s in ("columns", "rows", "mainAndSide") if s in shapes})
+    if count >= 3:
+        record(f"{name}: Columns, Rows and Main + Side all look different", distinct == 3, f"{distinct} different")
+    style = "auto"
+    cycle = {}
+    for step in range(10):
+        style = STYLES[(STYLES.index(style) + 1) % len(STYLES)]
+        press(CO, K["l"], 0.2)
+        _, frames = check_layout(f"{name}: ⌃⌥L press {step + 1} → {STYLE_NAMES[style]}", style, count)
+        if step >= 5 and frames and cycle.get(style):
+            record(f"{name}: {STYLE_NAMES[style]} looks the same on the second round", close_all(frames, cycle[style]),
+                   f"{frames} vs {cycle[style]}")
+        if step < 5:
+            cycle[style] = frames
+    for step in range(5):
+        style = STYLES[(STYLES.index(style) - 1) % len(STYLES)]
+        press("ctrl,opt,shift", K["l"], 0.2)
+        check_layout(f"{name}: ⌃⌥⇧L press {step + 1} → {STYLE_NAMES[style]}", style, count)
+
+
+def close_all(a, b, tol=3):
+    return a is not None and b is not None and len(a) == len(b) and all(close(x, y, tol) for x, y in zip(a, b))
+
+
+def hide(bundle):
+    activate(bundle)
+    keys("press", "cmd", "0x04")
+    time.sleep(0.8)
+
+
 # ---------- the tests ----------
 
 def main():
@@ -282,19 +447,21 @@ def main():
     snap_check("TextEdit Restore", CO, K["delete"], start)
 
     # --- Other apps ---
-    for bundle, name in [("com.apple.finder", "Finder"), ("com.apple.Safari", "Safari"), ("com.google.Chrome", "Chrome")]:
+    for bundle, name in [("com.apple.finder", "Finder"), ("com.apple.Safari", "Safari"), ("com.google.Chrome", "Chrome"),
+                         ("com.apple.Terminal", "Terminal")]:
         activate(bundle)
         time.sleep(0.5)
         first, win = front()
         if not win:
             record(f"{name} has a window in front", False)
             continue
-        snap_check(f"{name} Left Half", CO, K["left"], F(0, 0, .5, 1), allow_minimum=True)
-        snap_check(f"{name} Right Half", CO, K["right"], F(.5, 0, .5, 1), allow_minimum=True)
-        snap_check(f"{name} Top Left", CO, K["u"], F(0, 0, .5, .5), allow_minimum=True)
-        snap_check(f"{name} Last Third", CO, K["g"], F(2 / 3, 0, 1 / 3, 1), allow_minimum=True)
-        snap_check(f"{name} Maximise", CO, K["ret"], F(0, 0, 1, 1))
-        snap_check(f"{name} Restore", CO, K["delete"], first, tol=2)
+        tol = 16 if name == "Terminal" else 1     # Terminal sizes itself in whole characters
+        snap_check(f"{name} Left Half", CO, K["left"], F(0, 0, .5, 1), tol=tol, allow_minimum=True)
+        snap_check(f"{name} Right Half", CO, K["right"], F(.5, 0, .5, 1), tol=tol, allow_minimum=True)
+        snap_check(f"{name} Top Left", CO, K["u"], F(0, 0, .5, .5), tol=tol, allow_minimum=True)
+        snap_check(f"{name} Last Third", CO, K["g"], F(2 / 3, 0, 1 / 3, 1), tol=tol, allow_minimum=True)
+        snap_check(f"{name} Maximise", CO, K["ret"], F(0, 0, 1, 1), tol=tol)
+        snap_check(f"{name} Restore", CO, K["delete"], first, tol=max(tol, 2))
 
     # --- Drag to a screen edge ---
     record("macOS edge tiling was on at the start", d.get("macEdgeTiling") is True)
@@ -335,19 +502,80 @@ def main():
     shot("permission")
     time.sleep(1.5)
 
-    # --- Auto-tile ---
-    post("set:autoTile=1", 0.5)
-    d, _ = check_tiling("Auto, 5 windows")
-    for style in ["columns", "rows", "grid", "mainAndSide", "auto"]:
-        post(f"set:layout={style}", 0.3)
-        check_tiling(f"{style}", strict=style in ("auto", "grid", "columns", "mainAndSide"))
+    # --- Auto-tile: turn it on with the real key ---
+    press(CO, K["a"], 0.5)
+    d = dump()
+    record("⌃⌥A turns auto-tile on", d.get("autoTileSetting") is True)
+    check_layout("7 windows, Auto", "auto", 7)
 
+    # --- Every layout with 7 windows from 5 apps ---
+    layout_suite("7 windows", 7)
+
+    # --- The menu, clicked through Accessibility like a person would ---
+    trusted = keys("trusted").strip() == "yes"
+    record("Test helper may read menus", trusted, "no Accessibility for /tmp/keys", warn=not trusted)
+    if trusted:
+        post("menu", 1.5)
+        shot("menu-layouts")
+        try:
+            items = json.loads(keys("menu-list") or "[]")
+        except json.JSONDecodeError:
+            items = []
+        by_title = {i["title"]: i for i in items}
+        for style in STYLES:
+            item = by_title.get(STYLE_NAMES[style])
+            digit = str(STYLES.index(style) + 1)
+            record(f"Menu shows {STYLE_NAMES[style]} with ⌃⌥{digit}",
+                   item is not None and item["key"] == digit and item["mods"] == 14, f"{item}")
+        nxt, prv = by_title.get("Next Layout"), by_title.get("Previous Layout")
+        record("Menu shows Next Layout ⌃⌥L", nxt is not None and nxt["key"].upper() == "L" and nxt["mods"] == 14, f"{nxt}")
+        record("Menu shows Previous Layout ⌃⌥⇧L", prv is not None and prv["key"].upper() == "L" and prv["mods"] == 15, f"{prv}")
+        checked = [i["title"] for i in items if i["checked"]]
+        record("Menu ticks the current layout (Auto)", "Auto" in checked, f"ticked {checked}")
+        for style in ["mainAndSide", "columns", "grid"]:
+            if style != "mainAndSide":
+                post("menu", 1.5)
+            print(keys("menu-press", STYLE_NAMES[style]).strip(), flush=True)
+            check_layout(f"Menu › {STYLE_NAMES[style]}", style, 7)
+        post("menu", 1.5)
+        items = json.loads(keys("menu-list") or "[]")
+        record("Menu ticks the new layout (Grid)", "Grid" in [i["title"] for i in items if i["checked"]])
+        press("", K["esc"], 0.5)
+
+    # --- Windows coming and going keep the chosen layout ---
+    choose("rows", "Rows before changes", 7)
     activate("com.apple.TextEdit")
     keys("press", "cmd", K["n"])
-    d, _ = check_tiling("Auto after a new window")
+    check_layout("Rows after a new window", "rows", 8)
     activate("com.apple.TextEdit")
     keys("press", "cmd", K["w"])
-    check_tiling("Auto after closing it")
+    check_layout("Rows after closing it", "rows", 7)
+    hide("com.apple.finder")
+    check_layout("Rows after hiding Finder", "rows", 6)
+    keys("unhide", "com.apple.finder")
+    check_layout("Rows after showing Finder again", "rows", 7)
+    activate("com.apple.TextEdit")
+    keys("press", "cmd", K["m"])
+    check_layout("Rows after minimising a window", "rows", 6)
+    keys("unminimize", "com.apple.TextEdit")
+    check_layout("Rows after bringing it back", "rows", 7)
+
+    # --- Fewer windows: 3 (TextEdit only), then 1 ---
+    for bundle in ["com.apple.finder", "com.apple.Safari", "com.google.Chrome", "com.apple.Terminal"]:
+        hide(bundle)
+    check_layout("3 windows, Rows", "rows", 3)
+    layout_suite("3 windows", 3)
+    activate("com.apple.TextEdit")
+    keys("press", "cmd", K["m"])
+    time.sleep(0.8)
+    activate("com.apple.TextEdit")
+    keys("press", "cmd", K["m"])
+    for style in STYLES:
+        choose(style, f"1 window: {STYLE_NAMES[style]}", 1)
+    keys("unminimize", "com.apple.TextEdit")
+    for bundle in ["com.apple.finder", "com.apple.Safari", "com.google.Chrome", "com.apple.Terminal"]:
+        keys("unhide", bundle)
+    choose("auto", "Back to 7 windows, Auto", 7, picture="layout-7-back")
 
     # Swap with main.
     activate("com.apple.Safari")
@@ -390,11 +618,13 @@ def main():
         record("Drag a tile onto another: they swap", close(frame_of(a), fb, 3) and close(frame_of(b), fa, 3),
                f"a {frame_of(a)} want {fb}; b {frame_of(b)} want {fa}")
 
-    # Next layout and switching off.
-    press(CO, K["l"], 1.2)
+    # Switching off, then back on: the layout is remembered.
+    choose("mainAndSide", "Main + Side before switching off", 7)
+    press(CO, K["a"], 1.0)
     d = dump()
-    record("⌃⌥L switches to the next layout", "columns" in d["layouts"].values(), f"{d['layouts']}")
-    check_tiling("columns via ⌃⌥L")
+    record("⌃⌥A turns auto-tile off", d["autoTileSetting"] is False)
+    press(CO, K["a"], 0.5)
+    check_layout("⌃⌥A on again remembers Main + Side", "mainAndSide", 7)
     press(CO, K["a"], 1.0)
     d = dump()
     record("⌃⌥A turns auto-tile off", d["autoTileSetting"] is False)

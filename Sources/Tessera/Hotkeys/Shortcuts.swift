@@ -47,6 +47,10 @@ final class Shortcuts {
             AutoTiler.shared.toggle()
         case .tile(.nextLayout):
             AutoTiler.shared.nextLayout()
+        case .tile(.previousLayout):
+            AutoTiler.shared.previousLayout()
+        case .layout(let style):
+            AutoTiler.shared.chooseLayout(style)
         case .tile(.swapWithMain):
             AutoTiler.shared.swapWithMain()
         case .tile(.toggleFloat):
