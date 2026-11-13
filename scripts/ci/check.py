@@ -26,7 +26,11 @@ CO = "ctrl,opt"
 # ---------- helpers ----------
 
 def keys(*args):
-    return subprocess.run([KEYS, *args], capture_output=True, text=True).stdout
+    try:
+        return subprocess.run([KEYS, *args], capture_output=True, text=True, timeout=20).stdout
+    except subprocess.TimeoutExpired:
+        print("timed out: keys", *args, flush=True)
+        return ""
 
 
 def post(command, wait=0.8):
@@ -79,7 +83,10 @@ def frame_of(window_id):
 
 
 def shot(name):
-    subprocess.run(["screencapture", "-x", f"{OUT}/{name}.png"])
+    try:
+        subprocess.run(["screencapture", "-x", f"{OUT}/{name}.png"], timeout=20)
+    except subprocess.TimeoutExpired:
+        print("timed out: screenshot", name, flush=True)
 
 
 def record(name, ok, detail="", warn=False):
