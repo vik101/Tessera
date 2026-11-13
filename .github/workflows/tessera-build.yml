@@ -1,0 +1,67 @@
+name: Tessera build
+
+# Builds and tests Tessera on a Mac, then saves the logs (and the built app)
+# to the `tessera-ci` branch so they can be read without the GitHub website.
+on:
+  push:
+    branches: [tessera]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tessera-build
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Toolchain
+        run: |
+          mkdir -p ci-results
+          { sw_vers; xcodebuild -version; swift --version; } > ci-results/toolchain.txt 2>&1
+          cat ci-results/toolchain.txt
+
+      - name: Build
+        id: build
+        continue-on-error: true
+        run: swift build 2>&1 | tee ci-results/build.log
+
+      - name: Test
+        id: test
+        if: steps.build.outcome == 'success'
+        continue-on-error: true
+        run: swift test 2>&1 | tee ci-results/test.log
+
+      - name: App bundle
+        id: app
+        if: steps.build.outcome == 'success'
+        continue-on-error: true
+        run: |
+          ./scripts/build-app.sh debug 2>&1 | tee ci-results/app.log
+          ditto -c -k --keepParent build/debug/Tessera.app ci-results/Tessera-debug.zip
+
+      - name: Publish results
+        if: always()
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          {
+            echo "commit: ${GITHUB_SHA}"
+            echo "build: ${{ steps.build.outcome }}"
+            echo "test: ${{ steps.test.outcome }}"
+            echo "app: ${{ steps.app.outcome }}"
+          } > ci-results/summary.txt
+          grep -E "(error|warning):" ci-results/build.log | sort -u > ci-results/diagnostics.txt || true
+          cd ci-results
+          git init -q -b tessera-ci
+          git config user.name "Tessera CI"
+          git config user.email "ci@users.noreply.github.com"
+          git add -A
+          git commit -qm "CI results for ${GITHUB_SHA}"
+          git push -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" tessera-ci
