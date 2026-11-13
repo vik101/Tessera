@@ -155,14 +155,14 @@ final class TabViewController {
 
         let hold = holdModifiers.subtracting(.shift)
         tokens = ShortcutCenter.shared.claimTemporary([
-            (KeyCombo(KeyCode.leftArrow, hold), { [weak self] in self?.arrow(.left) }),
-            (KeyCombo(KeyCode.rightArrow, hold), { [weak self] in self?.arrow(.right) }),
-            (KeyCombo(KeyCode.upArrow, hold), { [weak self] in self?.arrow(.up) }),
-            (KeyCombo(KeyCode.downArrow, hold), { [weak self] in self?.arrow(.down) }),
-            (KeyCombo(KeyCode.escape, hold), { [weak self] in self?.cancel() }),
-            (KeyCombo(KeyCode.escape, []), { [weak self] in self?.cancel() }),
-            (KeyCombo(KeyCode.returnKey, hold), { [weak self] in self?.commit() }),
-            (KeyCombo(KeyCode.returnKey, []), { [weak self] in self?.commit() }),
+            (KeyCombo(KeyCode.leftArrow, hold), { @MainActor [weak self] in self?.arrow(.left) }),
+            (KeyCombo(KeyCode.rightArrow, hold), { @MainActor [weak self] in self?.arrow(.right) }),
+            (KeyCombo(KeyCode.upArrow, hold), { @MainActor [weak self] in self?.arrow(.up) }),
+            (KeyCombo(KeyCode.downArrow, hold), { @MainActor [weak self] in self?.arrow(.down) }),
+            (KeyCombo(KeyCode.escape, hold), { @MainActor [weak self] in self?.cancel() }),
+            (KeyCombo(KeyCode.escape, []), { @MainActor [weak self] in self?.cancel() }),
+            (KeyCombo(KeyCode.returnKey, hold), { @MainActor [weak self] in self?.commit() }),
+            (KeyCombo(KeyCode.returnKey, []), { @MainActor [weak self] in self?.commit() }),
         ])
         let released: (NSEvent) -> Void = { [weak self] _ in
             MainActor.assumeIsolated {
@@ -296,7 +296,7 @@ final class CheatSheetController {
         panel.orderFrontRegardless()
         self.panel = panel
         tokens = ShortcutCenter.shared.claimTemporary([
-            (KeyCombo(KeyCode.escape, []), { [weak self] in self?.close() }),
+            (KeyCombo(KeyCode.escape, []), { @MainActor [weak self] in self?.close() }),
         ])
         monitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
             MainActor.assumeIsolated { self?.close() }
