@@ -162,12 +162,21 @@ final class DragSnapper {
         }
         guard let action else { return nil }
         // A screen edge shared with another screen isn't a snap edge: the pointer just crosses it.
-        let probe: CGPoint? = switch action {
-        case .leftHalf: CGPoint(x: f.minX - 2, y: point.y)
-        case .rightHalf: CGPoint(x: f.maxX + 2, y: point.y)
-        default: nil
+        let west = CGPoint(x: f.minX - 2, y: point.y)
+        let east = CGPoint(x: f.maxX + 2, y: point.y)
+        let north = CGPoint(x: point.x, y: f.minY - 2)
+        let south = CGPoint(x: point.x, y: f.maxY + 2)
+        let probes: [CGPoint] = switch action {
+        case .leftHalf: [west]
+        case .rightHalf: [east]
+        case .maximise: [north]
+        case .topLeft: [west, north]
+        case .topRight: [east, north]
+        case .bottomLeft: [west, south]
+        case .bottomRight: [east, south]
+        default: [south]
         }
-        if let probe, Screens.display(containing: probe, in: displays) != nil { return nil }
+        if probes.contains(where: { Screens.display(containing: $0, in: displays) != nil }) { return nil }
         return (action, display)
     }
 }

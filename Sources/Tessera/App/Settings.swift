@@ -39,6 +39,13 @@ final class Settings: ObservableObject {
     }
 
     private init() {
+        // Tessera 2 starts with clean settings; Tessera 1 saved different things under some of the same names.
+        if store.integer(forKey: "settingsVersion") < 2, let id = Bundle.main.bundleIdentifier {
+            for key in (store.persistentDomain(forName: id) ?? [:]).keys where key != "TesseraTestHooks" {
+                store.removeObject(forKey: key)
+            }
+            store.set(2, forKey: "settingsVersion")
+        }
         store.register(defaults: [
             "gap": 0,
             "dragToSnap": true,

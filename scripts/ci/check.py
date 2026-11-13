@@ -75,6 +75,18 @@ def front():
     return None, None
 
 
+def activate(bundle):
+    """Bring an app forward and wait until macOS says it's in front."""
+    keys("activate", bundle)
+    for _ in range(20):
+        if windows().get("frontApp") == bundle:
+            time.sleep(0.2)
+            return True
+        time.sleep(0.2)
+    print("could not bring forward:", bundle, flush=True)
+    return False
+
+
 def frame_of(window_id):
     for win in windows()["windows"]:
         if win["id"] == window_id:
@@ -223,7 +235,7 @@ def main():
     F = lambda x, y, w, h: part(V, x, y, w, h)
 
     # --- Snapping with the keyboard, TextEdit ---
-    keys("activate", "com.apple.TextEdit")
+    activate("com.apple.TextEdit")
     start, _ = front()
     print("TextEdit starts at", start, flush=True)
     snap_check("TextEdit ⌃⌥← Left Half", CO, K["left"], F(0, 0, .5, 1))
@@ -271,7 +283,7 @@ def main():
 
     # --- Other apps ---
     for bundle, name in [("com.apple.finder", "Finder"), ("com.apple.Safari", "Safari"), ("com.google.Chrome", "Chrome")]:
-        keys("activate", bundle)
+        activate(bundle)
         time.sleep(0.5)
         first, win = front()
         if not win:
@@ -289,7 +301,7 @@ def main():
     post("fix-mac-tiling", 1.0)
     out = subprocess.run(["defaults", "read", "com.apple.WindowManager", "EnableTilingByEdgeDrag"], capture_output=True, text=True).stdout.strip()
     record("Tessera turns off macOS edge tiling", out == "0", f"EnableTilingByEdgeDrag = {out!r}")
-    keys("activate", "com.apple.TextEdit")
+    activate("com.apple.TextEdit")
     cur, _ = front()
     grab = (cur[0] + 100, cur[1] + 12)
     mid_y = V[1] + V[3] // 2
@@ -319,6 +331,9 @@ def main():
     post("settings", 2.0)
     shot("settings")
     post("close-settings", 0.5)
+    post("permission", 0.3)
+    shot("permission")
+    time.sleep(1.5)
 
     # --- Auto-tile ---
     post("set:autoTile=1", 0.5)
@@ -327,33 +342,33 @@ def main():
         post(f"set:layout={style}", 0.3)
         check_tiling(f"{style}", strict=style in ("auto", "grid", "columns", "mainAndSide"))
 
-    keys("activate", "com.apple.TextEdit")
+    activate("com.apple.TextEdit")
     keys("press", "cmd", K["n"])
     d, _ = check_tiling("Auto after a new window")
-    keys("activate", "com.apple.TextEdit")
+    activate("com.apple.TextEdit")
     keys("press", "cmd", K["w"])
     check_tiling("Auto after closing it")
 
     # Swap with main.
-    keys("activate", "com.apple.Safari")
+    activate("com.apple.Safari")
     press(CO, K["m"], 1.2)
     d = dump()
     order = list(d["autoTile"]["order"].values())[0] if d["autoTile"]["order"] else []
     record("⌃⌥M puts Safari in the main spot", bool(order) and order[0] == d["focused"], f"order {order}, focused {d['focused']}")
 
     # Snap by hand while tiling: Chrome takes the left half, the rest share the right half.
-    keys("activate", "com.google.Chrome")
+    activate("com.google.Chrome")
     chrome = snap_check("Auto-tile: Chrome ⌃⌥← keeps the left half", CO, K["left"], F(0, 0, .5, 1), allow_minimum=True)
     _, cw = front()
     d, frames = check_tiling("Others fill the right half", ignore=(cw["id"],) if cw else ())
     right = [r for r in frames.values() if r[0] < V[0] + V[2] / 2 - 2]
     record("Tiles stay out of Chrome's half", not right, f"{right}")
-    keys("activate", "com.google.Chrome")
+    activate("com.google.Chrome")
     press(CO, K["delete"], 1.0)
     d, _ = check_tiling("⌃⌥⌫ puts Chrome back")
 
     # Float and tile again.
-    keys("activate", "com.apple.TextEdit")
+    activate("com.apple.TextEdit")
     press(CO, K["w"], 1.2)
     d = dump()
     record("⌃⌥W floats the window", d["focused"] in d["autoTile"]["floating"], f"floating {d['autoTile']['floating']}")
