@@ -23,6 +23,7 @@ You can use snapping alone, exactly like Rectangle. Auto-tile is off until you t
 2. Open it. macOS may say it can't check the app, because it isn't notarized (checked by Apple). Open **System Settings › Privacy & Security**, scroll down, and click **Open Anyway**.
 3. Tessera asks for **Accessibility** access. This is how any window manager moves windows. Click **Open System Settings** and turn Tessera on. The window closes by itself when it works.
 4. If Rectangle is running, Tessera offers to quit it. Both apps use the same keys, so only one can answer.
+5. macOS 15 has its own "drag to a screen edge" tiling, which fights Tessera's. Tessera asks once if it may turn the macOS version off. You can also do it in **System Settings › Desktop & Dock › Drag windows to screen edges to tile**.
 
 > **After an update**, macOS sometimes keeps Tessera's old permission entry. The switch looks on, but nothing moves. Tessera spots this and shows its permission window. Click **Clear the Old Entry**, then turn Tessera on again.
 
@@ -167,7 +168,9 @@ Add a test in `Tests/TesseraCoreTests` with each change. The `everyWindowGetsIts
 
 ### Testing on a real Mac
 
-`.github/workflows/tessera-build.yml` runs on GitHub's Macs for every push. It builds, runs the unit tests, then `scripts/smoke-test.sh` opens TextEdit, Finder, Safari and Chrome and presses the real shortcuts. `scripts/ci/check.py` checks each window's exact position against what it should be, drags windows to edges, and checks every auto-tile style for overlaps and hidden windows. Results and screenshots go to the `tessera-ci` branch.
+`.github/workflows/tessera-build.yml` runs on GitHub's Macs for every push. It builds, runs the unit tests, then `scripts/smoke-test.sh` opens TextEdit, Finder, Safari and Chrome on a 1920×1080 screen and presses the real shortcuts. `scripts/ci/check.py` makes 107 checks: each window's exact position against what it should be, drags to every edge, and every auto-tile style for overlaps and hidden windows. Results and screenshots go to the `tessera-ci` branch.
+
+It can't test two screens, because GitHub's Macs have one. Next/Previous Display and per-screen layouts are covered by unit tests only.
 
 The test talks to Tessera through a hidden switch that is off by default:
 `defaults write com.vikram.Tessera TesseraTestHooks -bool YES`.
@@ -177,6 +180,7 @@ The test talks to Tessera through a hidden switch that is off by default:
 | Problem | Fix |
 | --- | --- |
 | Shortcuts do nothing | Quit Rectangle, Magnet or Spectacle. Then check the menu: a ⚠︎ line means permission is missing or a key is taken. |
+| Dragging to an edge snaps with a margin, or twice | That is macOS's own tiling. Menu › **Turn Off macOS Edge Tiling**. |
 | Nothing moves after an update | Open the menu › **Allow Accessibility Access…** › **Clear the Old Entry**, then turn Tessera on again. |
 | A window won't shrink into its tile | Some apps have a minimum size. Tessera learns it and picks a layout it fits. If none fits, it stays as small as the app allows. |
 | Auto-tile grabs a window you want free | Float it (⌃⌥W) or ignore its app from the menu. |

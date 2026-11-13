@@ -85,6 +85,7 @@ private struct PermissionView: View {
                     Text("Tessera needs one permission").font(.title2.bold())
                     Text("To move and resize windows, macOS asks you to allow Tessera in Accessibility.")
                         .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
             VStack(alignment: .leading, spacing: 8) {
