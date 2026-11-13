@@ -46,6 +46,27 @@ sleep 5
 screencapture -x "$OUT/2-four-windows.png" || true
 dump state-2-four-windows.txt
 
+# Keyboard shortcuts, pressed by a tiny helper (needs Accessibility for the runner).
+if [[ "${CI:-}" == "true" ]] && swiftc -O scripts/ci/keys.swift -o /tmp/keys 2>"$OUT/keys-build.log"; then
+  press() { /tmp/keys "$1" "$2"; sleep 2; }
+  press ctrl,opt 0x32;        dump state-3-stack-next.txt            # ⌃⌥` next in stack
+  press ctrl,opt,shift 0x13;  dump state-4-columns.txt               # ⌃⌥⇧2 Columns
+  press ctrl,opt 0x24;        dump state-5-make-primary.txt          # ⌃⌥↩ primary
+  press ctrl,opt 0x7C;        dump state-6-swap-right.txt            # ⌃⌥→ swap
+  press ctrl,opt 0x06;        screencapture -x "$OUT/4-focus-mode.png"; dump state-7-focus.txt   # ⌃⌥Z
+  press ctrl,opt 0x06
+  press ctrl,opt 0x02;        screencapture -x "$OUT/5-no-peek.png"  # ⌃⌥D
+  press ctrl,opt 0x02
+  press ctrl,opt 0x2C;        screencapture -x "$OUT/6-cheat-sheet.png"  # ⌃⌥/
+  press "" 0x35                                                      # Esc
+  /tmp/keys tabview "$OUT/7-tab-view.png"; sleep 2                   # ⌥⇥
+  press ctrl,opt,shift 0x12;  dump state-8-grid.txt                  # ⌃⌥⇧1 Grid
+  press cmd 0x0D;             sleep 2; dump state-9-closed-one.txt   # ⌘W closes a window
+  press ctrl,opt 0x11;        dump state-10-paused.txt               # ⌃⌥T pause
+  press ctrl,opt 0x11;        dump state-11-resumed.txt              # ⌃⌥T resume
+  screencapture -x "$OUT/8-final.png"
+fi
+
 # Opening the app again shows Settings.
 open "$APP"
 sleep 4

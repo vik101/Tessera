@@ -55,7 +55,7 @@ jobs:
         id: smoke
         if: steps.app.outcome == 'success'
         continue-on-error: true
-        timeout-minutes: 5
+        timeout-minutes: 8
         run: ./scripts/smoke-test.sh build/debug/Tessera.app
 
       - name: Universal release build
