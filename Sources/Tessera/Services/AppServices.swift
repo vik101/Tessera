@@ -144,7 +144,7 @@ final class SystemMonitor {
             guard let state = tiling.state(forKey: key) else { continue }
             text += "\(key): \(state.layout.rawValue) cap \(state.capacity)\n"
             for (index, tile) in state.tiles.enumerated() {
-                let apps = tile.windows.map { id in tiling.registry.window(id)?.bundleID ?? "?" }
+                let apps = tile.windows.map { id in "\(id):" + (tiling.registry.window(id)?.bundleID ?? "?") }
                 let frame = tiling.frames[key]?[index].map { "\(Int($0.minX)),\(Int($0.minY)) \(Int($0.width))×\(Int($0.height))" } ?? "-"
                 text += "  [\(index)] \(frame) \(apps)\n"
             }

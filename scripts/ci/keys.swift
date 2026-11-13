@@ -45,3 +45,15 @@ if args.count >= 3, args[1] == "tabview" {
     key(code, down: true, mods)
     key(code, down: false, mods)
 }
+
+// keys windows   → id, app, title and frame of every normal on-screen window (front to back)
+if args.count == 2, args[1] == "windows" {
+    let list = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID) as? [[String: Any]] ?? []
+    for info in list where (info[kCGWindowLayer as String] as? Int) == 0 {
+        let id = info[kCGWindowNumber as String] as? Int ?? 0
+        let owner = info[kCGWindowOwnerName as String] as? String ?? "?"
+        let name = info[kCGWindowName as String] as? String ?? ""
+        let b = info[kCGWindowBounds as String] as? [String: Any] ?? [:]
+        print("\(id)\t\(owner)\t\(name)\t\(b["X"] ?? 0),\(b["Y"] ?? 0) \(b["Width"] ?? 0)×\(b["Height"] ?? 0)")
+    }
+}

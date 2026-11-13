@@ -21,6 +21,8 @@ final class TilingController {
     private(set) var states: [String: ScreenState] = [:]
     /// The tile frames last applied, per screen key.
     private(set) var frames: [String: [Int: CGRect]] = [:]
+    /// The window showing in each tile at the last apply, to spot stacks whose top changed.
+    private var lastShowing: [String: [CGWindowID]] = [:]
 
     enum FloatReason { case full, tooBig }
 
@@ -306,6 +308,15 @@ final class TilingController {
                 if let window = registry.window(id) { applier.set(window, to: frame) }
             }
         }
+        // A stack whose top window changed (after a swap, say) brings that window forward.
+        let showing = state.showingWindows
+        let before = Set(lastShowing[key] ?? [])
+        for tile in state.tiles where tile.isStack {
+            if let top = tile.showing, !before.contains(top), top != raiseID, let window = registry.window(top) {
+                applier.raise(window)
+            }
+        }
+        lastShowing[key] = showing
         if let focusMode, focusMode.key == key, let window = registry.window(focusMode.window) {
             applier.set(window, to: area)
             applier.raise(window)

@@ -49,6 +49,11 @@ dump state-2-four-windows.txt
 # Keyboard shortcuts, pressed by a tiny helper (needs Accessibility for the runner).
 if [[ "${CI:-}" == "true" ]] && swiftc -O scripts/ci/keys.swift -o /tmp/keys 2>"$OUT/keys-build.log"; then
   press() { /tmp/keys "$1" "$2"; sleep 2; }
+  dump() {
+    rm -f "$SUPPORT/dump.txt"; touch "$SUPPORT/dump-request"; sleep 4
+    { cat "$SUPPORT/dump.txt" 2>/dev/null || echo "no state dump"; echo "— Window server (front to back) —"; /tmp/keys windows; } > "$OUT/$1"
+  }
+  dump state-2b-ids.txt
   press ctrl,opt 0x32;        dump state-3-stack-next.txt            # ⌃⌥` next in stack
   press ctrl,opt,shift 0x13;  dump state-4-columns.txt               # ⌃⌥⇧2 Columns
   press ctrl,opt 0x24;        dump state-5-make-primary.txt          # ⌃⌥↩ primary
