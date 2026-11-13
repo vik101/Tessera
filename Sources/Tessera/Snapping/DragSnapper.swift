@@ -103,8 +103,8 @@ final class DragSnapper {
 
     /// Rectangle-style: a snapped window you drag away gets its old size back, under the pointer.
     private func restoreSizeIfSnapped(_ window: TrackedWindow, frame: CGRect) {
-        guard settings.restoreSizeOnDrag, let startFrame,
-              let size = SnapController.shared.sizeBeforeSnap(window, currentFrame: startFrame) else { return }
+        guard settings.restoreSizeOnDrag, let dragStart = startFrame,
+              let size = SnapController.shared.sizeBeforeSnap(window, currentFrame: dragStart) else { return }
         SnapController.shared.forget(window)
         guard !AutoTiler.shared.isTiled(window) else { return }
         let mouse = Screens.mouseLocation
@@ -113,7 +113,7 @@ final class DragSnapper {
         window.element.setSize(size)
         window.element.setPosition(CGPoint(x: x, y: frame.minY))
         // Restore should now return to this size, not to the snapped frame the drag began from.
-        startFrame = window.element.frame ?? startFrame
+        startFrame = window.element.frame ?? dragStart
     }
 
     /// Which snap a drop at `point` means: edges give halves, corners give quarters,

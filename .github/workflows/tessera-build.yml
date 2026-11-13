@@ -92,7 +92,7 @@ jobs:
             echo "test: ${{ steps.test.outcome }}"
             echo "app: ${{ steps.app.outcome }}"
             echo "smoke: ${{ steps.smoke.outcome }}"
-            head -1 ci-results/results.txt 2>/dev/null | sed 's/^/checks: /' 
+            echo "checks: $(head -1 ci-results/results.txt 2>/dev/null || echo none)"
             echo "release: ${{ steps.release.outcome }}"
             echo "firstlaunch: ${{ steps.firstlaunch.outcome }}"
           } > ci-results/summary.txt
