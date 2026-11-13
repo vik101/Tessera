@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(CoreGraphics)
+import CoreGraphics
+#endif
 
 /// A learned minimum size. A nil side means "no known limit".
 public struct LearnedMinimum: Codable, Hashable, Sendable {

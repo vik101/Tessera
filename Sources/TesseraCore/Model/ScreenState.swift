@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(CoreGraphics)
+import CoreGraphics
+#endif
 
 /// A window, as the core sees it: just a stable number (the macOS window ID).
 public typealias WindowKey = UInt32

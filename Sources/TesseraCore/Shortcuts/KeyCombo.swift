@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(CoreGraphics)
+import CoreGraphics
+#endif
 
 /// Modifier keys, in the order macOS shows them: ⌃ ⌥ ⇧ ⌘.
 public struct Modifiers: OptionSet, Codable, Hashable, Sendable {

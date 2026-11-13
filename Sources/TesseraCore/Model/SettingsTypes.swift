@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(CoreGraphics)
+import CoreGraphics
+#endif
 
 public enum HighlightStyle: String, Codable, CaseIterable, Sendable, Identifiable {
     case none

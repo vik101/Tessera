@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(CoreGraphics)
+import CoreGraphics
+#endif
 
 /// Direction a split lays its children out in.
 /// Coordinates follow the Accessibility API: origin top-left, y grows downward.

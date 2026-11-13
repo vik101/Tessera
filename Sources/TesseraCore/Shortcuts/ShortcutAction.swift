@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(CoreGraphics)
+import CoreGraphics
+#endif
 
 /// The modifier keys most shortcuts start with.
 public enum ShortcutPrefix: String, Codable, CaseIterable, Sendable, Identifiable {

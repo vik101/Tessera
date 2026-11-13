@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(CoreGraphics)
+import CoreGraphics
+#endif
 
 /// The four ways a screen can be split into tiles.
 public enum LayoutKind: String, Codable, CaseIterable, Sendable, Identifiable {

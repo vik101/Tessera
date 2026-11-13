@@ -10,6 +10,11 @@ on:
 permissions:
   contents: write
 
+defaults:
+  run:
+    # bash -eo pipefail: a failing build fails the step even when piped through tee.
+    shell: bash
+
 concurrency:
   group: tessera-build
   cancel-in-progress: true

@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(CoreGraphics)
+import CoreGraphics
+#endif
 
 /// An app in a setup. Only the app is stored — never window titles or documents.
 public struct SetupApp: Codable, Hashable, Sendable {

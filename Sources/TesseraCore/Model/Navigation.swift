@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(CoreGraphics)
+import CoreGraphics
+#endif
 
 /// Finds neighbours among rectangles (tiles, screens, Tab View items).
 /// Coordinates: origin top-left, y grows downward.
