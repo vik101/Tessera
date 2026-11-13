@@ -51,7 +51,9 @@ More actions are in the menu with no shortcut yet: Centre Half, Centre Two Third
 | Shortcut | Action |
 | --- | --- |
 | ⌃⌥A | Auto-tile on or off |
+| ⌃⌥1 … ⌃⌥5 | Auto, Columns, Rows, Grid, Main + Side |
 | ⌃⌥L | Next layout style for this screen |
+| ⌃⌥⇧L | Previous layout style |
 | ⌃⌥M | Swap this window with the main window |
 | ⌃⌥W | Float this window (Tessera leaves it alone), or tile it again |
 
@@ -80,7 +82,11 @@ Auto-tile keeps every normal window on a screen arranged. Windows never overlap,
 | Grid | An even grid; the last row widens to fill the gap |
 | Main + Side | One big main window; the rest stack beside it. Drag its edge to change its size. |
 
-How Auto chooses: it tries every grid, plus columns, rows and main + side. It scores each by how close every window is to a comfortable shape (a little wider than tall). The worst window counts extra, so nothing gets squashed into a strip. Some apps can't shrink past a certain size; Tessera notices and picks an arrangement they fit.
+Each switch shows a picture of the new layout in the middle of the screen. The menu shows the same pictures, drawn for the windows you have open.
+
+**A style you pick keeps its shape.** Some apps won't go below a certain size (Chrome and Safari stop at about 500 points wide). If they can't all fit, say seven windows in Columns, they overlap a little and the picture says so. Auto always looks for an arrangement where everything fits.
+
+How Auto chooses: it tries every grid, plus columns, rows and main + side. It scores each by how close every window is to a comfortable shape (a little wider than tall). The worst window counts extra, so nothing gets squashed into a strip. When an app won't shrink, Tessera notices, gives that window more room, and lets its neighbours share the rest.
 
 **Working with tiles:**
 
@@ -158,17 +164,23 @@ Version, bundle ID and signing live in `scripts/config.env`. With an Apple Devel
 
 | To change… | Edit |
 | --- | --- |
-| A default shortcut | `defaultShortcut` in `SnapAction.swift` or `Commands.swift` |
+| A default shortcut | `defaultShortcut` in `SnapAction.swift` or `Commands.swift` (layouts too) |
 | Where an action puts a window | `region(shape:cycle:)` in `SnapAction.swift` |
 | How Auto picks a layout | `score` and `idealAspect` in `TilePlanner.swift` |
 | Add a layout style | Add a case to `LayoutStyle`, and its shape in `TilePlanner.frames` |
 | Apps ignored by default | `ignoredApps` default in `Settings.swift` |
 
-Add a test in `Tests/TesseraCoreTests` with each change. The `everyWindowGetsItsOwnSpace` test checks every style, 1 to 12 windows, on four screen shapes.
+Add a test in `Tests/TesseraCoreTests` with each change. The `everyWindowGetsItsOwnSpace` test checks every style, 1 to 12 windows, on four screen shapes. `everyStyleKeepsItsShapeWithRealAppSizes` checks each style still has its shape when apps won't shrink.
 
 ### Testing on a real Mac
 
-`.github/workflows/tessera-build.yml` runs on GitHub's Macs for every push. It builds, runs the unit tests, then `scripts/smoke-test.sh` opens TextEdit, Finder, Safari and Chrome on a 1920×1080 screen and presses the real shortcuts. `scripts/ci/check.py` makes 107 checks: each window's exact position against what it should be, drags to every edge, and every auto-tile style for overlaps and hidden windows. Results and screenshots go to the `tessera-ci` branch.
+`.github/workflows/tessera-build.yml` runs on GitHub's Macs for every push. It builds, runs the unit tests, then `scripts/smoke-test.sh` opens TextEdit, Finder, Safari, Chrome and Terminal on a 1920×1080 screen and presses the real shortcuts. `scripts/ci/check.py` makes about 400 checks:
+
+- Every snap: each window's exact position against what it should be, and drags to every edge.
+- Every layout: picked with ⌃⌥1–5, two full rounds of ⌃⌥L, back again with ⌃⌥⇧L, and clicked in the menu (through Accessibility, as a person would). Each time it checks the layout really has that shape (Columns are side by side and full height, and so on), the windows are where planned, nothing overlaps when it fits, and the second round matches the first.
+- With 7, 3 and 1 windows, and while windows open, close, hide and minimise.
+
+Results and screenshots go to the `tessera-ci` branch.
 
 It can't test two screens, because GitHub's Macs have one. So Next/Previous Display, a layout per screen, and dragging between screens have not yet been checked on a real Mac.
 
