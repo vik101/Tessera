@@ -170,7 +170,7 @@ Add a test in `Tests/TesseraCoreTests` with each change. The `everyWindowGetsIts
 
 `.github/workflows/tessera-build.yml` runs on GitHub's Macs for every push. It builds, runs the unit tests, then `scripts/smoke-test.sh` opens TextEdit, Finder, Safari and Chrome on a 1920×1080 screen and presses the real shortcuts. `scripts/ci/check.py` makes 107 checks: each window's exact position against what it should be, drags to every edge, and every auto-tile style for overlaps and hidden windows. Results and screenshots go to the `tessera-ci` branch.
 
-It can't test two screens, because GitHub's Macs have one. Next/Previous Display and per-screen layouts are covered by unit tests only.
+It can't test two screens, because GitHub's Macs have one. So Next/Previous Display, a layout per screen, and dragging between screens have not yet been checked on a real Mac.
 
 The test talks to Tessera through a hidden switch that is off by default:
 `defaults write com.vikram.Tessera TesseraTestHooks -bool YES`.
