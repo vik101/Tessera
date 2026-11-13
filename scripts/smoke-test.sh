@@ -22,7 +22,6 @@ fi
 defaults delete "$BUNDLE_ID" >/dev/null 2>&1
 defaults write "$BUNDLE_ID" TesseraTestHooks -bool YES
 
-{ system_profiler SPDisplaysDataType; } > "$OUT/displays.txt" 2>&1
 
 mkdir -p /tmp/tessera-docs
 for i in 1 2 3; do echo "Tessera test document $i" > "/tmp/tessera-docs/doc$i.txt"; done
