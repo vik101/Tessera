@@ -59,3 +59,34 @@ if args.count == 2, args[1] == "windows" {
         print("\(id)\t\(owner)\t\(name)\t\(b["X"] ?? 0),\(b["Y"] ?? 0) \(b["Width"] ?? 0)×\(b["Height"] ?? 0)")
     }
 }
+
+func mouse(_ type: CGEventType, _ x: Double, _ y: Double, _ flags: CGEventFlags = []) {
+    let event = CGEvent(mouseEventSource: source, mouseType: type, mouseCursorPosition: CGPoint(x: x, y: y), mouseButton: .left)!
+    event.flags = flags
+    event.post(tap: .cghidEventTap)
+}
+
+// keys move X Y              → move the pointer
+// keys drag X1 Y1 X2 Y2 cmd  → drag with modifiers held
+if args.count == 4, args[1] == "move", let x = Double(args[2]), let y = Double(args[3]) {
+    mouse(.mouseMoved, x - 3, y)
+    usleep(50_000)
+    mouse(.mouseMoved, x, y)
+}
+if args.count >= 6, args[1] == "drag", let x1 = Double(args[2]), let y1 = Double(args[3]), let x2 = Double(args[4]), let y2 = Double(args[5]) {
+    let mods = args.count >= 7 ? flags(args[6]) : []
+    if mods.contains(.maskCommand) { key(0x37, down: true, mods) }
+    mouse(.mouseMoved, x1, y1, mods)
+    usleep(100_000)
+    mouse(.leftMouseDown, x1, y1, mods)
+    usleep(150_000)
+    for step in 1...30 {
+        let t = Double(step) / 30
+        mouse(.leftMouseDragged, x1 + (x2 - x1) * t, y1 + (y2 - y1) * t, mods)
+        usleep(30_000)
+    }
+    usleep(400_000)
+    mouse(.leftMouseUp, x2, y2, mods)
+    usleep(100_000)
+    if mods.contains(.maskCommand) { key(0x37, down: false, []) }
+}

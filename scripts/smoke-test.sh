@@ -69,6 +69,18 @@ if [[ "${CI:-}" == "true" ]] && swiftc -O scripts/ci/keys.swift -o /tmp/keys 2>"
   press "" 0x35                                                      # Esc
   /tmp/keys tabview "$OUT/7-tab-view.png"; sleep 2                   # ⌥⇥
   press ctrl,opt,shift 0x12;  dump state-8-grid.txt                  # ⌃⌥⇧1 Grid
+  # Grid on 1024×768: primary 8,33 500×668; right column 516,33 and 516,371 (500×330).
+  /tmp/keys drag 260 46 760 520 cmd; sleep 3; dump state-8b-cmd-drag-swap.txt   # ⌘-drag primary onto bottom-right
+  /tmp/keys drag 260 46 260 300; sleep 3; dump state-8c-plain-drag-back.txt     # plain drag snaps back
+  press ctrl,opt 0x18;        dump state-8d-grow.txt                 # ⌃⌥= bigger
+  press ctrl,opt 0x1D;        dump state-8e-reset.txt                # ⌃⌥0 reset sizes
+  press ctrl,opt,cmd 0x13;    dump state-8f-two-windows.txt          # ⌃⌥⌘2 two windows
+  press ctrl,opt,cmd 0x14;    dump state-8g-three-windows.txt        # ⌃⌥⌘3 back to three
+  /tmp/keys move 400 400; sleep 1
+  /tmp/keys move 258 29; sleep 2; screencapture -x "$OUT/9-hover-bar.png"   # rest on the primary's grip
+  /tmp/keys move 400 400; sleep 1
+  press ctrl,opt 0x23;        screencapture -x "$OUT/10-clean-space.png"; dump state-8h-clean-space.txt  # ⌃⌥P
+  press ctrl,opt 0x23;        dump state-8i-clean-space-off.txt
   press cmd 0x0D;             sleep 2; dump state-9-closed-one.txt   # ⌘W closes a window
   press ctrl,opt 0x11;        dump state-10-paused.txt               # ⌃⌥T pause
   press ctrl,opt 0x11;        dump state-11-resumed.txt              # ⌃⌥T resume
