@@ -70,7 +70,7 @@ if [[ "${CI:-}" == "true" ]] && swiftc -O scripts/ci/keys.swift -o /tmp/keys 2>"
   /tmp/keys tabview "$OUT/7-tab-view.png"; sleep 2                   # ⌥⇥
   press ctrl,opt,shift 0x12;  dump state-8-grid.txt                  # ⌃⌥⇧1 Grid
   # Grid on 1024×768: primary 8,33 500×668; right column 516,33 and 516,371 (500×330).
-  /tmp/keys drag 260 46 760 520 cmd; sleep 3; dump state-8b-cmd-drag-swap.txt   # ⌘-drag primary onto bottom-right
+  /tmp/keys drag 450 46 760 520 cmd; sleep 3; dump state-8b-cmd-drag-swap.txt   # ⌘-drag primary (by empty title bar) onto bottom-right
   /tmp/keys drag 260 46 260 300; sleep 3; dump state-8c-plain-drag-back.txt     # plain drag snaps back
   press ctrl,opt 0x18;        dump state-8d-grow.txt                 # ⌃⌥= bigger
   press ctrl,opt 0x1D;        dump state-8e-reset.txt                # ⌃⌥0 reset sizes
