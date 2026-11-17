@@ -640,8 +640,13 @@ def main():
         fa, fb = frame_of(a), frame_of(b)
         keys("drag", str(fa[0] + 100), str(fa[1] + 12), str(fb[0] + fb[2] // 2), str(fb[1] + fb[3] // 2))
         time.sleep(1.5)
-        record("Drag a tile onto another: they swap", close(frame_of(a), fb, 3) and close(frame_of(b), fa, 3),
-               f"a {frame_of(a)} want {fb}; b {frame_of(b)} want {fa}")
+        # Swapped means each window now sits where the other was. Sizes can shift by a few
+        # points, because a row's height follows the minimum sizes of the windows in it.
+        def centre_in(r, box):
+            return r is not None and box[0] <= r[0] + r[2] / 2 <= box[0] + box[2] and box[1] <= r[1] + r[3] / 2 <= box[1] + box[3]
+        na, nb = frame_of(a), frame_of(b)
+        record("Drag a tile onto another: they swap", centre_in(na, fb) and centre_in(nb, fa),
+               f"a {na} was {fa}; b {nb} was {fb}")
 
     # Switching off, then back on: the layout is remembered.
     choose("mainAndSide", "Main + Side before switching off", 7)
