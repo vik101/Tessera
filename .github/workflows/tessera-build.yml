@@ -4,7 +4,7 @@ name: Tessera build
 # to the `tessera-ci` branch so they can be read without the GitHub website.
 on:
   push:
-    branches: [tessera]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
