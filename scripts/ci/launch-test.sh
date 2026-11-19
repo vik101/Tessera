@@ -17,8 +17,11 @@ result() { echo "$1" | tee -a "$OUT/results.txt"; }
 { sw_vers; uname -m; } > "$OUT/system.txt" 2>&1
 
 # The exact file on the download link.
-limit 60 curl -sSL -o /tmp/Tessera.zip https://github.com/vik101/tessera/raw/tessera-ci/Tessera-release.zip
-rm -rf /tmp/dl && mkdir /tmp/dl && ditto -x -k /tmp/Tessera.zip /tmp/dl
+for try in 1 2 3 4 5; do
+  limit 60 curl -fsSL -o /tmp/Tessera.zip "${TESSERA_ZIP_URL:-https://github.com/vik101/tessera/raw/tessera-ci/Tessera-release.zip}" && break
+  sleep 20
+done
+rm -rf /tmp/dl && mkdir /tmp/dl && ditto -x -k /tmp/Tessera.zip /tmp/dl || { result "FAIL could not download Tessera"; exit 1; }
 sudo rm -rf "$APP"
 sudo ditto /tmp/dl/Tessera.app "$APP"
 { codesign -dv --verbose=2 "$APP"; codesign --verify --deep --strict "$APP" && echo "signature verified"; } > "$OUT/codesign.txt" 2>&1

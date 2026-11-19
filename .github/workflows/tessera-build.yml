@@ -5,6 +5,11 @@ name: Tessera build
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - README.md
+      - .github/workflows/launch-test.yml
+      - scripts/ci/launch-test.sh
+      - scripts/ci/vdisplay.m
   workflow_dispatch:
 
 permissions:
@@ -82,7 +87,8 @@ jobs:
           pgrep -x Tessera && echo "running" | tee ci-results/first-launch.txt
 
       - name: Publish results
-        if: always()
+        # Not when cancelled: a half-finished run must not replace the download.
+        if: ${{ !cancelled() }}
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
