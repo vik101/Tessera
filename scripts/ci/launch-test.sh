@@ -125,6 +125,18 @@ else
   result "SKIP 6: could not build the pretend screen tool"
 fi
 
+# 7. "Clear the Old Entry": Tessera runs `tccutil reset` on itself. Does macOS then stop it?
+settings_from_2_0
+grant_accessibility
+launch "7a-before-clearing"
+tccutil reset Accessibility "$BUNDLE" > "$OUT/7-tccutil.txt" 2>&1
+alive "7a after clearing its permission while running with it" 5
+defaults delete "$BUNDLE" >/dev/null 2>&1
+launch "7b-before-clearing-no-permission"
+tccutil reset Accessibility "$BUNDLE" >> "$OUT/7-tccutil.txt" 2>&1
+alive "7b after clearing while waiting for permission" 5
+screencapture -x "$OUT/7b-after.png"
+
 # 4. Rectangle running too (it asks to quit it).
 if limit 240 brew install --cask --quiet rectangle >/dev/null 2>&1; then
   xattr -dr com.apple.quarantine /Applications/Rectangle.app 2>/dev/null
