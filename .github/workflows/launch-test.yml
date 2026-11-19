@@ -1,0 +1,47 @@
+name: Launch test
+
+# Opens the downloadable Tessera on macOS 15 and macOS 26 in several starting states
+# and saves crash reports. Results go to the launch-ci-<os> branches.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/launch-test.yml
+      - scripts/ci/launch-test.sh
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  launch:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-26]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Open Tessera in several starting states
+        continue-on-error: true
+        timeout-minutes: 15
+        run: ./scripts/ci/launch-test.sh launch-results
+      - name: Publish results
+        if: always()
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p launch-results
+          echo "commit: ${GITHUB_SHA}" > launch-results/summary.txt
+          cd launch-results
+          git init -q -b "launch-ci-${{ matrix.os }}"
+          git config user.name "Tessera CI"
+          git config user.email "ci@users.noreply.github.com"
+          git add -A
+          git commit -qm "Launch test for ${GITHUB_SHA} on ${{ matrix.os }}"
+          git push -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "launch-ci-${{ matrix.os }}"
