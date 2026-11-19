@@ -85,6 +85,43 @@ alive "3 after ⌃⌥L five times" 1
 /tmp/keys press ctrl,opt 0x00; sleep 1; alive "3 after ⌃⌥A" 1
 /tmp/keys post dump; sleep 1; cp /tmp/tessera-dump.json "$OUT/3-dump.json" 2>/dev/null
 
+# 6. Two screens: a pretend second display, like an external monitor.
+if clang -fobjc-arc -framework Foundation -framework CoreGraphics scripts/ci/vdisplay.m -o /tmp/vdisplay 2> "$OUT/vdisplay-build.txt"; then
+  /tmp/vdisplay 1920 1080 > "$OUT/vdisplay.txt" 2>&1 &
+  VDISPLAY=$!
+  sleep 4
+  /tmp/keys displays > "$OUT/6-displays.txt" 2>&1
+  if [[ $(grep -c "^display" "$OUT/6-displays.txt") -ge 2 ]]; then
+    result "PASS 6: a second screen is attached"
+    # 6a. Fresh install, two screens.
+    pkill -x Tessera; sleep 1
+    defaults delete "$BUNDLE" >/dev/null 2>&1
+    defaults write "$BUNDLE" TesseraTestHooks -bool YES
+    launch "6a-two-screens-fresh"
+    screencapture -x "$OUT/6a-screen1.png" "$OUT/6a-screen2.png"
+    # 6b. Update from 2.0 with permission, auto-tile on, two screens.
+    settings_from_2_0
+    grant_accessibility
+    defaults write "$BUNDLE" TesseraTestHooks -bool YES
+    launch "6b-two-screens-update"
+    screencapture -x "$OUT/6b-screen1.png" "$OUT/6b-screen2.png"
+    /tmp/keys post menu; sleep 2; screencapture -x "$OUT/6b-menu1.png" "$OUT/6b-menu2.png"
+    /tmp/keys press "" 0x35; alive "6b after opening the menu" 1
+    /tmp/keys activate com.apple.TextEdit
+    /tmp/keys press ctrl,opt,cmd,fn,num 0x7C; sleep 1.5; alive "6b after ⌃⌥⌘→ (next display)" 1
+    for i in 1 2 3; do /tmp/keys press ctrl,opt 0x25; sleep 1.2; done
+    alive "6b after ⌃⌥L three times" 1
+    /tmp/keys post dump; sleep 1; cp /tmp/tessera-dump.json "$OUT/6b-dump.json" 2>/dev/null
+    screencapture -x "$OUT/6b-end1.png" "$OUT/6b-end2.png"
+  else
+    result "SKIP 6: the pretend second screen did not appear"
+  fi
+  kill "$VDISPLAY" 2>/dev/null; sleep 2
+  alive "6 after the second screen goes away" 2
+else
+  result "SKIP 6: could not build the pretend screen tool"
+fi
+
 # 4. Rectangle running too (it asks to quit it).
 if limit 240 brew install --cask --quiet rectangle >/dev/null 2>&1; then
   xattr -dr com.apple.quarantine /Applications/Rectangle.app 2>/dev/null

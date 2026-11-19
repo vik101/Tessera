@@ -9,6 +9,7 @@ on:
     paths:
       - .github/workflows/launch-test.yml
       - scripts/ci/launch-test.sh
+      - scripts/ci/vdisplay.m
 
 permissions:
   contents: write

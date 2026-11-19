@@ -6,6 +6,7 @@
 //   keys post dump                     send a test command to Tessera
 //   keys drag X1 Y1 X2 Y2              drag with the left button
 //   keys click X Y
+//   keys displays                      list screens and their frames
 //   keys trusted                       does this tool have Accessibility? (needed for the next four)
 //   keys menu-list                     Tessera's open menu: titles and shortcut keys, as JSON
 //   keys menu-press "Columns"          click an item in Tessera's open menu
@@ -137,6 +138,12 @@ case "drag" where args.count >= 5:
     }
     mouse(.leftMouseUp, x2, y2)
     usleep(150_000)
+
+case "displays":
+    for screen in NSScreen.screens {
+        let id = (screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber)?.intValue ?? 0
+        print("display \(id) \(screen.localizedName) frame=\(screen.frame) visible=\(screen.visibleFrame)")
+    }
 
 case "trusted":
     print(AXIsProcessTrusted() ? "yes" : "no")
