@@ -20,7 +20,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var engineStarted = false
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        if quitIfAlreadyRunning() { return }
+        takeOverFromOtherCopies()
         buildMainMenu()
         StatusMenu.shared.install()
         Shortcuts.shared.start()
@@ -54,14 +54,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         Log.info("Window engine started")
     }
 
-    private func quitIfAlreadyRunning() -> Bool {
-        guard let id = Bundle.main.bundleIdentifier else { return false }
+    /// If another copy of Tessera is running (say, the old version you just replaced),
+    /// the copy you opened last takes over: the other one quits first, so they never fight
+    /// over shortcuts. (Before, the new copy quit silently, which looked like a crash.)
+    private func takeOverFromOtherCopies() {
+        guard let id = Bundle.main.bundleIdentifier else { return }
         let others = NSRunningApplication.runningApplications(withBundleIdentifier: id)
             .filter { $0.processIdentifier != getpid() }
-        guard let other = others.first else { return false }
-        other.activate()
-        NSApp.terminate(nil)
-        return true
+        guard !others.isEmpty else { return }
+        Log.info("Replacing \(others.count) other running copy of Tessera")
+        for other in others { other.terminate() }
+        let deadline = Date().addingTimeInterval(3)
+        while others.contains(where: { !$0.isTerminated }), Date() < deadline {
+            RunLoop.current.run(until: Date().addingTimeInterval(0.1))
+        }
+        for other in others where !other.isTerminated { other.forceTerminate() }
     }
 
     /// Rectangle and friends grab the same shortcuts. Offer to quit them.

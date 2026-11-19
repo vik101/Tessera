@@ -216,7 +216,7 @@ enum MenuIcons {
                 height: frame.height / area.height
             )
         }
-        let image = NSImage(size: size, flipped: true) { rect in
+        return render(size) { rect in
             NSColor.black.set()
             let outer = rect.insetBy(dx: big ? 2 : 1, dy: big ? 2 : 1)
             let screen = NSBezierPath(roundedRect: outer, xRadius: big ? 6 : 2, yRadius: big ? 6 : 2)
@@ -227,15 +227,12 @@ enum MenuIcons {
                 let tile = part(unit, of: inner).insetBy(dx: big ? 2 : 0.6, dy: big ? 2 : 0.6)
                 NSBezierPath(roundedRect: tile, xRadius: big ? 3 : 0.8, yRadius: big ? 3 : 0.8).fill()
             }
-            return true
         }
-        image.isTemplate = true
-        return image
     }
 
     /// The menu bar icon: four tiles.
     static var statusIcon: NSImage {
-        let image = NSImage(size: NSSize(width: 18, height: 18), flipped: true) { _ in
+        render(NSSize(width: 18, height: 18)) { _ in
             NSColor.black.setFill()
             let tiles = [
                 CGRect(x: 2, y: 3, width: 8, height: 12),
@@ -243,21 +240,45 @@ enum MenuIcons {
                 CGRect(x: 11, y: 9.5, width: 5, height: 5.5),
             ]
             for tile in tiles { NSBezierPath(roundedRect: tile, xRadius: 1.5, yRadius: 1.5).fill() }
-            return true
         }
-        image.isTemplate = true
-        return image
     }
 
-    private static func image(_ drawInside: @escaping @Sendable (CGRect) -> Void) -> NSImage {
-        let image = NSImage(size: NSSize(width: 20, height: 14), flipped: true) { rect in
+    private static func image(_ drawInside: (CGRect) -> Void) -> NSImage {
+        render(NSSize(width: 20, height: 14)) { rect in
             NSColor.black.set()
             let outer = rect.insetBy(dx: 1.5, dy: 1.5)
             let frame = NSBezierPath(roundedRect: outer, xRadius: 2, yRadius: 2)
             frame.lineWidth = 1
             frame.stroke()
             drawInside(outer.insetBy(dx: 2, dy: 2))
-            return true
+        }
+    }
+
+    /// Draws a template picture straight away, on this thread, at 1×, 2× and 3×.
+    ///
+    /// Not with an NSImage drawing handler: macOS may run that later on another thread
+    /// (for example to draw the menu bar on a second screen), and a Swift 6 app stops
+    /// with a crash when main-thread code runs anywhere else.
+    private static func render(_ size: NSSize, _ draw: (CGRect) -> Void) -> NSImage {
+        let image = NSImage(size: size)
+        for scale in [1, 2, 3] as [CGFloat] {
+            let width = Int((size.width * scale).rounded())
+            let height = Int((size.height * scale).rounded())
+            guard width > 0, height > 0, let context = CGContext(
+                data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0,
+                space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+            ) else { continue }
+            context.translateBy(x: 0, y: CGFloat(height))
+            context.scaleBy(x: scale, y: -scale)   // Points, with y growing downward.
+            NSGraphicsContext.saveGraphicsState()
+            NSGraphicsContext.current = NSGraphicsContext(cgContext: context, flipped: true)
+            draw(CGRect(origin: .zero, size: size))
+            NSGraphicsContext.restoreGraphicsState()
+            if let picture = context.makeImage() {
+                let rep = NSBitmapImageRep(cgImage: picture)
+                rep.size = size
+                image.addRepresentation(rep)
+            }
         }
         image.isTemplate = true
         return image

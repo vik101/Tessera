@@ -72,6 +72,8 @@ final class TestHooks: NSObject {
         let focused = WindowRegistry.shared.focusedWindow()
         let dump: [String: Any] = [
             "trusted": AccessibilityPermission.isTrusted,
+            "version": AppInfo.version,
+            "path": Bundle.main.bundlePath,
             "macEdgeTiling": MacTiling.edgeDragIsOn,
             "displays": Screens.all().map { ["id": $0.stableID, "name": $0.name, "frame": rect($0.frame), "visible": rect($0.visibleFrame)] },
             "focused": focused.map { Int($0.id) } ?? 0,
