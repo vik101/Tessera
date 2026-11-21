@@ -40,6 +40,7 @@ final class Shortcuts {
     }
 
     static func run(_ command: Command) {
+        if TestHooks.shared.isOn { Log.info("Shortcut: \(command.id)") }
         switch command {
         case .snap(let action):
             SnapController.shared.perform(action)

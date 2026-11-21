@@ -170,10 +170,19 @@ VISIBLE = [0, 0, 0, 0]
 
 def snap_check(label, mods, code, expect, tol=1, warn=False, allow_minimum=False):
     press(mods, code)
-    got, _ = front()
+    got, win = front()
     ok = close(got, expect, tol) or (allow_minimum and fits_or_minimum(got, expect, VISIBLE, tol))
     note = "" if close(got, expect, tol) else " (app minimum size)"
-    record(label, ok, f"got {got}, want {expect}{note if ok else ''}", warn=warn)
+    detail = f"got {got}, want {expect}{note if ok else ''}"
+    if not ok:
+        # Find out why: what was in front, what Tessera thought was in front, and a second try.
+        shot("fail-" + "".join(c if c.isalnum() else "-" for c in label))
+        d = dump()
+        detail += f"; front app {windows().get('frontApp')}, front window {win and win['id']}, Tessera's focused window {d.get('focused')}"
+        press(mods, code)
+        again, _ = front()
+        detail += f"; a second press gave {again}"
+    record(label, ok, detail, warn=warn)
     return got
 
 

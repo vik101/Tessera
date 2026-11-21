@@ -493,8 +493,9 @@ final class AutoTiler {
             for (id, frame) in zip(active, plan.frames) {
                 guard let window = windows[id] else { continue }
                 planned[id] = frame
+                let before = mover.moveCount
                 mover.move(window, to: frame, within: display.visibleFrame, slack: Self.slack)
-                moved.append(id)
+                if mover.moveCount != before { moved.append(id) }   // Only check windows that really moved.
             }
         }
         if !moved.isEmpty {
@@ -512,6 +513,7 @@ final class AutoTiler {
         var suspects: [CGWindowID] = []
         for id in ids {
             guard let window = registry.window(id), let target = planned[id], let actual = window.frame else { continue }
+            mover.noteSettled(id, at: actual)
             if var known = minimums[id] {
                 if actual.width < known.width - 4 { known.width = actual.width }
                 if actual.height < known.height - 4 { known.height = actual.height }
@@ -520,6 +522,10 @@ final class AutoTiler {
             // Any overshoot gets a second try (an app rounding up even 2 points would poke into
             // its neighbour). Only a window still well over after that has a real minimum size.
             guard actual.width > target.width + 1 || actual.height > target.height + 1 else { continue }
+            // Already known to be this big: nothing to learn, and asking again would only make it jump.
+            if let known = minimums[id],
+               actual.width <= max(target.width + 1, known.width + 4),
+               actual.height <= max(target.height + 1, known.height + 4) { continue }
             guard confirming else {
                 suspects.append(id)
                 continue

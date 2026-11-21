@@ -37,6 +37,9 @@ final class WindowMover {
         }
         ownMoves[window.id] = Date().addingTimeInterval(0.8)
         moveCount += 1
+        if TestHooks.shared.isOn {
+            Log.info("Move \(window.id) (\(window.bundleID)) from \(window.element.frame.map(NSStringFromRect) ?? "?") to \(NSStringFromRect(frame))")
+        }
         defer { if let got = window.element.frame { lastMove[window.id] = (frame, got) } }
 
         // Apps with "enhanced user interface" on (set by some assistive tools) animate every move. Pause it.
@@ -70,6 +73,13 @@ final class WindowMover {
             return false
         }
         return true
+    }
+
+    /// The window has settled after Tessera's last move: remember where it really ended up.
+    /// (Some apps, Chrome among them, report their new frame a moment late.)
+    func noteSettled(_ id: CGWindowID, at frame: CGRect) {
+        guard let last = lastMove[id] else { return }
+        lastMove[id] = (last.asked, frame)
     }
 
     func forget(_ id: CGWindowID) {
