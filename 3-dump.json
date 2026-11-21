@@ -1,0 +1,209 @@
+{
+  "autoTile" : {
+    "crowded" : [
+
+    ],
+    "currentLayouts" : {
+      "0-0-305419896" : "auto"
+    },
+    "currentSpaces" : [
+      "1:1"
+    ],
+    "desktops" : [
+      {
+        "current" : 1,
+        "display" : "DB32F47A-7705-4CEB-965F-EAF56E961A80",
+        "spaces" : [
+          {
+            "id" : 1,
+            "type" : 0
+          }
+        ]
+      }
+    ],
+    "floating" : [
+
+    ],
+    "minimums" : {
+      "34" : "{460, 252}"
+    },
+    "moves" : 56,
+    "on" : false,
+    "order" : {
+
+    },
+    "pendingLayout" : {
+
+    },
+    "pinned" : {
+
+    },
+    "plans" : {
+
+    },
+    "spaceLayouts" : {
+      "0-0-305419896#1" : "auto"
+    },
+    "spacesSupported" : true
+  },
+  "autoTileSetting" : false,
+  "displays" : [
+    {
+      "frame" : [
+        0,
+        0,
+        1024,
+        768
+      ],
+      "id" : "0-0-305419896",
+      "name" : "Apple Virtual",
+      "visible" : [
+        0,
+        25,
+        1024,
+        684
+      ]
+    }
+  ],
+  "failedShortcuts" : [
+
+  ],
+  "focused" : 34,
+  "gap" : 0,
+  "layouts" : {
+    "0-0-305419896" : "auto",
+    "x-display" : "columns"
+  },
+  "log" : [
+    "4:52:50 PM I Move 31 (com.apple.TextEdit) from {{256, 25}, {256, 683}} to {{460, 25}, {188, 684}}",
+    "4:52:50 PM I Move 29 (com.apple.TextEdit) from {{512, 25}, {256, 683}} to {{648, 25}, {188, 684}}",
+    "4:52:50 PM I Move 30 (com.apple.TextEdit) from {{768, 25}, {256, 683}} to {{836, 25}, {188, 684}}",
+    "4:52:50 PM I Shortcut: layout.rows",
+    "4:52:50 PM I Move 34 (com.apple.finder) from {{-0, 25}, {460, 683}} to {{0, 25}, {1024, 171}}",
+    "4:52:50 PM I Move 31 (com.apple.TextEdit) from {{460, 25}, {188, 683}} to {{0, 196}, {1024, 171}}",
+    "4:52:50 PM I Move 29 (com.apple.TextEdit) from {{648, 25}, {188, 683}} to {{0, 367}, {1024, 171}}",
+    "4:52:50 PM I Move 30 (com.apple.TextEdit) from {{836, 25}, {188, 683}} to {{0, 538}, {1024, 171}}",
+    "4:52:51 PM I Move 34 (com.apple.finder) from {{-0, 25}, {1024, 252}} to {{0, 25}, {1024, 171}}",
+    "4:52:51 PM I Window 34 (com.apple.finder) needs at least 460×252",
+    "4:52:51 PM I Move 31 (com.apple.TextEdit) from {{0, 196}, {1024, 171}} to {{0, 277}, {1024, 144}}",
+    "4:52:51 PM I Move 29 (com.apple.TextEdit) from {{0, 367}, {1024, 171}} to {{0, 421}, {1024, 144}}",
+    "4:52:51 PM I Move 30 (com.apple.TextEdit) from {{0, 538}, {1024, 171}} to {{0, 565}, {1024, 144}}",
+    "4:52:52 PM I Shortcut: layout.grid",
+    "4:52:52 PM I Move 34 (com.apple.finder) from {{-0, 25}, {1024, 252}} to {{0, 25}, {512, 342}}",
+    "4:52:52 PM I Move 31 (com.apple.TextEdit) from {{0, 277}, {1024, 144}} to {{512, 25}, {512, 342}}",
+    "4:52:52 PM I Move 29 (com.apple.TextEdit) from {{0, 421}, {1024, 144}} to {{0, 367}, {512, 342}}",
+    "4:52:52 PM I Move 30 (com.apple.TextEdit) from {{0, 565}, {1024, 144}} to {{512, 367}, {512, 342}}",
+    "4:52:54 PM I Shortcut: layout.mainAndSide",
+    "4:52:54 PM I Move 34 (com.apple.finder) from {{-0, 25}, {512, 342}} to {{0, 25}, {512, 684}}",
+    "4:52:54 PM I Move 31 (com.apple.TextEdit) from {{512, 25}, {512, 342}} to {{512, 25}, {512, 228}}",
+    "4:52:54 PM I Move 29 (com.apple.TextEdit) from {{0, 367}, {512, 341}} to {{512, 253}, {512, 228}}",
+    "4:52:54 PM I Move 30 (com.apple.TextEdit) from {{512, 367}, {512, 341}} to {{512, 481}, {512, 228}}",
+    "4:52:56 PM I Shortcut: layout.auto",
+    "4:52:56 PM I Move 34 (com.apple.finder) from {{-0, 25}, {512, 683}} to {{0, 25}, {512, 342}}",
+    "4:52:56 PM I Move 31 (com.apple.TextEdit) from {{512, 25}, {512, 228}} to {{512, 25}, {512, 342}}",
+    "4:52:56 PM I Move 29 (com.apple.TextEdit) from {{512, 253}, {512, 228}} to {{0, 367}, {512, 342}}",
+    "4:52:56 PM I Move 30 (com.apple.TextEdit) from {{512, 481}, {512, 228}} to {{512, 367}, {512, 342}}",
+    "4:52:58 PM I Shortcut: tile.nextLayout",
+    "4:52:58 PM I Move 34 (com.apple.finder) from {{-0, 25}, {512, 342}} to {{0, 25}, {460, 684}}",
+    "4:52:59 PM I Move 31 (com.apple.TextEdit) from {{512, 25}, {512, 342}} to {{460, 25}, {188, 684}}",
+    "4:52:59 PM I Move 29 (com.apple.TextEdit) from {{0, 367}, {512, 342}} to {{648, 25}, {188, 684}}",
+    "4:52:59 PM I Move 30 (com.apple.TextEdit) from {{512, 367}, {512, 341}} to {{836, 25}, {188, 684}}",
+    "4:53:00 PM I Shortcut: tile.nextLayout",
+    "4:53:00 PM I Move 34 (com.apple.finder) from {{-0, 25}, {460, 683}} to {{0, 25}, {1024, 252}}",
+    "4:53:00 PM I Move 31 (com.apple.TextEdit) from {{460, 25}, {188, 683}} to {{0, 277}, {1024, 144}}",
+    "4:53:00 PM I Move 29 (com.apple.TextEdit) from {{648, 25}, {188, 683}} to {{0, 421}, {1024, 144}}",
+    "4:53:00 PM I Move 30 (com.apple.TextEdit) from {{836, 25}, {188, 683}} to {{0, 565}, {1024, 144}}",
+    "4:53:01 PM I Shortcut: tile.nextLayout",
+    "4:53:01 PM I Move 34 (com.apple.finder) from {{-0, 25}, {1024, 252}} to {{0, 25}, {512, 342}}",
+    "4:53:02 PM I Move 31 (com.apple.TextEdit) from {{0, 277}, {1024, 144}} to {{512, 25}, {512, 342}}",
+    "4:53:02 PM I Move 29 (com.apple.TextEdit) from {{0, 421}, {1024, 144}} to {{0, 367}, {512, 342}}",
+    "4:53:02 PM I Move 30 (com.apple.TextEdit) from {{0, 565}, {1024, 144}} to {{512, 367}, {512, 342}}",
+    "4:53:03 PM I Shortcut: tile.nextLayout",
+    "4:53:03 PM I Move 34 (com.apple.finder) from {{-0, 25}, {512, 342}} to {{0, 25}, {512, 684}}",
+    "4:53:03 PM I Move 31 (com.apple.TextEdit) from {{512, 25}, {512, 342}} to {{512, 25}, {512, 228}}",
+    "4:53:03 PM I Move 29 (com.apple.TextEdit) from {{0, 367}, {512, 341}} to {{512, 253}, {512, 228}}",
+    "4:53:03 PM I Move 30 (com.apple.TextEdit) from {{512, 367}, {512, 341}} to {{512, 481}, {512, 228}}",
+    "4:53:04 PM I Shortcut: tile.nextLayout",
+    "4:53:04 PM I Move 34 (com.apple.finder) from {{-0, 25}, {512, 683}} to {{0, 25}, {512, 342}}",
+    "4:53:04 PM I Move 31 (com.apple.TextEdit) from {{512, 25}, {512, 228}} to {{512, 25}, {512, 342}}",
+    "4:53:05 PM I Move 29 (com.apple.TextEdit) from {{512, 253}, {512, 228}} to {{0, 367}, {512, 342}}",
+    "4:53:05 PM I Move 30 (com.apple.TextEdit) from {{512, 481}, {512, 228}} to {{512, 367}, {512, 342}}",
+    "4:53:07 PM I Shortcut: snap.leftHalf",
+    "4:53:07 PM I Move 34 (com.apple.finder) from {{-0, 25}, {512, 342}} to {{0, 25}, {512, 684}}",
+    "4:53:07 PM I Move 31 (com.apple.TextEdit) from {{512, 25}, {512, 342}} to {{512, 25}, {512, 228}}",
+    "4:53:07 PM I Move 29 (com.apple.TextEdit) from {{0, 367}, {512, 342}} to {{512, 253}, {512, 228}}",
+    "4:53:07 PM I Move 30 (com.apple.TextEdit) from {{512, 367}, {512, 341}} to {{512, 481}, {512, 228}}",
+    "4:53:10 PM I Shortcut: tile.toggleAutoTile",
+    "4:53:12 PM I Test command: dump"
+  ],
+  "macEdgeTiling" : true,
+  "path" : "\/Applications\/Tessera.app",
+  "trusted" : true,
+  "version" : "2.2.0 (5)",
+  "windows" : [
+    {
+      "app" : "com.apple.finder",
+      "frame" : [
+        0,
+        25,
+        512,
+        683
+      ],
+      "fullScreen" : false,
+      "id" : 34,
+      "spaces" : [
+        1
+      ],
+      "standard" : true,
+      "tiled" : false
+    },
+    {
+      "app" : "com.apple.TextEdit",
+      "frame" : [
+        512,
+        25,
+        512,
+        228
+      ],
+      "fullScreen" : false,
+      "id" : 31,
+      "spaces" : [
+        1
+      ],
+      "standard" : true,
+      "tiled" : false
+    },
+    {
+      "app" : "com.apple.TextEdit",
+      "frame" : [
+        512,
+        253,
+        512,
+        228
+      ],
+      "fullScreen" : false,
+      "id" : 29,
+      "spaces" : [
+        1
+      ],
+      "standard" : true,
+      "tiled" : false
+    },
+    {
+      "app" : "com.apple.TextEdit",
+      "frame" : [
+        512,
+        481,
+        512,
+        228
+      ],
+      "fullScreen" : false,
+      "id" : 30,
+      "spaces" : [
+        1
+      ],
+      "standard" : true,
+      "tiled" : false
+    }
+  ]
+}

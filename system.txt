@@ -1,0 +1,6 @@
++ 16:51:30 sw_vers
+ProductName:		macOS
+ProductVersion:		15.8.2
+BuildVersion:		24H232
++ 16:51:30 uname -m
+arm64
