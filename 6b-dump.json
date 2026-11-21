@@ -1,0 +1,257 @@
+{
+  "autoTile" : {
+    "crowded" : [
+
+    ],
+    "currentLayouts" : {
+      "0-0-305419896" : "auto",
+      "32341-2-66" : "grid"
+    },
+    "currentSpaces" : [
+      "1:1",
+      "2:15"
+    ],
+    "desktops" : [
+      {
+        "current" : 1,
+        "display" : "EEBC8EBB-1747-4179-8CB3-7038F756154C",
+        "spaces" : [
+          {
+            "id" : 1,
+            "type" : 0
+          }
+        ]
+      },
+      {
+        "current" : 15,
+        "display" : "7F41CD99-4A16-4DD9-9B21-D28DB810EE73",
+        "spaces" : [
+          {
+            "id" : 15,
+            "type" : 0
+          }
+        ]
+      }
+    ],
+    "floating" : [
+
+    ],
+    "minimums" : {
+
+    },
+    "moves" : 7,
+    "on" : true,
+    "order" : {
+      "0-0-305419896" : [
+        40,
+        38,
+        37
+      ],
+      "32341-2-66" : [
+        39
+      ]
+    },
+    "pendingLayout" : {
+
+    },
+    "pinned" : {
+
+    },
+    "plans" : {
+      "0-0-305419896" : {
+        "area" : [
+          0,
+          31,
+          1920,
+          971
+        ],
+        "fits" : true,
+        "frames" : [
+          [
+            0,
+            31,
+            960,
+            971
+          ],
+          [
+            960,
+            31,
+            960,
+            486
+          ],
+          [
+            960,
+            517,
+            960,
+            485
+          ]
+        ],
+        "ids" : [
+          40,
+          38,
+          37
+        ],
+        "style" : "auto"
+      },
+      "32341-2-66" : {
+        "area" : [
+          1920,
+          31,
+          1920,
+          1049
+        ],
+        "fits" : true,
+        "frames" : [
+          [
+            1920,
+            31,
+            1920,
+            1049
+          ]
+        ],
+        "ids" : [
+          39
+        ],
+        "style" : "grid"
+      }
+    },
+    "spaceLayouts" : {
+      "0-0-305419896#1" : "auto",
+      "32341-2-66#15" : "grid"
+    },
+    "spacesSupported" : true
+  },
+  "autoTileSetting" : true,
+  "displays" : [
+    {
+      "frame" : [
+        0,
+        0,
+        1920,
+        1080
+      ],
+      "id" : "0-0-305419896",
+      "name" : "Apple Virtual",
+      "visible" : [
+        0,
+        31,
+        1920,
+        971
+      ]
+    },
+    {
+      "frame" : [
+        1920,
+        0,
+        1920,
+        1080
+      ],
+      "id" : "32341-2-66",
+      "name" : "Tessera Test Display",
+      "visible" : [
+        1920,
+        31,
+        1920,
+        1049
+      ]
+    }
+  ],
+  "failedShortcuts" : [
+
+  ],
+  "focused" : 39,
+  "gap" : 0,
+  "layouts" : {
+    "32341-2-66" : "grid",
+    "x-display" : "columns"
+  },
+  "log" : [
+    "4:53:41 PM I Test hooks on",
+    "4:53:41 PM I Desktops (Spaces) supported",
+    "4:53:41 PM I Move 40 (com.apple.finder) from {{52, 403}, {920, 436}} to {{0, 31}, {960, 486}}",
+    "4:53:41 PM I Move 39 (com.apple.TextEdit) from {{471, 196}, {656, 422}} to {{960, 31}, {960, 486}}",
+    "4:53:41 PM I Move 38 (com.apple.TextEdit) from {{371, 138}, {656, 422}} to {{0, 517}, {960, 485}}",
+    "4:53:41 PM I Move 37 (com.apple.TextEdit) from {{271, 81}, {656, 422}} to {{960, 517}, {960, 485}}",
+    "4:53:41 PM I Window engine started",
+    "4:53:41 PM I Tessera 2.2.0 (5) started",
+    "4:53:51 PM I Test command: menu",
+    "4:53:56 PM I Shortcut: snap.nextDisplay",
+    "4:53:56 PM I Move 40 (com.apple.finder) from {{0, 31}, {960, 486}} to {{0, 31}, {960, 971}}",
+    "4:53:56 PM I Move 38 (com.apple.TextEdit) from {{0, 517}, {960, 485}} to {{960, 31}, {960, 486}}",
+    "4:53:56 PM I Move 39 (com.apple.TextEdit) from {{960, 31}, {960, 486}} to {{1920, 31}, {1920, 1049}}",
+    "4:53:59 PM I Shortcut: tile.nextLayout",
+    "4:54:01 PM I Shortcut: tile.nextLayout",
+    "4:54:02 PM I Shortcut: tile.nextLayout",
+    "4:54:05 PM I Test command: dump"
+  ],
+  "macEdgeTiling" : true,
+  "path" : "\/Applications\/Tessera.app",
+  "trusted" : true,
+  "version" : "2.2.0 (5)",
+  "windows" : [
+    {
+      "app" : "com.apple.TextEdit",
+      "frame" : [
+        1920,
+        31,
+        1920,
+        1049
+      ],
+      "fullScreen" : false,
+      "id" : 39,
+      "spaces" : [
+        15
+      ],
+      "standard" : true,
+      "tiled" : true
+    },
+    {
+      "app" : "com.apple.finder",
+      "frame" : [
+        0,
+        31,
+        960,
+        970
+      ],
+      "fullScreen" : false,
+      "id" : 40,
+      "spaces" : [
+        1
+      ],
+      "standard" : true,
+      "tiled" : true
+    },
+    {
+      "app" : "com.apple.TextEdit",
+      "frame" : [
+        960,
+        31,
+        960,
+        486
+      ],
+      "fullScreen" : false,
+      "id" : 38,
+      "spaces" : [
+        1
+      ],
+      "standard" : true,
+      "tiled" : true
+    },
+    {
+      "app" : "com.apple.TextEdit",
+      "frame" : [
+        960,
+        517,
+        960,
+        485
+      ],
+      "fullScreen" : false,
+      "id" : 37,
+      "spaces" : [
+        1
+      ],
+      "standard" : true,
+      "tiled" : true
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+PASS 1-fresh (opened): still running
+PASS 2-update-no-permission (opened): still running
+PASS 3-update-with-permission (opened): still running
+PASS 3 after opening the menu: still running
+PASS 3 after opening Settings: still running
+PASS 3 after ⌃⌥2 … ⌃⌥1: still running
+PASS 3 after ⌃⌥L five times: still running
+PASS 3 after ⌃⌥←: still running
+PASS 3 after ⌃⌥A: still running
+PASS 6: a second screen is attached
+PASS 6a-two-screens-fresh (opened): still running
+PASS 6b-two-screens-update (opened): still running
+PASS 6b after opening the menu: still running
+PASS 6b after ⌃⌥⌘→ (next display): still running
+PASS 6b after ⌃⌥L three times: still running
+PASS 6 after the second screen goes away: still running
+PASS 7a-before-clearing (opened): still running
+PASS 7a after clearing its permission while running with it: still running
+PASS 7b-before-clearing-no-permission (opened): still running
+PASS 7b after clearing while waiting for permission: still running
+PASS 8-first-copy (opened): still running
+PASS 8: one copy running after opening a second (/private/tmp/dl/Tessera.app/Contents/MacOS/Tessera)
+PASS 4-with-rectangle (opened): still running
+INFO 5-quarantined: running

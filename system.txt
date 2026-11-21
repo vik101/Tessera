@@ -1,0 +1,6 @@
++ 16:51:29 sw_vers
+ProductName:		macOS
+ProductVersion:		26.7.2
+BuildVersion:		25G332
++ 16:51:29 uname -m
+arm64
