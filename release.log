@@ -1,0 +1,104 @@
+› Compiling (release)…
+0%: Compute target dependency graph
+Building targets in dependency order
+Target dependency graph (4 targets)
+0%: Gather provisioning inputs
+0%: Create build description
+0%: Discovering version info for swiftc
+0%: Discovering version info for clang
+0%: Discovering version info for ld
+Build description signature: 3a2bc86d95825461cfa9db8e49836e90
+
+Build description path: /Users/runner/work/Tessera/Tessera/.build/apple/Intermediates.noindex/XCBuildData/3a2bc86d95825461cfa9db8e49836e90.xcbuilddata
+
+0%: Create build directory $(TARGET_BUILD_DIR)
+0%: Create build directory $(OBJROOT)
+0%: Build stat cache for /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk
+0%: Create build directory $(TARGET_BUILD_DIR)/Release
+0%: Create build directory $(OBJROOT)/EagerLinkingTBDs/Release
+0%: Create build directory $(TARGET_BUILD_DIR)/Release/PackageFrameworks
+0%: Write Tessera.DependencyStaticMetadataFileList
+0%: Write Tessera.DependencyMetadataFileList
+0%: Write Tessera_const_extract_protocols.json (x86_64)
+0%: Write Tessera.SwiftFileList (x86_64)
+0%: Write Tessera.LinkFileList (x86_64)
+0%: Write Tessera-OutputFileMap.json (x86_64)
+17%: Write Tessera_const_extract_protocols.json (arm64)
+17%: Write Tessera.SwiftFileList (arm64)
+17%: Write Tessera.LinkFileList (arm64)
+17%: Write Tessera-OutputFileMap.json (arm64)
+17%: Write TesseraCore_Module.DependencyStaticMetadataFileList
+17%: Write TesseraCore_Module.DependencyMetadataFileList
+17%: Write TesseraCore.modulemap
+17%: Write TesseraCore_Module_const_extract_protocols.json (x86_64)
+17%: Write TesseraCore_Module.SwiftFileList (x86_64)
+17%: Write TesseraCore_Module.SwiftConstValuesFileList
+17%: Write TesseraCore_Module.LinkFileList (x86_64)
+17%: Write TesseraCore_Module-OutputFileMap.json (x86_64)
+17%: Write TesseraCore_Module_const_extract_protocols.json (arm64)
+17%: Write TesseraCore_Module.SwiftFileList (arm64)
+17%: Write TesseraCore_Module.SwiftConstValuesFileList
+17%: Write TesseraCore_Module.LinkFileList (arm64)
+17%: Write TesseraCore_Module-OutputFileMap.json (arm64)
+17%: Copy TesseraCore.modulemap
+46%: Planning Swift module TesseraCore (x86_64)
+46%: Planning Swift module TesseraCore (arm64)
+47%: Compile TesseraCore_Module (x86_64)
+47%: Compiling Geometry.swift, Commands.swift, KeyCombo.swift, SnapAction.swift, SnapCalculator.swift, TilePlanner.swift
+47%: Compiling Geometry.swift, Commands.swift, KeyCombo.swift, SnapAction.swift, SnapCalculator.swift, TilePlanner.swift
+47%: Compile TesseraCore_Module (arm64)
+47%: Compile 6 Swift source files (arm64)
+47%: Compile 6 Swift source files (x86_64)
+51%: Discovering Swift tasks after 'Compiling Geometry.swift, Commands.swift, KeyCombo.swift, SnapAction.swift, SnapCalculator.swift, TilePlanner.swift'
+51%: Unblock downstream dependents of TesseraCore_Module (arm64)
+51%: Copy TesseraCore.swiftmodule (arm64)
+51%: Copy TesseraCore.swiftdoc (arm64)
+51%: Copy TesseraCore.abi.json (arm64)
+51%: Copy TesseraCore.swiftsourceinfo (arm64)
+51%: Discovering Swift tasks after 'Compiling Geometry.swift, Commands.swift, KeyCombo.swift, SnapAction.swift, SnapCalculator.swift, TilePlanner.swift'
+51%: Unblock downstream dependents of TesseraCore_Module (x86_64)
+51%: Merge Objective-C generated interface headers
+51%: Copy TesseraCore.swiftmodule (x86_64)
+51%: Copy TesseraCore.swiftdoc (x86_64)
+51%: Copy TesseraCore.abi.json (x86_64)
+51%: Copy TesseraCore.swiftsourceinfo (x86_64)
+51%: Link TesseraCore_Module.o (x86_64)
+51%: Link TesseraCore_Module.o (arm64)
+51%: Planning Swift module Tessera (x86_64)
+51%: Planning Swift module Tessera (arm64)
+70%: Compiling AXElement.swift, AXObserverHub.swift, Settings.swift, TesseraApp.swift, TestHooks.swift, HotKeyCenter.swift, Shortcuts.swift, DragSnapper.swift, SnapController.swift, Support.swift, AutoTiler.swift, Overlays.swift, PermissionWindow.swift, SettingsWindow.swift, StatusMenu.swift, Screens.swift, Spaces.swift, WindowMover.swift, WindowRegistry.swift
+70%: Compiling AXElement.swift, AXObserverHub.swift, Settings.swift, TesseraApp.swift, TestHooks.swift, HotKeyCenter.swift, Shortcuts.swift, DragSnapper.swift, SnapController.swift, Support.swift, AutoTiler.swift, Overlays.swift, PermissionWindow.swift, SettingsWindow.swift, StatusMenu.swift, Screens.swift, Spaces.swift, WindowMover.swift, WindowRegistry.swift
+71%: Compile Tessera (x86_64)
+71%: Create universal binary TesseraCore_Module.o
+71%: Compile Tessera (arm64)
+71%: Extract app intents metadata
+71%: Compile 19 Swift source files (x86_64)
+71%: Compile 19 Swift source files (arm64)
+2026-11-21 16:50:33.251 appintentsmetadataprocessor[17220:52496] Starting appintentsmetadataprocessor export
+2026-11-21 16:50:33.316 appintentsmetadataprocessor[17220:52496] Extracted no relevant App Intents symbols, skipping writing output
+
+77%: Register execution policy exception for TesseraCore_Module.o
+79%: Discovering Swift tasks after 'Compiling AXElement.swift, AXObserverHub.swift, Settings.swift, TesseraApp.swift, TestHooks.swift, HotKeyCenter.swift, Shortcuts.swift, DragSnapper.swift, SnapController.swift, Support.swift, AutoTiler.swift, Overlays.swift, PermissionWindow.swift, SettingsWindow.swift, StatusMenu.swift, Screens.swift, Spaces.swift, WindowMover.swift, WindowRegistry.swift'
+79%: Unblock downstream dependents of Tessera (arm64)
+79%: Copy Tessera.swiftmodule (arm64)
+79%: Link Tessera (arm64)
+79%: Copy Tessera.swiftdoc (arm64)
+79%: Copy Tessera.abi.json (arm64)
+79%: Copy Tessera.swiftsourceinfo (arm64)
+87%: Discovering Swift tasks after 'Compiling AXElement.swift, AXObserverHub.swift, Settings.swift, TesseraApp.swift, TestHooks.swift, HotKeyCenter.swift, Shortcuts.swift, DragSnapper.swift, SnapController.swift, Support.swift, AutoTiler.swift, Overlays.swift, PermissionWindow.swift, SettingsWindow.swift, StatusMenu.swift, Screens.swift, Spaces.swift, WindowMover.swift, WindowRegistry.swift'
+87%: Unblock downstream dependents of Tessera (x86_64)
+87%: Copy Tessera.swiftmodule (x86_64)
+87%: Link Tessera (x86_64)
+87%: Copy Tessera.swiftdoc (x86_64)
+87%: Copy Tessera.abi.json (x86_64)
+87%: Copy Tessera.swiftsourceinfo (x86_64)
+95%: Create universal binary Tessera
+95%: Generate Tessera.dSYM for Tessera
+98%: Register execution policy exception for Tessera
+100%: Build succeeded
+Build complete!
+› Assembling build/release/Tessera.app
+! No signing certificate found; signing ad-hoc.
+build/release/Tessera.app: replacing existing signature
+✓ Built build/release/Tessera.app
+Architectures in the fat file: build/release/Tessera.app/Contents/MacOS/Tessera are: x86_64 arm64 

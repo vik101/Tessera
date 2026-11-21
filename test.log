@@ -1,0 +1,119 @@
+[0/1] Planning build
+Building for debugging...
+[0/8] /Users/runner/work/Tessera/Tessera/.build/arm64-apple-macosx/debug/TesseraPackageTests.derived/runner.swift
+[1/8] Write sources
+[3/8] Write swift-version--79AA4F9932D1E87A.txt
+[5/9] Emitting module TesseraCoreTests
+[6/9] Compiling TesseraCoreTests SnapTests.swift
+[7/9] Compiling TesseraCoreTests TileTests.swift
+[8/11] Compiling TesseraPackageTests runner.swift
+[9/11] Emitting module TesseraPackageTests
+[9/11] Write Objects.LinkFileList
+[10/11] Linking TesseraPackageTests
+Build complete! (7.28s)
+Test Suite 'All tests' started at 2026-11-21 16:41:29.580.
+Test Suite 'All tests' passed at 2026-11-21 16:41:29.586.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.006) seconds
+◇ Test run started.
+↳ Testing Library Version: 124.4
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite "Snapping" started.
+◇ Suite "Auto-tile layouts" started.
+◇ Suite "Shortcuts" started.
+◇ Suite "Window order" started.
+◇ Test sizeActions() started.
+◇ Suite "Space left by snapped windows" started.
+◇ Test largerAndSmaller() started.
+◇ Test halvesCycleThroughTwoThirdsAndOneThird() started.
+◇ Test quartersMeetWithoutGapsOrOverlap() started.
+◇ Test quartersAndSixths() started.
+◇ Test thirdsOnLandscapeAndPortrait() started.
+◇ Test moveToEdgeKeepsSize() started.
+◇ Test callerHandlesRestoreAndDisplays() started.
+◇ Test everyRegionActionStaysOnScreen() started.
+◇ Test halves() started.
+◇ Test everyStyleKeepsItsShapeWithRealAppSizes(style:) started.
+◇ Test gapsAreEven() started.
+◇ Test windowsThatCannotShrinkGetAnArrangementTheyFit() started.
+◇ Test movingToAnotherDisplayKeepsTheSpot() started.
+◇ Test noGapsWithoutAGapSetting(style:) started.
+◇ Test waterFillGivesNeedsFirst() started.
+◇ Test whenNothingFitsItStillPlacesEveryWindow() started.
+◇ Test mainRatioChangesTheMainWindow() started.
+◇ Test everyWindowGetsItsOwnSpace(style:) started.
+◇ Test partitionsListEverySplit() started.
+◇ Test layoutsCycleBothWays() started.
+◇ Test autoPicksSensibleArrangements() started.
+◇ Test autoAdaptsToTheScreenShape() started.
+◇ Test styles() started.
+◇ Test neighboursMakeRoomForAWindowThatCannotShrink() started.
+◇ Test defaultsMatchRectangleAndNeverClash() started.
+◇ Test gapsLeaveEqualSpaceEverywhere() started.
+◇ Test assigningATakenComboMovesIt() started.
+◇ Test idsRoundTrip() started.
+◇ Test reconcileKeepsOrderAndAppendsNewWindows() started.
+◇ Test promoteAndSwap() started.
+◇ Test aChosenStyleKeepsItsShapeEvenWhenWindowsCannotShrink() started.
+◇ Passing 1 argument style → .rows to everyStyleKeepsItsShapeWithRealAppSizes(style:)
+◇ Passing 1 argument style → .grid to everyStyleKeepsItsShapeWithRealAppSizes(style:)
+◇ Passing 1 argument style → .mainAndSide to everyStyleKeepsItsShapeWithRealAppSizes(style:)
+◇ Passing 1 argument style → .auto to everyStyleKeepsItsShapeWithRealAppSizes(style:)
+◇ Passing 1 argument style → .auto to noGapsWithoutAGapSetting(style:)
+◇ Passing 1 argument style → .columns to everyStyleKeepsItsShapeWithRealAppSizes(style:)
+◇ Passing 1 argument style → .columns to noGapsWithoutAGapSetting(style:)
+◇ Passing 1 argument style → .rows to noGapsWithoutAGapSetting(style:)
+◇ Passing 1 argument style → .grid to noGapsWithoutAGapSetting(style:)
+◇ Passing 1 argument style → .mainAndSide to noGapsWithoutAGapSetting(style:)
+◇ Passing 1 argument style → .auto to everyWindowGetsItsOwnSpace(style:)
+◇ Passing 1 argument style → .columns to everyWindowGetsItsOwnSpace(style:)
+◇ Passing 1 argument style → .rows to everyWindowGetsItsOwnSpace(style:)
+◇ Passing 1 argument style → .grid to everyWindowGetsItsOwnSpace(style:)
+◇ Passing 1 argument style → .mainAndSide to everyWindowGetsItsOwnSpace(style:)
+✔ Test sizeActions() passed after 0.040 seconds.
+✔ Test largerAndSmaller() passed after 0.040 seconds.
+◇ Test twoThirdsLeavesOneThird() started.
+◇ Test gapsCountAsTouchingTheEdge() started.
+◇ Test cornersAndMaximisedWindowsFloatAbove() started.
+◇ Test topHalfLeavesTheBottom() started.
+◇ Test leftHalfLeavesTheRightHalf() started.
+✔ Test halvesCycleThroughTwoThirdsAndOneThird() passed after 0.040 seconds.
+✔ Test quartersAndSixths() passed after 0.041 seconds.
+✔ Test thirdsOnLandscapeAndPortrait() passed after 0.040 seconds.
+✔ Test quartersMeetWithoutGapsOrOverlap() passed after 0.041 seconds.
+✔ Test callerHandlesRestoreAndDisplays() passed after 0.040 seconds.
+✔ Test moveToEdgeKeepsSize() passed after 0.041 seconds.
+✔ Test halves() passed after 0.040 seconds.
+✔ Test gapsAreEven() passed after 0.040 seconds.
+✔ Test everyRegionActionStaysOnScreen() passed after 0.041 seconds.
+✔ Test everyStyleKeepsItsShapeWithRealAppSizes(style:) passed after 0.041 seconds.
+✔ Test windowsThatCannotShrinkGetAnArrangementTheyFit() passed after 0.041 seconds.
+✔ Test movingToAnotherDisplayKeepsTheSpot() passed after 0.041 seconds.
+✔ Test waterFillGivesNeedsFirst() passed after 0.041 seconds.
+✔ Test noGapsWithoutAGapSetting(style:) passed after 0.041 seconds.
+✔ Test whenNothingFitsItStillPlacesEveryWindow() passed after 0.041 seconds.
+✔ Test mainRatioChangesTheMainWindow() passed after 0.041 seconds.
+✔ Test partitionsListEverySplit() passed after 0.040 seconds.
+✔ Test layoutsCycleBothWays() passed after 0.040 seconds.
+✔ Test autoPicksSensibleArrangements() passed after 0.040 seconds.
+✔ Test autoAdaptsToTheScreenShape() passed after 0.040 seconds.
+✔ Test styles() passed after 0.040 seconds.
+✔ Test neighboursMakeRoomForAWindowThatCannotShrink() passed after 0.040 seconds.
+✔ Test gapsLeaveEqualSpaceEverywhere() passed after 0.040 seconds.
+✔ Test assigningATakenComboMovesIt() passed after 0.040 seconds.
+✔ Test idsRoundTrip() passed after 0.040 seconds.
+✔ Test reconcileKeepsOrderAndAppendsNewWindows() passed after 0.040 seconds.
+✔ Test defaultsMatchRectangleAndNeverClash() passed after 0.040 seconds.
+✔ Test promoteAndSwap() passed after 0.040 seconds.
+✔ Test aChosenStyleKeepsItsShapeEvenWhenWindowsCannotShrink() passed after 0.038 seconds.
+✔ Suite "Snapping" passed after 0.042 seconds.
+✔ Test twoThirdsLeavesOneThird() passed after 0.001 seconds.
+✔ Test gapsCountAsTouchingTheEdge() passed after 0.001 seconds.
+✔ Test cornersAndMaximisedWindowsFloatAbove() passed after 0.001 seconds.
+✔ Test topHalfLeavesTheBottom() passed after 0.001 seconds.
+✔ Test leftHalfLeavesTheRightHalf() passed after 0.001 seconds.
+✔ Suite "Shortcuts" passed after 0.042 seconds.
+✔ Suite "Window order" passed after 0.042 seconds.
+✔ Suite "Space left by snapped windows" passed after 0.042 seconds.
+✔ Test everyWindowGetsItsOwnSpace(style:) passed after 0.155 seconds.
+✔ Suite "Auto-tile layouts" passed after 0.156 seconds.
+✔ Test run with 37 tests passed after 0.156 seconds.

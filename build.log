@@ -1,0 +1,35 @@
+Building for debugging...
+[0/7] Write sources
+[2/7] Write Tessera-entitlement.plist
+[3/7] Write swift-version--79AA4F9932D1E87A.txt
+[5/12] Compiling TesseraCore Geometry.swift
+[6/12] Compiling TesseraCore Commands.swift
+[7/12] Emitting module TesseraCore
+[8/12] Compiling TesseraCore KeyCombo.swift
+[9/12] Compiling TesseraCore SnapAction.swift
+[10/14] Compiling TesseraCore SnapCalculator.swift
+[11/14] Compiling TesseraCore TilePlanner.swift
+[12/28] Emitting module Tessera
+[13/28] Compiling Tessera DragSnapper.swift
+[14/28] Compiling Tessera SnapController.swift
+[15/28] Compiling Tessera Support.swift
+[16/28] Compiling Tessera AutoTiler.swift
+[17/28] Compiling Tessera Overlays.swift
+[18/28] Compiling Tessera PermissionWindow.swift
+[19/28] Compiling Tessera AXElement.swift
+[20/28] Compiling Tessera AXObserverHub.swift
+[21/28] Compiling Tessera Settings.swift
+[22/28] Compiling Tessera TesseraApp.swift
+[23/28] Compiling Tessera TestHooks.swift
+[24/28] Compiling Tessera HotKeyCenter.swift
+[25/28] Compiling Tessera Shortcuts.swift
+[26/34] Compiling Tessera SettingsWindow.swift
+[27/34] Compiling Tessera StatusMenu.swift
+[28/34] Compiling Tessera Screens.swift
+[29/34] Compiling Tessera Spaces.swift
+[30/34] Compiling Tessera WindowMover.swift
+[31/34] Compiling Tessera WindowRegistry.swift
+[31/34] Write Objects.LinkFileList
+[32/34] Linking Tessera
+[33/34] Applying Tessera
+Build complete! (27.87s)

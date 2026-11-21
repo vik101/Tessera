@@ -1,0 +1,9 @@
+› Compiling (debug)…
+[0/1] Planning build
+Building for debugging...
+[0/3] Write swift-version--79AA4F9932D1E87A.txt
+Build complete! (0.25s)
+› Assembling build/debug/Tessera.app
+! No signing certificate found; signing ad-hoc.
+build/debug/Tessera.app: replacing existing signature
+✓ Built build/debug/Tessera.app
