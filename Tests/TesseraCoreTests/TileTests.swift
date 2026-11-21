@@ -224,5 +224,8 @@ struct OrderTests {
         #expect(TileOrder.promote(3, in: [1, 2, 3]) == [3, 2, 1])
         #expect(TileOrder.promote(1, in: [1, 2, 3]) == [2, 1, 3])
         #expect(TileOrder.swap(1, 3, in: [1, 2, 3]) == [3, 2, 1])
+        // 9 is on another Space and 8 floats: they keep their places while 3 becomes main.
+        #expect(TileOrder.promote(3, in: [9, 1, 8, 2, 3], among: [1, 2, 3]) == [9, 3, 8, 2, 1])
+        #expect(TileOrder.promote(7, in: [1, 2], among: [1, 2]) == [1, 2])
     }
 }

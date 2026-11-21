@@ -320,7 +320,8 @@ def check_layout(label, style, count=None):
     """After a layout change: right style, right shape, windows really there, no overlaps when they fit."""
     d = settled_dump()
     plan = screen_plan(d)
-    chosen = list(d.get("layouts", {}).values()) or ["auto"]   # nothing chosen yet means Auto
+    # The layout of the desktop on screen now (each desktop has its own).
+    chosen = list(d.get("autoTile", {}).get("currentLayouts", {}).values()) or list(d.get("layouts", {}).values()) or ["auto"]
     record(f"{label}: style is {STYLE_NAMES[style]}", chosen[0] == style and plan is not None and plan["style"] == style,
            f"setting {chosen}, arranged as {plan and plan['style']}")
     if not plan:
@@ -405,6 +406,197 @@ def hide(bundle):
     activate(bundle)
     keys("press", "cmd", "0x04")
     time.sleep(0.8)
+
+
+# ---------- the latest command wins ----------
+
+def plan_ids(d):
+    return (screen_plan(d) or {}).get("ids", [])
+
+
+def latest_command_wins(F):
+    """Maximise one window in a layout, then pick a layout: every window joins it."""
+    choose("grid", "Grid before maximising", 7)
+    activate("com.apple.TextEdit")
+    d = dump()
+    te = d["focused"]
+    slot = plan_ids(d).index(te) if te in plan_ids(d) else -1
+    press(CO, K["ret"], 1.5)
+    d = dump()
+    got = frame_of(te)
+    record("Maximise while tiling: TextEdit fills the screen", got is not None and close(got, F(0, 0, 1, 1), 2), f"got {got}")
+    record("Maximise while tiling: it stays there (pinned)", str(te) in d["autoTile"]["pinned"], f"pinned {list(d['autoTile']['pinned'])}")
+    moves = d["autoTile"]["moves"]
+    time.sleep(2.5)
+    later = frame_of(te)
+    record("Maximised window is left alone while you wait",
+           dump()["autoTile"]["moves"] == moves and later is not None and got is not None and close(later, got, 2), f"{got} → {later}")
+    d, _ = choose("rows", "⌃⌥3 after maximising: all 7 in Rows", 7, picture="latest-command-rows")
+    record("⌃⌥3 after maximising: nothing is pinned", not d["autoTile"]["pinned"], f"pinned {list(d['autoTile']['pinned'])}")
+    ids = plan_ids(d)
+    record("The maximised window goes back to its old place", te in ids and ids.index(te) == slot,
+           f"was {slot}, now {ids.index(te) if te in ids else None}")
+
+    # Retile also puts a maximised window back.
+    activate("com.apple.TextEdit")
+    press(CO, K["ret"], 1.5)
+    post("run:tile.retile", 0.5)
+    d, _ = check_layout("Retile after maximising: all 7 in Rows", "rows", 7)
+    record("Retile after maximising: nothing is pinned", not d["autoTile"]["pinned"])
+
+    # macOS "Fill" (Window menu) counts as maximise: it wins until the next layout command.
+    activate("com.apple.TextEdit")
+    out = keys("app-menu", "com.apple.TextEdit", "Window", "Fill").strip()
+    print(out, flush=True)
+    if out.startswith("pressed"):
+        time.sleep(2.0)
+        d = dump()
+        got = frame_of(te)
+        record("macOS Fill while tiling: TextEdit keeps the whole screen", got is not None and close(got, F(0, 0, 1, 1), 24)
+               and str(te) in d["autoTile"]["pinned"], f"got {got}, pinned {list(d['autoTile']['pinned'])}")
+        d, _ = choose("columns", "⌃⌥2 after macOS Fill: all 7 in Columns", 7)
+        record("⌃⌥2 after macOS Fill: nothing is pinned", not d["autoTile"]["pinned"])
+    else:
+        record("macOS Fill is in TextEdit's Window menu", False, out, warn=True)
+
+    # macOS full screen (its own desktop): picking a layout brings the window back into it.
+    activate("com.apple.TextEdit")
+    out = keys("app-menu", "com.apple.TextEdit", "View", "Enter Full Screen").strip()
+    if not out.startswith("pressed"):
+        out = keys("app-menu", "com.apple.TextEdit", "Window", "Enter Full Screen|Full Screen").strip()
+    print(out, flush=True)
+    time.sleep(3.0)
+    d = dump()
+    full = [w["id"] for w in d["windows"] if w.get("fullScreen")]
+    record("macOS full screen: TextEdit went full screen", te in full, f"{out}; full screen: {full}", warn=te not in full)
+    if te in full:
+        shot("full-screen")
+        press(CO, DIGIT["grid"], 0.5)
+        time.sleep(3.0)
+        d, _ = check_layout("⌃⌥4 from macOS full screen: TextEdit is back, all 7 in Grid", "grid", 7)
+        record("⌃⌥4 from macOS full screen: TextEdit left full screen",
+               te not in [w["id"] for w in d["windows"] if w.get("fullScreen")] and te in plan_ids(d))
+
+
+# ---------- desktops (Spaces) ----------
+
+def desktops(d):
+    """The desktops of the first screen: (current id, [ids of normal desktops])."""
+    lists = d.get("autoTile", {}).get("desktops") or []
+    if not lists:
+        return None, []
+    first = lists[0]
+    return first.get("current"), [s["id"] for s in first.get("spaces", []) if s.get("type") == 0]
+
+
+def go_to_desktop(number, label):
+    """⌃→ / ⌃← like a person (falls back to Mission Control). Returns the desktop now on screen."""
+    before, spaces = desktops(dump())
+    if len(spaces) < number:
+        return before
+    want = spaces[number - 1]
+    if before == want:
+        return before
+    if before in spaces:
+        arrow = K["right"] if spaces.index(before) < number - 1 else K["left"]
+        keys("press", "ctrl,fn,num", arrow)
+    for _ in range(15):
+        time.sleep(0.2)
+        now, _ = desktops(dump())
+        if now == want:
+            return now
+    print(f"{label}: ⌃→/⌃← did not switch, using Mission Control:", keys("space-go", str(number)).strip(), flush=True)
+    time.sleep(1.0)
+    now, _ = desktops(dump())
+    return now
+
+
+def watch_for_jumps(settled, seconds=2.0):
+    """Looks at the windows ten times a second while a switch happens. Returns any that moved."""
+    jumps = []
+    end = time.time() + seconds
+    while time.time() < end:
+        for w in windows()["windows"]:
+            want = settled.get(w["id"])
+            got = [round(v) for v in w["frame"]]
+            if want and not close(got, want, 2):
+                jumps.append(f"{w['id']} at {got}, was {want}")
+        time.sleep(0.1)
+    return jumps
+
+
+def desktops_never_jump():
+    d = dump()
+    record("Tessera can see desktops (Spaces)", d["autoTile"].get("spacesSupported") is True and desktops(d)[0] is not None,
+           f"supported {d['autoTile'].get('spacesSupported')}, desktops {d['autoTile'].get('desktops')}")
+    choose("columns", "Desktop 1: Columns", 7)
+    home, spaces = desktops(dump())
+    if len(spaces) < 2:
+        print(keys("space-add").strip()[:3000], flush=True)
+        time.sleep(1.5)
+        home, spaces = desktops(dump())
+    record("Test helper adds a second desktop", len(spaces) >= 2, f"desktops {spaces}")
+    if len(spaces) < 2:
+        return
+    one = settled_dump()
+    first_ids = plan_ids(one)
+    settled = {i: frame_of(i) for i in first_ids}
+
+    # Desktop 2: two new TextEdit windows, then Rows there.
+    now = go_to_desktop(2, "to desktop 2")
+    record("Switch to desktop 2", now == spaces[1], f"on {now}, desktop 2 is {spaces[1]}")
+    if now != spaces[1]:
+        return
+    shot("desktop-2-empty")
+    # New windows open on the desktop you're looking at. File › New works without bringing
+    # TextEdit forward (which could switch back to desktop 1, where its other windows are).
+    for _ in range(2):
+        print(keys("app-menu", "com.apple.TextEdit", "File", "New").strip(), flush=True)
+        time.sleep(1.0)
+    still, _ = desktops(dump())
+    record("New windows open on desktop 2", still == spaces[1], f"on {still}")
+    d, _ = check_layout("Desktop 2: its two new windows tile, Columns like desktop 1", "columns", 2)
+    second_ids = plan_ids(d)
+    record("Desktop 2 tiles only its own windows", len(second_ids) == 2 and not set(second_ids) & set(first_ids),
+           f"desktop 2 {second_ids}, desktop 1 {first_ids}")
+    choose("rows", "Desktop 2: ⌃⌥3 Rows", 2, picture="desktop-2-rows")
+    two = settled_dump()
+    settled.update({i: frame_of(i) for i in plan_ids(two)})
+
+    # Back on desktop 1: still Columns, nothing moved.
+    moves = dump()["autoTile"]["moves"]
+    go_to_desktop(1, "back to desktop 1")
+    jumps = watch_for_jumps(settled)
+    d, _ = check_layout("Desktop 1 keeps Columns after desktop 2 chose Rows", "columns", 7)
+    record("Back to desktop 1: no window jumped", not jumps, "; ".join(jumps[:4]))
+
+    # Swipe back and forth: Tessera never moves a window.
+    for round_ in range(4):
+        go_to_desktop(2, f"round {round_ + 1} to 2")
+        jumps += watch_for_jumps(settled, 1.2)
+        go_to_desktop(1, f"round {round_ + 1} to 1")
+        jumps += watch_for_jumps(settled, 1.2)
+    d = settled_dump()
+    record("Switching desktops 8 more times: Tessera moved nothing", d["autoTile"]["moves"] == moves,
+           f"{d['autoTile']['moves'] - moves} moves")
+    record("Switching desktops 8 more times: no window jumped", not jumps, "; ".join(jumps[:4]))
+    check_layout("Desktop 1 is still Columns", "columns", 7)
+
+    # Mission Control open and shut: nothing moves either.
+    moves = d["autoTile"]["moves"]
+    keys("space-tree")
+    time.sleep(1.5)
+    d = settled_dump()
+    record("Mission Control open and shut: Tessera moved nothing", d["autoTile"]["moves"] == moves,
+           f"{d['autoTile']['moves'] - moves} moves")
+
+    # Desktop 2 kept Rows. Close its windows there, then come home.
+    go_to_desktop(2, "to desktop 2 again")
+    check_layout("Desktop 2 still Rows", "rows", 2)
+    print(keys("close-untitled", "com.apple.TextEdit").strip(), flush=True)
+    time.sleep(1.0)
+    go_to_desktop(1, "home")
+    check_layout("Home again: Columns with 7 windows", "columns", 7)
 
 
 # ---------- the tests ----------
@@ -605,8 +797,8 @@ def main():
     # Swap with main.
     activate("com.apple.Safari")
     press(CO, K["m"], 1.2)
-    d = dump()
-    order = list(d["autoTile"]["order"].values())[0] if d["autoTile"]["order"] else []
+    d = settled_dump()
+    order = (screen_plan(d) or {}).get("ids", [])
     record("⌃⌥M puts Safari in the main spot", bool(order) and order[0] == d["focused"], f"order {order}, focused {d['focused']}")
 
     # Snap by hand while tiling: Chrome takes the left half, the rest share the right half.
@@ -647,6 +839,9 @@ def main():
         na, nb = frame_of(a), frame_of(b)
         record("Drag a tile onto another: they swap", centre_in(na, fb) and centre_in(nb, fa),
                f"a {na} was {fa}; b {nb} was {fb}")
+
+    latest_command_wins(F)
+    desktops_never_jump()
 
     # Switching off, then back on: the layout is remembered.
     choose("mainAndSide", "Main + Side before switching off", 7)

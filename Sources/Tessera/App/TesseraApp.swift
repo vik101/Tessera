@@ -52,6 +52,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         DragSnapper.shared.start()
         AutoTiler.shared.start()
         Log.info("Window engine started")
+        // Tessera has no window of its own, so say hello: otherwise opening it looks like nothing happened.
+        if !TestHooks.shared.isOn {
+            after(0.6) {
+                Notice.shared.show(Settings.shared.autoTile
+                    ? "Tessera is running · auto-tile is on"
+                    : "Tessera is running · it lives in the menu bar")
+            }
+        }
     }
 
     /// If another copy of Tessera is running (say, the old version you just replaced),

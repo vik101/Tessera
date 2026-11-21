@@ -361,6 +361,15 @@ public enum TileOrder {
         return result
     }
 
+    /// Like `promote`, but only among the windows being tiled now. The others (on another
+    /// Space, floating, snapped by hand) keep their places in the order.
+    public static func promote<ID: Hashable>(_ id: ID, in order: [ID], among active: Set<ID>) -> [ID] {
+        let tiled = order.filter { active.contains($0) }
+        guard tiled.contains(id) else { return order }
+        var reordered = promote(id, in: tiled).makeIterator()
+        return order.map { active.contains($0) ? reordered.next()! : $0 }
+    }
+
     public static func swap<ID: Hashable>(_ a: ID, _ b: ID, in order: [ID]) -> [ID] {
         guard let i = order.firstIndex(of: a), let j = order.firstIndex(of: b) else { return order }
         var result = order

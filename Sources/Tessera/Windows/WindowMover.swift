@@ -7,6 +7,10 @@ final class WindowMover {
     static let shared = WindowMover()
 
     private var ownMoves: [CGWindowID: Date] = [:]
+    /// The last frame asked for each window, and where the window ended up.
+    private var lastMove: [CGWindowID: (asked: CGRect, got: CGRect)] = [:]
+    /// How many times Tessera has moved a window (the tests check nothing moves when it shouldn't).
+    private(set) var moveCount = 0
 
     /// Puts a window at `frame` (Accessibility coordinates). Skips windows already there.
     ///
@@ -15,15 +19,25 @@ final class WindowMover {
     ///
     /// - Parameter slack: a window this many points smaller than `frame` (at the right spot) counts
     ///   as already there. Apps like Terminal size themselves in whole characters.
+    /// - Parameter force: ask again even if the window is still where the same request left it.
     @discardableResult
-    func move(_ window: TrackedWindow, to frame: CGRect, within visible: CGRect? = nil, slack: CGFloat = 0) -> CGRect? {
+    func move(_ window: TrackedWindow, to frame: CGRect, within visible: CGRect? = nil, slack: CGFloat = 0,
+              force: Bool = false) -> CGRect? {
         if let current = window.element.frame {
             let placed = abs(current.minX - frame.minX) <= 1 && abs(current.minY - frame.minY) <= 1
             let wide = current.width <= frame.width + 1 && current.width >= frame.width - max(slack, 1)
             let tall = current.height <= frame.height + 1 && current.height >= frame.height - max(slack, 1)
             if placed && wide && tall { return current }
+            // Same request as last time, and the window hasn't moved since: asking again would only
+            // make a window that can't get that small jump and come back.
+            if !force, let last = lastMove[window.id], last.asked.isClose(to: frame, tolerance: 1),
+               current.isClose(to: last.got, tolerance: 1) {
+                return current
+            }
         }
         ownMoves[window.id] = Date().addingTimeInterval(0.8)
+        moveCount += 1
+        defer { if let got = window.element.frame { lastMove[window.id] = (frame, got) } }
 
         // Apps with "enhanced user interface" on (set by some assistive tools) animate every move. Pause it.
         let app = AXElement.application(window.pid)
@@ -58,7 +72,10 @@ final class WindowMover {
         return true
     }
 
-    func forget(_ id: CGWindowID) { ownMoves.removeValue(forKey: id) }
+    func forget(_ id: CGWindowID) {
+        ownMoves.removeValue(forKey: id)
+        lastMove.removeValue(forKey: id)
+    }
 }
 
 extension TrackedWindow {

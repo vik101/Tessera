@@ -47,7 +47,7 @@ final class TestHooks: NSObject {
                 case "gap": settings.gap = Int(parts[1]) ?? 0
                 case "layout":
                     if let style = LayoutStyle(rawValue: parts[1]) {
-                        for display in Screens.all() { settings.layouts[display.stableID] = style }
+                        for display in Screens.all() { AutoTiler.shared.setLayout(style, for: display, notify: false) }
                     }
                 default: break
                 }
@@ -67,6 +67,8 @@ final class TestHooks: NSObject {
                 "frame": rect(frame),
                 "tiled": AutoTiler.shared.isTiled(window),
                 "standard": window.isStandard,
+                "fullScreen": window.element.isFullScreen,
+                "spaces": Spaces.spaces(of: info.id).sorted().map { NSNumber(value: $0) },
             ])
         }
         let focused = WindowRegistry.shared.focusedWindow()

@@ -26,6 +26,11 @@ if [[ "${CI:-}" == "true" ]]; then
   done
 fi
 defaults delete "$BUNDLE_ID" >/dev/null 2>&1
+# CI only: bringing an app forward must not jump to another desktop (the desktop tests need this).
+if [[ "${CI:-}" == "true" ]]; then
+  defaults write com.apple.dock workspaces-auto-swoosh -bool NO
+  killall Dock; sleep 3
+fi
 # Chrome on the runner is quarantined, so macOS would ask before opening it.
 [[ "${CI:-}" == "true" ]] && sudo xattr -dr com.apple.quarantine "/Applications/Google Chrome.app"
 limit 20 /tmp/keys resolution > "$OUT/resolution.txt" 2>&1
@@ -50,7 +55,7 @@ limit 30 open "$APP"
 sleep 6
 screencapture -x "$OUT/0-start.png"
 
-limit 1000 python3 scripts/ci/check.py "$OUT" 2>&1 | tee "$OUT/check.log"
+limit 1600 python3 scripts/ci/check.py "$OUT" 2>&1 | tee "$OUT/check.log"
 status=${PIPESTATUS[0]}
 
 limit 90 log show --last 10m --info --style compact --predicate "subsystem == \"$BUNDLE_ID\"" > "$OUT/tessera.log" 2>&1

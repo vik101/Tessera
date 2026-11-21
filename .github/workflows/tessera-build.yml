@@ -27,7 +27,7 @@ concurrency:
 jobs:
   build:
     runs-on: macos-15
-    timeout-minutes: 60
+    timeout-minutes: 75
     steps:
       - uses: actions/checkout@v4
 
@@ -60,7 +60,7 @@ jobs:
         id: smoke
         if: steps.app.outcome == 'success'
         continue-on-error: true
-        timeout-minutes: 22
+        timeout-minutes: 32
         run: ./scripts/smoke-test.sh build/debug/Tessera.app
 
       - name: Universal release build
@@ -113,9 +113,9 @@ jobs:
           git push -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" tessera-ci
 
   latest-xcode:
-    # The newest macOS image, to catch problems with the newest Swift.
+    # The newest macOS (Tahoe) and Swift: build, unit tests, and the full real-window test.
     runs-on: macos-26
-    timeout-minutes: 30
+    timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
       - name: Build and test
@@ -126,12 +126,27 @@ jobs:
           { sw_vers; xcodebuild -version; swift --version; } > ci-latest/toolchain.txt 2>&1
           swift build 2>&1 | tee ci-latest/build.log
           swift test 2>&1 | tee ci-latest/test.log
+      - name: Run against real windows on Tahoe
+        id: smoke
+        if: steps.check.outcome == 'success'
+        continue-on-error: true
+        timeout-minutes: 35
+        run: |
+          ./scripts/build-app.sh debug 2>&1 | tee ci-latest/app.log
+          ./scripts/smoke-test.sh build/debug/Tessera.app
       - name: Publish results
-        if: always()
+        if: ${{ !cancelled() }}
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          { echo "commit: ${GITHUB_SHA}"; echo "latest: ${{ steps.check.outcome }}"; } > ci-latest/summary.txt
+          mkdir -p ci-latest/smoke
+          cp -R ci-results/. ci-latest/smoke/ 2>/dev/null || true
+          {
+            echo "commit: ${GITHUB_SHA}"
+            echo "latest: ${{ steps.check.outcome }}"
+            echo "smoke: ${{ steps.smoke.outcome }}"
+            echo "checks: $(head -1 ci-latest/smoke/results.txt 2>/dev/null || echo none)"
+          } > ci-latest/summary.txt
           cd ci-latest
           git init -q -b tessera-ci-latest
           git config user.name "Tessera CI"

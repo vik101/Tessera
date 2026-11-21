@@ -79,7 +79,7 @@ final class StatusMenu: NSObject, NSMenuDelegate {
         menu.addItem(auto)
 
         let screen = tiler.currentLayoutScreen
-        let current = screen.map { settings.layout(for: $0.stableID) } ?? .auto
+        let current = screen.map { tiler.layout(for: $0) } ?? .auto
         if let screen, Screens.all().count > 1 {
             let header = NSMenuItem(title: "Layout for \(screen.name)", action: nil, keyEquivalent: "")
             header.isEnabled = false

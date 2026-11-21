@@ -72,7 +72,7 @@ Drag a snapped window away and it gets its old size back.
 
 ## Auto-tile
 
-Auto-tile keeps every normal window on a screen arranged. Windows never overlap, and none is ever hidden. Each screen has its own layout style.
+Auto-tile keeps every normal window on a screen arranged. Windows never overlap, and none is ever hidden. Each desktop on each screen has its own layout style.
 
 | Style | What it does |
 | --- | --- |
@@ -92,9 +92,19 @@ How Auto chooses: it tries every grid, plus columns, rows and main + side. It sc
 
 - **New windows** join at the end. Closed windows leave a space that the rest fill.
 - **Drag** one tile onto another to swap them. Drag a tile to another screen to move it there.
-- **Snap a window by hand** (say ⌃⌥←) and it keeps that spot. The other windows tile in the rest of the screen. Press **⌃⌥⌫** (Restore) to put it back.
-- **Float** a window with ⌃⌥W. Tessera then leaves it where you put it.
+- **Snap or maximise a window by hand** (⌃⌥←, ⌃⌥↩, or macOS **Window › Fill**) and it keeps that spot. The other windows tile in the rest of the screen. Press **⌃⌥⌫** (Restore) to put it back.
+- **Float** a window with ⌃⌥W. Tessera then leaves it where you put it, even when you change layout.
 - **Ignore an app** from the menu (**Ignore Safari**, for example). Tessera won't snap or tile it.
+
+**The latest command wins.** Picking a layout (⌃⌥1–5, ⌃⌥L, the menu) or **Retile** puts every window on that desktop into it. A window you snapped or maximised joins again, in its old place. A window in macOS full screen leaves full screen and joins too. Only floating windows (⌃⌥W) stay out.
+
+```mermaid
+flowchart LR
+    A["Grid<br/>4 windows"] -- "⌃⌥↩ on one" --> B["That window fills the screen<br/>the other 3 tile behind it"]
+    B -- "⌃⌥3 Rows" --> C["All 4 in Rows<br/>the big one back in its old place"]
+```
+
+**Desktops (Spaces).** Only windows on the desktop you can see take part. Swiping to another desktop never moves a window, so nothing jumps. Each desktop keeps its own layout. A desktop Tessera hasn't seen yet starts with the layout you picked last. A window set to show on every desktop is left alone.
 
 ## Settings
 
@@ -121,6 +131,7 @@ flowchart TB
         SNAP --> MOVE["WindowMover"]
         TILE --> MOVE
         REG["WindowRegistry<br/>watches apps and windows"] --> TILE
+        SPC["Spaces<br/>which desktop each screen shows"] --> TILE
     end
     subgraph Core["TesseraCore (pure maths, tested)"]
         CALC["SnapCalculator<br/>where a snap goes"]
@@ -142,10 +153,20 @@ All the maths lives in **TesseraCore**, which has no AppKit. That is where almos
 | `Sources/TesseraCore/Shortcuts` | Key combos, commands, and the user's shortcut set |
 | `Sources/Tessera/Snapping` | Keyboard and mouse snapping |
 | `Sources/Tessera/Tiling` | `AutoTiler`: decides which windows to tile and when |
-| `Sources/Tessera/Windows` | Window tracking, screens, moving windows |
+| `Sources/Tessera/Windows` | Window tracking, screens, desktops (`Spaces.swift`), moving windows |
 | `Sources/Tessera/UI` | Menu, Settings, permission window, overlays |
 | `Tests/TesseraCoreTests` | Unit tests for every snap and layout |
 | `scripts/` | Build, release, and the real-Mac test (`smoke-test.sh`, `ci/check.py`) |
+
+### How auto-tile stays still
+
+A tiler that moves windows when nothing changed feels broken. Three rules in `AutoTiler` and `WindowMover` stop that:
+
+1. **Only the desktop on screen counts.** During a swipe, windows from two desktops are on screen at once. `Spaces` asks macOS which desktop each window lives on, and the other desktop's windows are left out. While a swipe is still under way, Tessera waits.
+2. **A change must be seen twice.** The half-second check acts only when it sees the same new set of windows two times in a row. Brief in-between states never cause a move.
+3. **Never ask twice for the same thing.** If a window can't get as small as its tile, `WindowMover` remembers where it ended up. Asking again would only make it jump and come back, so it doesn't.
+
+macOS has no public way to read desktops. `Spaces.swift` uses the window server's own functions, like yabai and Amethyst do. If a future macOS removes them, Tessera still works, and rule 2 keeps it calm.
 
 ### Build and test
 
@@ -174,15 +195,17 @@ Add a test in `Tests/TesseraCoreTests` with each change. The `everyWindowGetsIts
 
 ### Testing on a real Mac
 
-`.github/workflows/tessera-build.yml` runs on GitHub's Macs for every push. It builds, runs the unit tests, then `scripts/smoke-test.sh` opens TextEdit, Finder, Safari, Chrome and Terminal on a 1920×1080 screen and presses the real shortcuts. `scripts/ci/check.py` makes about 400 checks:
+`.github/workflows/tessera-build.yml` runs on GitHub's Macs for every push, on macOS 15 and macOS 26 (Tahoe). It builds, runs the unit tests, then `scripts/smoke-test.sh` opens TextEdit, Finder, Safari, Chrome and Terminal on a 1920×1080 screen and presses the real shortcuts. `scripts/ci/check.py` makes about 470 checks:
 
 - Every snap: each window's exact position against what it should be, and drags to every edge.
 - Every layout: picked with ⌃⌥1–5, two full rounds of ⌃⌥L, back again with ⌃⌥⇧L, and clicked in the menu (through Accessibility, as a person would). Each time it checks the layout really has that shape (Columns are side by side and full height, and so on), the windows are where planned, nothing overlaps when it fits, and the second round matches the first.
 - With 7, 3 and 1 windows, and while windows open, close, hide and minimise.
+- The latest command wins: maximise (Tessera's, and macOS Fill and full screen), then a layout. Every window must join it.
+- Desktops: it adds a second desktop, gives it its own layout, then swipes back and forth. It watches every window ten times a second, and fails if any moves.
 
-Results and screenshots go to the `tessera-ci` branch.
+Results and screenshots go to the `tessera-ci` branch (`tessera-ci-latest` for Tahoe).
 
-It can't test two screens, because GitHub's Macs have one. So Next/Previous Display, a layout per screen, and dragging between screens have not yet been checked on a real Mac.
+Two screens: `launch-test.yml` adds a virtual second screen and checks Tessera starts, its menu opens and its keys work. The full layout checks run on one screen.
 
 The test talks to Tessera through a hidden switch that is off by default:
 `defaults write com.vikram.Tessera TesseraTestHooks -bool YES`.
@@ -196,4 +219,5 @@ The test talks to Tessera through a hidden switch that is off by default:
 | Nothing moves after an update | Open the menu › **Allow Accessibility Access…** › **Clear the Old Entry**, then turn Tessera on again. |
 | A window won't shrink into its tile | Some apps have a minimum size. Tessera learns it and picks a layout it fits. If none fits, it stays as small as the app allows. |
 | Auto-tile grabs a window you want free | Float it (⌃⌥W) or ignore its app from the menu. |
+| One window stays put when you change layout | It is floating. Press ⌃⌥W on it to tile it again. |
 | See what Tessera is doing | Console app, filter by `com.vikram.Tessera`. |

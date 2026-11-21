@@ -125,8 +125,8 @@ struct SettingsView: View {
 
     private func layoutBinding(_ display: DisplayInfo) -> Binding<LayoutStyle> {
         Binding(
-            get: { settings.layout(for: display.stableID) },
-            set: { settings.layouts[display.stableID] = $0 }
+            get: { AutoTiler.shared.layout(for: display) },
+            set: { AutoTiler.shared.setLayout($0, for: display, notify: false) }
         )
     }
 

@@ -56,11 +56,7 @@ final class Shortcuts {
         case .tile(.toggleFloat):
             AutoTiler.shared.toggleFloat()
         case .tile(.retile):
-            if AutoTiler.shared.isOn {
-                AutoTiler.shared.retile()
-            } else {
-                AutoTiler.shared.toggle()
-            }
+            AutoTiler.shared.retileCommand()
         }
     }
 }

@@ -3,9 +3,12 @@ import TesseraCore
 
 /// Auto-tile: keeps every normal window on each screen arranged, with no overlaps and none hidden.
 ///
-/// - Each screen has its own layout style (Auto, Columns, Rows, Grid, Main + Side).
-/// - A window you snap by hand is "pinned": it keeps its spot and the others fill the rest.
-/// - A "floating" window is left alone until you tile it again.
+/// - Each desktop (Space) on each screen has its own layout style (Auto, Columns, Rows, Grid, Main + Side).
+/// - Only windows on the desktop a screen is showing take part. Windows on other desktops are never
+///   moved, so swiping between desktops never makes windows jump.
+/// - The latest command wins. A window you snap or maximise by hand is "pinned" and keeps that spot;
+///   picking a layout afterwards puts it back into the layout, in its old place.
+/// - A "floating" window (⌃⌥W) is left alone until you tile it again, even when you change layout.
 @MainActor
 final class AutoTiler {
     static let shared = AutoTiler()
@@ -14,8 +17,12 @@ final class AutoTiler {
     private let mover = WindowMover.shared
     private let settings = Settings.shared
 
-    /// Tiled windows per screen (by screen id), main window first. May include windows on other Spaces.
+    /// Windows per screen (by screen id), main window first. Includes windows on other desktops,
+    /// floating and pinned ones, so each keeps its place for when it takes part again.
     private var order: [String: [CGWindowID]] = [:]
+    /// The layout of each desktop, by `layoutKey`. A desktop gets the screen's layout the first time
+    /// Tessera sees it, then keeps its own.
+    private var spaceLayouts: [String: LayoutStyle] = [:]
     /// The screen each tiled window belongs to.
     private var home: [CGWindowID: String] = [:]
     private var floating: Set<CGWindowID> = []
@@ -45,7 +52,19 @@ final class AutoTiler {
 
     private var running = false
     private var pendingAfterMouse = false
+    /// The windows that took part in the last arrangement.
     private var lastSeen: Set<CGWindowID> = []
+    /// A different set of windows seen by the watchdog, waiting to be seen once more before Tessera acts.
+    private var candidate: Set<CGWindowID>?
+    /// No arranging until then: macOS is still animating a switch between desktops.
+    private var quietUntil = Date.distantPast
+    /// A layout picked while a window was in macOS full screen, by screen. It applies to the
+    /// desktop that window goes back to.
+    private var pendingLayout: [String: (window: CGWindowID, style: LayoutStyle, at: Date)] = [:]
+    /// When windows from a desktop the screen isn't showing were first seen on screen.
+    private var switchingSince: Date?
+    /// The latest move or resize by something else, per window: only the last one counts.
+    private var appMoveTicket: [CGWindowID: Int] = [:]
     private let debouncer = Debouncer(delay: 0.12)
     private let watchdog = RepeatingTimer()
 
@@ -63,15 +82,23 @@ final class AutoTiler {
         ) { _ in MainActor.assumeIsolated { AutoTiler.shared.scheduleRetile(delay: 0.6) } }
         NSWorkspace.shared.notificationCenter.addObserver(
             forName: NSWorkspace.activeSpaceDidChangeNotification, object: nil, queue: .main
-        ) { _ in MainActor.assumeIsolated { AutoTiler.shared.scheduleRetile(delay: 0.3) } }
+        ) { _ in MainActor.assumeIsolated { AutoTiler.shared.spaceChanged() } }
+        Log.info(Spaces.isAvailable ? "Desktops (Spaces) supported" : "Desktops (Spaces) unknown: waiting for the screen to settle instead")
         settingsChanged()
+    }
+
+    /// You switched desktop. Let the animation finish, then arrange the new desktop once.
+    private func spaceChanged() {
+        quietUntil = Date().addingTimeInterval(0.5)
+        candidate = nil
+        scheduleRetile(delay: 0.55)
     }
 
     private func settingsChanged() {
         if isOn && !running {
             running = true
-            // Check once a second for windows that appeared or vanished without telling us.
-            watchdog.start(every: 1.0) { [weak self] in self?.checkForChanges() }
+            // Twice a second, look for windows that appeared or vanished without telling us.
+            watchdog.start(every: 0.5) { [weak self] in self?.checkForChanges() }
             retile()
         } else if !isOn && running {
             running = false
@@ -84,6 +111,7 @@ final class AutoTiler {
             planned.removeAll()
             plans.removeAll()
             crowded.removeAll()
+            candidate = nil
         } else {
             scheduleRetile()
         }
@@ -100,15 +128,33 @@ final class AutoTiler {
         Notice.shared.show(settings.autoTile ? "Auto-tile on" : "Auto-tile off")
     }
 
-    /// Switches the layout of the screen you're working on to the next style.
+    /// Switches the desktop you're working on to the next style.
     func nextLayout() {
         guard let screen = currentScreen() else { return }
-        setLayout(settings.layout(for: screen.stableID).next, for: screen)
+        setLayout(layout(for: screen).next, for: screen)
     }
 
     func previousLayout() {
         guard let screen = currentScreen() else { return }
-        setLayout(settings.layout(for: screen.stableID).previous, for: screen)
+        setLayout(layout(for: screen).previous, for: screen)
+    }
+
+    /// The layout of the desktop a screen is showing now.
+    func layout(for screen: DisplayInfo) -> LayoutStyle {
+        spaceLayouts[layoutKey(screen, Spaces.current(for: Screens.all()))] ?? settings.layout(for: screen.stableID)
+    }
+
+    /// "Retile": arrange the screen you're working on again, putting snapped windows back in.
+    func retileCommand() {
+        guard isOn else {
+            toggle()
+            return
+        }
+        if let screen = currentScreen() {
+            if leaveFullScreen(on: screen, style: nil) { return }
+            unpinVisible(on: screen)
+        }
+        retile()
     }
 
     /// Switches the screen you're working on to one style (⌃⌥1–5).
@@ -117,15 +163,25 @@ final class AutoTiler {
         setLayout(style, for: screen)
     }
 
-    /// Sets a screen's style, turns auto-tile on, arranges the windows now and shows a picture of the result.
-    func setLayout(_ style: LayoutStyle, for screen: DisplayInfo) {
+    /// Sets the style of the desktop a screen is showing, arranges its windows now and shows a picture.
+    ///
+    /// The latest command wins: windows you snapped or maximised by hand join the new layout.
+    /// Floating windows (⌃⌥W) stay floating.
+    func setLayout(_ style: LayoutStyle, for screen: DisplayInfo, notify: Bool = true) {
         guard AccessibilityPermission.isTrusted else {
-            PermissionWindow.shared.show()
+            if notify { PermissionWindow.shared.show() } else { settings.layouts[screen.stableID] = style }
             return
         }
-        settings.layouts[screen.stableID] = style
-        if !settings.autoTile { settings.autoTile = true }
+        settings.layouts[screen.stableID] = style   // New desktops, and the next launch, start with it.
+        if notify, !settings.autoTile { settings.autoTile = true }
+        if notify, leaveFullScreen(on: screen, style: style) {
+            Notice.shared.show(style.title, picture: MenuIcons.layoutIcon(style, on: screen, count: 3, height: 90))
+            return
+        }
+        spaceLayouts[layoutKey(screen, Spaces.current(for: Screens.all()))] = style
+        unpinVisible(on: screen)
         retile()
+        guard notify else { return }
         var text = style.title
         if crowded.contains(screen.stableID) {
             text += " — some windows can't get that small, so they overlap"
@@ -148,7 +204,10 @@ final class AutoTiler {
             NSSound.beep()
             return
         }
-        order[screen] = TileOrder.promote(window.id, in: list)
+        pinned[window.id] = nil
+        floating.remove(window.id)
+        let active = Set(plans[screen]?.ids ?? []).union([window.id])
+        order[screen] = TileOrder.promote(window.id, in: list, among: active)
         retile()
     }
 
@@ -162,10 +221,10 @@ final class AutoTiler {
         if floating.contains(id) || pinned[id] != nil {
             floating.remove(id)
             pinned[id] = nil
+            if let frame = window.frame { rehome(id, frame: frame) }   // You may have moved it to another screen.
             Notice.shared.show("Tiled")
         } else if canTile(window) {
-            floating.insert(id)
-            removeFromOrder(id)
+            floating.insert(id)   // It keeps its place in the order for when you tile it again.
             window.element.perform(kAXRaiseAction)
             Notice.shared.show("Floating")
         } else {
@@ -184,11 +243,12 @@ final class AutoTiler {
     }
 
     /// A window you snapped by hand keeps that spot; the others tile around it.
+    /// It keeps its place in the order, so a later layout puts it back where it was.
     func pin(_ window: TrackedWindow, at frame: CGRect) {
         guard isOn, canTile(window) else { return }
         floating.remove(window.id)
-        removeFromOrder(window.id)
         pinned[window.id] = frame
+        rehome(window.id, frame: frame)
         scheduleRetile()
     }
 
@@ -218,7 +278,8 @@ final class AutoTiler {
             return
         }
         let source = home[id]
-        let other = (order[target.stableID] ?? []).first { $0 != id && planned[$0]?.contains(point) == true }
+        // Only a window in the target's current layout can be swapped with.
+        let other = (plans[target.stableID]?.ids ?? []).first { $0 != id && planned[$0]?.contains(point) == true }
         if let other, let source {
             if source == target.stableID {
                 order[source] = TileOrder.swap(id, other, in: order[source] ?? [])
@@ -241,8 +302,9 @@ final class AutoTiler {
     func userResized(_ window: TrackedWindow, from old: CGRect, to new: CGRect) {
         pendingAfterMouse = false
         defer { retile() }
-        guard isOn, let screen = home[window.id], settings.layout(for: screen) == .mainAndSide,
-              let list = order[screen], let display = Screens.all().first(where: { $0.stableID == screen }) else { return }
+        guard isOn, let screen = home[window.id], let list = plans[screen]?.ids,
+              let display = Screens.all().first(where: { $0.stableID == screen }),
+              layout(for: display) == .mainAndSide else { return }
         let area = freeArea(on: display)
         let gap = CGFloat(settings.gap)
         let portrait = ScreenShape.of(area.size) == .portrait
@@ -270,11 +332,19 @@ final class AutoTiler {
     private func handle(_ event: WindowEvent) {
         switch event {
         case .moved(let id), .resized(let id):
-            guard running, !mover.isOwnMove(id), home[id] != nil else { return }
+            // Floating and pinned windows go where you put them.
+            guard running, !mover.isOwnMove(id), home[id] != nil, pinned[id] == nil, !floating.contains(id) else { return }
             if DragSnapper.shared.isMouseDown {
                 pendingAfterMouse = true
             } else {
-                scheduleRetile(delay: 0.3)
+                // Wait until the window stops changing (macOS animates "Fill"), then look once.
+                let ticket = (appMoveTicket[id] ?? 0) + 1
+                appMoveTicket[id] = ticket
+                after(0.35) { [weak self] in
+                    guard let self, self.appMoveTicket[id] == ticket else { return }
+                    self.appMoveTicket[id] = nil
+                    self.movedByApp(id)
+                }
             }
         case .destroyed(let id):
             forget(id)
@@ -289,10 +359,44 @@ final class AutoTiler {
         }
     }
 
-    private func checkForChanges() {
+    /// Something other than Tessera or your mouse moved a tiled window, such as macOS "Fill" or a
+    /// double-click on the title bar. If the window now fills the screen, that was a "maximise"
+    /// command: it wins, and the window keeps that spot until your next layout command. Anything
+    /// else (an app nudging its own window) goes back to its tile.
+    private func movedByApp(_ id: CGWindowID) {
         guard running else { return }
-        // Only which windows are visible matters, not their stacking order.
-        if Set(visibleWindowIDs()) != lastSeen { scheduleRetile() }
+        if let window = registry.window(id), isTiled(window), !mover.isOwnMove(id), let frame = window.frame,
+           let display = Screens.display(for: frame, in: Screens.all()),
+           frame.isClose(to: display.visibleFrame, tolerance: 24),
+           planned[id]?.isClose(to: display.visibleFrame, tolerance: 24) != true {
+            Log.info("Window \(id) was maximised outside Tessera: it keeps that spot")
+            pin(window, at: frame)
+            return
+        }
+        scheduleRetile()
+    }
+
+    /// The watchdog: a change in which windows take part must be seen twice in a row (half a
+    /// second apart) before Tessera moves anything. Brief in-between states, like the middle of a
+    /// desktop swipe or Mission Control, never cause a rearrangement.
+    private func checkForChanges() {
+        guard running, Date() >= quietUntil, !DragSnapper.shared.isMouseDown else { return }
+        let members = currentMembers(Screens.all())
+        guard !stillSwitching(members.moving) else {
+            candidate = nil
+            return
+        }
+        let now = Set(members.ids)
+        guard now != lastSeen else {
+            candidate = nil
+            return
+        }
+        if now == candidate {
+            candidate = nil
+            scheduleRetile()
+        } else {
+            candidate = now
+        }
     }
 
     func scheduleRetile(delay: Double? = nil) {
@@ -313,10 +417,21 @@ final class AutoTiler {
             pendingAfterMouse = true
             return
         }
+        let wait = quietUntil.timeIntervalSinceNow
+        if wait > 0 {
+            scheduleRetile(delay: wait + 0.05)
+            return
+        }
         let displays = Screens.all()
         guard !displays.isEmpty else { return }
-        let visibleIDs = visibleWindowIDs()
+        let (visibleIDs, spaces, moving) = currentMembers(displays)
+        // Mid-swipe: wait for the desktop to land.
+        if stillSwitching(moving) {
+            scheduleRetile(delay: 0.3)
+            return
+        }
         lastSeen = Set(visibleIDs)
+        candidate = nil
 
         // Pick up windows Accessibility didn't tell us about.
         let unknown = Set(visibleIDs.filter { registry.window($0) == nil }).subtracting(rescannedFor)
@@ -325,12 +440,11 @@ final class AutoTiler {
             registry.rescan()
         }
 
-        // Group tileable windows by screen, front window first.
+        // Group the windows on each screen's current desktop by screen, front window first.
         var present: [String: [CGWindowID]] = [:]
         var windows: [CGWindowID: TrackedWindow] = [:]
         for id in visibleIDs {
-            guard let window = registry.window(id), pinned[id] == nil, !floating.contains(id), canTile(window),
-                  let frame = window.frame else { continue }
+            guard let window = registry.window(id), canTile(window), let frame = window.frame else { continue }
             let screen = home[id].flatMap { s in displays.first { $0.stableID == s } }
                 ?? Screens.display(for: frame, in: displays)
             guard let screen else { continue }
@@ -344,15 +458,28 @@ final class AutoTiler {
         for display in displays {
             let screen = display.stableID
             let here = present[screen] ?? []
-            if here.isEmpty { plans[screen] = nil }
-            // Keep the saved order (including windows on other Spaces); new windows join at the end.
-            var list = (order[screen] ?? []).filter { registry.window($0) != nil && home[$0] == screen && pinned[$0] == nil && !floating.contains($0) }
+            // Keep the saved order (with windows on other desktops, floating and pinned ones);
+            // new windows join at the end.
+            var list = (order[screen] ?? []).filter { registry.window($0) != nil && home[$0] == screen }
             for id in here where !list.contains(id) { list.append(id) }
             order[screen] = list
-            let active = list.filter { here.contains($0) }
-            guard !active.isEmpty else { continue }
+            let active = list.filter { here.contains($0) && pinned[$0] == nil && !floating.contains($0) }
+            guard !active.isEmpty else {
+                plans[screen] = nil
+                continue
+            }
 
-            let style = settings.layout(for: screen)
+            let key = layoutKey(display, spaces)
+            if let pending = pendingLayout[screen] {
+                if here.contains(pending.window) {
+                    spaceLayouts[key] = pending.style
+                    pendingLayout[screen] = nil
+                } else if Date().timeIntervalSince(pending.at) > 5 {
+                    pendingLayout[screen] = nil
+                }
+            }
+            let style = spaceLayouts[key] ?? settings.layout(for: screen)
+            spaceLayouts[key] = style
             let plan = TilePlanner.plan(
                 count: active.count,
                 in: freeArea(on: display),
@@ -422,9 +549,9 @@ final class AutoTiler {
                     // Just over: ask for a little less, so an app that rounds up lands inside its tile.
                     let smaller = CGRect(x: target.minX, y: target.minY,
                                          width: target.width - overWide, height: target.height - overTall)
-                    mover.move(window, to: smaller)
+                    mover.move(window, to: smaller, force: true)
                 } else {
-                    mover.move(window, to: target)
+                    mover.move(window, to: target, force: true)
                 }
             }
             after(0.4) { [weak self] in self?.learnMinimums(suspects, confirming: true) }
@@ -452,12 +579,74 @@ final class AutoTiler {
         return ok
     }
 
-    /// Normal windows on screen now (this Space), front to back.
-    private func visibleWindowIDs() -> [CGWindowID] {
+    /// The windows that take part now, front to back: normal windows on screen that live on the
+    /// desktop their screen is showing. Also returns each screen's current desktop.
+    ///
+    /// During a desktop swipe, windows from both desktops are on screen for a moment; the desktop
+    /// check keeps the other desktop's windows out, so nothing jumps.
+    ///
+    /// `moving` is true while a switch is still under way: some window on screen belongs only to a
+    /// desktop the screen isn't showing.
+    private func currentMembers(_ displays: [DisplayInfo])
+        -> (ids: [CGWindowID], spaces: [CGDirectDisplayID: Spaces.SpaceID]?, moving: Bool) {
         let me = getpid()
-        return WindowServer.onScreen()
+        let visible = WindowServer.onScreen()
             .filter { $0.layer == 0 && $0.pid != me && $0.alpha > 0 && $0.bounds.width > 40 && $0.bounds.height > 40 }
             .map(\.id)
+        guard let spaces = Spaces.current(for: displays) else { return (visible, nil, false) }
+        let current = Set(spaces.values)
+        var moving = false
+        let members = visible.filter { id in
+            let on = Spaces.spaces(of: id)
+            // macOS didn't say: go by what's on screen.
+            if on.isEmpty { return true }
+            if on.isDisjoint(with: current) { moving = true }
+            // A window shown on every desktop would push the others around on each one: leave it alone.
+            return on.count == 1 && current.contains(on.first!)
+        }
+        return (members, spaces, moving)
+    }
+
+    /// True while a desktop switch is under way, for at most 2 seconds (in case some window
+    /// always looks that way).
+    private func stillSwitching(_ moving: Bool) -> Bool {
+        guard moving else {
+            switchingSince = nil
+            return false
+        }
+        let since = switchingSince ?? Date()
+        switchingSince = since
+        return Date().timeIntervalSince(since) < 2
+    }
+
+    /// Which layout a screen uses now: per desktop when macOS says which desktop it shows.
+    private func layoutKey(_ display: DisplayInfo, _ spaces: [CGDirectDisplayID: Spaces.SpaceID]?) -> String {
+        if let space = spaces?[display.displayID] { return "\(display.stableID)#\(space)" }
+        return display.stableID
+    }
+
+    /// Puts windows snapped by hand on a screen's current desktop back into the layout.
+    private func unpinVisible(on screen: DisplayInfo) {
+        let visible = Set(currentMembers(Screens.all()).ids)
+        for id in pinned.keys where visible.contains(id) && home[id] == screen.stableID {
+            pinned[id] = nil
+        }
+    }
+
+    /// The latest command wins over macOS full screen too: a layout picked while a full-screen
+    /// window is in front takes it out of full screen, then arranges the desktop it goes back to.
+    /// Returns true if that is happening.
+    private func leaveFullScreen(on screen: DisplayInfo, style: LayoutStyle?) -> Bool {
+        guard let window = registry.focusedWindow(), window.element.isFullScreen,
+              !settings.isIgnored(window.bundleID), let frame = window.frame,
+              Screens.display(for: frame, in: Screens.all())?.stableID == screen.stableID else { return false }
+        Log.info("Taking window \(window.id) out of full screen for the new layout")
+        window.element.set("AXFullScreen", bool: false)
+        if let style { pendingLayout[screen.stableID] = (window.id, style, Date()) }
+        // macOS animates back to the desktop; arrange once it has landed.
+        quietUntil = Date().addingTimeInterval(1.2)
+        scheduleRetile(delay: 1.25)
+        return true
     }
 
     private func currentScreen() -> DisplayInfo? {
@@ -466,6 +655,14 @@ final class AutoTiler {
             return Screens.display(for: frame, in: displays)
         }
         return Screens.display(containing: Screens.mouseLocation, in: displays) ?? displays.first
+    }
+
+    /// A window now on another screen belongs to that screen's tiles (at the end).
+    private func rehome(_ id: CGWindowID, frame: CGRect) {
+        guard let display = Screens.display(for: frame, in: Screens.all()), home[id] != display.stableID else { return }
+        removeFromOrder(id)
+        home[id] = display.stableID
+        order[display.stableID, default: []].append(id)
     }
 
     private func removeFromOrder(_ id: CGWindowID) {
@@ -478,6 +675,7 @@ final class AutoTiler {
         removeFromOrder(id)
         floating.remove(id)
         pinned[id] = nil
+        appMoveTicket[id] = nil
         minimums[id] = nil
         planned[id] = nil
         kind[id] = nil
@@ -490,6 +688,13 @@ final class AutoTiler {
         [
             "on": isOn,
             "order": order.mapValues { $0.map(Int.init) },
+            "spacesSupported": Spaces.isAvailable,
+            "spaceLayouts": spaceLayouts.mapValues(\.rawValue),
+            "currentLayouts": Dictionary(Screens.all().map { ($0.stableID, layout(for: $0).rawValue) }, uniquingKeysWith: { a, _ in a }),
+            "currentSpaces": (Spaces.current(for: Screens.all()) ?? [:]).map { "\($0.key):\($0.value)" },
+            "moves": mover.moveCount,
+            "desktops": Spaces.all(),
+            "pendingLayout": pendingLayout.mapValues { "\($0.window):\($0.style.rawValue)" },
             "floating": floating.map(Int.init),
             "pinned": Dictionary(uniqueKeysWithValues: pinned.map { (String($0.key), NSStringFromRect($0.value)) }),
             "crowded": Array(crowded),
