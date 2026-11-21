@@ -11,6 +11,7 @@
 //   keys menu-list                     Tessera's open menu: titles and shortcut keys, as JSON
 //   keys menu-press "Columns"          click an item in Tessera's open menu
 //   keys unminimize com.apple.TextEdit un-minimise an app's windows
+//   keys hide com.apple.finder         hide an app (from the background, like ⌘H on it)
 //   keys unhide com.apple.finder       show a hidden app again
 //   keys space-add                     add a desktop (Space) through Mission Control
 //   keys space-go 2                    go to desktop 2 through Mission Control
@@ -238,6 +239,15 @@ case "unminimize" where args.count >= 2:
             AXUIElementSetAttributeValue(window, kAXMinimizedAttribute as CFString, kCFBooleanFalse)
             usleep(300_000)
         }
+    }
+
+case "hide" where args.count >= 2:
+    // Hides an app without bringing anything forward (hiding the front app makes macOS bring
+    // forward the next one, and that can un-hide an app hidden earlier).
+    if let app = NSRunningApplication.runningApplications(withBundleIdentifier: args[1]).first {
+        app.hide()
+        usleep(500_000)
+        print("\(args[1]) hidden: \(app.isHidden)")
     }
 
 case "unhide" where args.count >= 2:

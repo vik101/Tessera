@@ -787,8 +787,11 @@ def main():
     check_layout("Rows after bringing it back", "rows", 7)
 
     # --- Fewer windows: 3 (TextEdit only), then 1 ---
+    # TextEdit in front first, then hide the rest from the background: hiding the front app
+    # makes macOS bring another forward, which can un-hide one hidden a moment before.
+    activate("com.apple.TextEdit")
     for bundle in ["com.apple.finder", "com.apple.Safari", "com.google.Chrome", "com.apple.Terminal"]:
-        hide(bundle)
+        print(keys("hide", bundle).strip(), flush=True)
     check_layout("3 windows, Rows", "rows", 3)
     layout_suite("3 windows", 3)
     activate("com.apple.TextEdit")
