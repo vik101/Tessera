@@ -1,0 +1,919 @@
++ 16:51:01 local secs=90
++ 16:51:01 shift
++ 16:51:01 perl -e 'alarm shift; exec @ARGV' 90 log show --last 10m --info --style compact --predicate 'subsystem == "com.vikram.Tessera"'
+Timestamp               Ty Process[PID:TID]
+2026-11-21 16:43:04.862 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test hooks on
+2026-11-21 16:43:05.126 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Desktops (Spaces) supported
+2026-11-21 16:43:05.126 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Window engine started
+2026-11-21 16:43:05.126 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Tessera 2.2.0 (5) started
+2026-11-21 16:43:11.990 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:43:13.358 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.leftHalf
+2026-11-21 16:43:13.372 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{271, 136}, {673, 439}} to {{0, 31}, {960, 971}}
+2026-11-21 16:43:14.372 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.leftHalf
+2026-11-21 16:43:14.376 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{0, 31}, {960, 970}} to {{0, 31}, {1280, 971}}
+2026-11-21 16:43:15.484 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.leftHalf
+2026-11-21 16:43:15.487 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {1280, 970}} to {{0, 31}, {640, 971}}
+2026-11-21 16:43:16.515 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.rightHalf
+2026-11-21 16:43:16.517 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {640, 970}} to {{960, 31}, {960, 971}}
+2026-11-21 16:43:17.587 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.topHalf
+2026-11-21 16:43:17.588 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{960, 31}, {960, 970}} to {{0, 31}, {1920, 486}}
+2026-11-21 16:43:18.607 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.bottomHalf
+2026-11-21 16:43:18.609 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{0, 31}, {1920, 486}} to {{0, 517}, {1920, 485}}
+2026-11-21 16:43:19.656 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.topLeft
+2026-11-21 16:43:19.659 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{0, 517}, {1920, 485}} to {{0, 31}, {960, 486}}
+2026-11-21 16:43:20.669 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.topRight
+2026-11-21 16:43:20.672 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{0, 31}, {960, 486}} to {{960, 31}, {960, 486}}
+2026-11-21 16:43:21.703 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.bottomLeft
+2026-11-21 16:43:21.707 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{960, 31}, {960, 486}} to {{0, 517}, {960, 485}}
+2026-11-21 16:43:22.740 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.bottomRight
+2026-11-21 16:43:22.747 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{0, 517}, {960, 485}} to {{960, 517}, {960, 485}}
+2026-11-21 16:43:23.784 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.firstThird
+2026-11-21 16:43:23.786 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{960, 517}, {960, 485}} to {{0, 31}, {640, 971}}
+2026-11-21 16:43:24.897 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.centreThird
+2026-11-21 16:43:24.906 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{0, 31}, {640, 970}} to {{640, 31}, {640, 971}}
+2026-11-21 16:43:26.502 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.lastThird
+2026-11-21 16:43:26.509 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{640, 31}, {640, 970}} to {{1280, 31}, {640, 971}}
+2026-11-21 16:43:27.566 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.firstTwoThirds
+2026-11-21 16:43:27.569 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{1280, 31}, {640, 970}} to {{0, 31}, {1280, 971}}
+2026-11-21 16:43:28.826 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.lastTwoThirds
+2026-11-21 16:43:28.832 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{0, 31}, {1280, 970}} to {{640, 31}, {1280, 971}}
+2026-11-21 16:43:29.910 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.maximise
+2026-11-21 16:43:29.917 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{640, 31}, {1280, 970}} to {{0, 31}, {1920, 971}}
+2026-11-21 16:43:30.957 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.restore
+2026-11-21 16:43:30.958 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{0, 31}, {1920, 970}} to {{271, 136}, {673, 439}}
+2026-11-21 16:43:32.096 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.centre
+2026-11-21 16:43:32.103 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{271, 136}, {673, 439}} to {{624, 297}, {673, 439}}
+2026-11-21 16:43:33.206 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.larger
+2026-11-21 16:43:33.210 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{624, 297}, {673, 439}} to {{594, 267}, {733, 499}}
+2026-11-21 16:43:34.215 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.smaller
+2026-11-21 16:43:34.218 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{594, 267}, {733, 499}} to {{624, 297}, {673, 439}}
+2026-11-21 16:43:35.385 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.maximiseHeight
+2026-11-21 16:43:35.387 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{624, 297}, {673, 439}} to {{624, 31}, {673, 971}}
+2026-11-21 16:43:36.560 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: run:snap.almostMaximise
+2026-11-21 16:43:36.560 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.almostMaximise
+2026-11-21 16:43:36.563 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{624, 31}, {673, 970}} to {{96, 80}, {1728, 873}}
+2026-11-21 16:43:37.608 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: run:snap.centreHalf
+2026-11-21 16:43:37.608 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.centreHalf
+2026-11-21 16:43:37.611 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{96, 80}, {1728, 873}} to {{480, 31}, {960, 971}}
+2026-11-21 16:43:38.635 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: run:snap.centreTwoThirds
+2026-11-21 16:43:38.635 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.centreTwoThirds
+2026-11-21 16:43:38.638 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{480, 31}, {960, 970}} to {{320, 31}, {1280, 971}}
+2026-11-21 16:43:39.754 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: run:snap.topLeftSixth
+2026-11-21 16:43:39.754 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.topLeftSixth
+2026-11-21 16:43:39.758 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{320, 31}, {1280, 970}} to {{0, 31}, {640, 486}}
+2026-11-21 16:43:40.835 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: run:snap.bottomRightSixth
+2026-11-21 16:43:40.835 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.bottomRightSixth
+2026-11-21 16:43:40.839 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{0, 31}, {640, 486}} to {{1280, 517}, {640, 485}}
+2026-11-21 16:43:42.064 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: run:snap.firstThreeQuarters
+2026-11-21 16:43:42.065 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.firstThreeQuarters
+2026-11-21 16:43:42.069 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{1280, 517}, {640, 485}} to {{0, 31}, {1440, 971}}
+2026-11-21 16:43:43.095 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: run:snap.lastQuarter
+2026-11-21 16:43:43.096 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.lastQuarter
+2026-11-21 16:43:43.098 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{0, 31}, {1440, 970}} to {{1440, 31}, {480, 971}}
+2026-11-21 16:43:44.561 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.restore
+2026-11-21 16:43:44.576 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{1440, 31}, {480, 970}} to {{271, 136}, {673, 439}}
+2026-11-21 16:43:45.580 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: run:snap.moveRight
+2026-11-21 16:43:45.580 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.moveRight
+2026-11-21 16:43:45.585 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{271, 136}, {673, 439}} to {{1247, 136}, {673, 439}}
+2026-11-21 16:43:46.720 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: run:snap.moveUp
+2026-11-21 16:43:46.720 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.moveUp
+2026-11-21 16:43:46.723 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{1247, 136}, {673, 439}} to {{1247, 31}, {673, 439}}
+2026-11-21 16:43:47.816 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.restore
+2026-11-21 16:43:47.819 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{1247, 31}, {673, 439}} to {{271, 136}, {673, 439}}
+2026-11-21 16:43:48.704 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: set:gap=10
+2026-11-21 16:43:49.752 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.leftHalf
+2026-11-21 16:43:49.755 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{271, 136}, {673, 439}} to {{10, 41}, {945, 951}}
+2026-11-21 16:43:50.704 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.rightHalf
+2026-11-21 16:43:50.705 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{10, 41}, {945, 951}} to {{965, 41}, {945, 951}}
+2026-11-21 16:43:51.559 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: set:gap=0
+2026-11-21 16:43:52.642 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.restore
+2026-11-21 16:43:52.648 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{965, 41}, {945, 951}} to {{271, 136}, {673, 439}}
+2026-11-21 16:43:55.280 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.leftHalf
+2026-11-21 16:43:55.297 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{500, 165}, {920, 436}} to {{0, 31}, {960, 971}}
+2026-11-21 16:43:56.277 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.rightHalf
+2026-11-21 16:43:56.279 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{0, 31}, {960, 970}} to {{960, 31}, {960, 971}}
+2026-11-21 16:43:57.241 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.topLeft
+2026-11-21 16:43:57.243 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{960, 31}, {960, 970}} to {{0, 31}, {960, 486}}
+2026-11-21 16:43:58.246 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.lastThird
+2026-11-21 16:43:58.253 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{0, 31}, {960, 486}} to {{1280, 31}, {640, 971}}
+2026-11-21 16:43:59.281 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.maximise
+2026-11-21 16:43:59.284 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{1280, 31}, {640, 970}} to {{0, 31}, {1920, 971}}
+2026-11-21 16:44:00.270 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.restore
+2026-11-21 16:44:00.273 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{0, 31}, {1920, 970}} to {{500, 165}, {920, 436}}
+2026-11-21 16:44:02.897 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.leftHalf
+2026-11-21 16:44:02.902 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{298, 47}, {1324, 940}} to {{0, 31}, {960, 971}}
+2026-11-21 16:44:04.080 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.rightHalf
+2026-11-21 16:44:04.082 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 31}, {960, 970}} to {{960, 31}, {960, 971}}
+2026-11-21 16:44:05.340 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.topLeft
+2026-11-21 16:44:05.347 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{960, 31}, {960, 970}} to {{0, 31}, {960, 486}}
+2026-11-21 16:44:06.360 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.lastThird
+2026-11-21 16:44:06.362 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 31}, {960, 486}} to {{1280, 31}, {640, 971}}
+2026-11-21 16:44:07.428 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.maximise
+2026-11-21 16:44:07.434 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{1280, 31}, {640, 970}} to {{0, 31}, {1920, 971}}
+2026-11-21 16:44:08.486 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.restore
+2026-11-21 16:44:08.488 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 31}, {1920, 970}} to {{298, 47}, {1324, 940}}
+2026-11-21 16:44:11.010 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.leftHalf
+2026-11-21 16:44:11.014 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{22, 53}, {1200, 927}} to {{0, 31}, {960, 971}}
+2026-11-21 16:44:12.187 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.rightHalf
+2026-11-21 16:44:12.190 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{0, 31}, {960, 970}} to {{960, 31}, {960, 971}}
+2026-11-21 16:44:13.369 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.topLeft
+2026-11-21 16:44:13.371 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{960, 31}, {960, 970}} to {{0, 31}, {960, 486}}
+2026-11-21 16:44:14.563 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.lastThird
+2026-11-21 16:44:14.569 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{0, 31}, {960, 486}} to {{1280, 31}, {640, 971}}
+2026-11-21 16:44:15.972 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.maximise
+2026-11-21 16:44:15.980 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{1280, 31}, {640, 970}} to {{0, 31}, {1920, 971}}
+2026-11-21 16:44:17.011 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.restore
+2026-11-21 16:44:17.013 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{0, 31}, {1920, 970}} to {{22, 53}, {1200, 927}}
+2026-11-21 16:44:19.397 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.leftHalf
+2026-11-21 16:44:19.426 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{40, 51}, {877, 499}} to {{0, 31}, {960, 971}}
+2026-11-21 16:44:20.354 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.rightHalf
+2026-11-21 16:44:20.356 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 31}, {961, 964}} to {{960, 31}, {960, 971}}
+2026-11-21 16:44:21.363 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.topLeft
+2026-11-21 16:44:21.366 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{960, 31}, {961, 964}} to {{0, 31}, {960, 486}}
+2026-11-21 16:44:22.318 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.lastThird
+2026-11-21 16:44:22.321 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 31}, {961, 484}} to {{1280, 31}, {640, 971}}
+2026-11-21 16:44:23.299 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.maximise
+2026-11-21 16:44:23.301 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{1280, 31}, {639, 964}} to {{0, 31}, {1920, 971}}
+2026-11-21 16:44:24.285 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.restore
+2026-11-21 16:44:24.287 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 31}, {1920, 964}} to {{40, 51}, {877, 499}}
+2026-11-21 16:44:25.309 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: fix-mac-tiling
+2026-11-21 16:44:31.870 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-18, 504}, {673, 439}} to {{0, 31}, {960, 971}}
+2026-11-21 16:44:42.309 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{860, 31}, {673, 439}} to {{0, 31}, {1920, 971}}
+2026-11-21 16:44:47.585 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{1836, 480}, {673, 439}} to {{960, 31}, {960, 971}}
+2026-11-21 16:44:48.824 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.restore
+2026-11-21 16:44:48.839 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{960, 31}, {960, 970}} to {{199, 54}, {673, 439}}
+2026-11-21 16:44:49.817 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: menu
+2026-11-21 16:44:52.951 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: settings
+2026-11-21 16:44:56.080 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: close-settings
+2026-11-21 16:44:56.223 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: permission
+2026-11-21 16:44:58.611 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.toggleAutoTile
+2026-11-21 16:44:58.667 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{199, 54}, {673, 439}} to {{0, 31}, {640, 486}}
+2026-11-21 16:44:58.708 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{40, 51}, {877, 499}} to {{640, 31}, {640, 486}}
+2026-11-21 16:44:58.774 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{22, 53}, {1200, 927}} to {{1280, 31}, {640, 486}}
+2026-11-21 16:44:58.850 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{298, 47}, {1324, 940}} to {{0, 517}, {480, 485}}
+2026-11-21 16:44:59.144 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{500, 165}, {920, 436}} to {{480, 517}, {480, 485}}
+2026-11-21 16:44:59.366 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{242, 107}, {673, 439}} to {{960, 517}, {480, 485}}
+2026-11-21 16:44:59.411 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{213, 78}, {673, 439}} to {{1440, 517}, {480, 485}}
+2026-11-21 16:44:59.720 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:00.105 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 517}, {574, 485}} to {{0, 517}, {480, 485}}
+2026-11-21 16:45:00.108 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{480, 517}, {501, 485}} to {{480, 517}, {480, 485}}
+2026-11-21 16:45:00.532 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Window 54 (com.apple.Safari) needs at least 574×0
+2026-11-21 16:45:00.532 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Window 48 (com.apple.finder) needs at least 501×0
+2026-11-21 16:45:00.545 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{480, 517}, {501, 485}} to {{574, 517}, {501, 485}}
+2026-11-21 16:45:00.550 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{960, 517}, {480, 485}} to {{1075, 517}, {423, 485}}
+2026-11-21 16:45:00.569 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1440, 517}, {480, 485}} to {{1498, 517}, {422, 485}}
+2026-11-21 16:45:01.061 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:02.116 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:02.683 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.columns
+2026-11-21 16:45:02.711 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{0, 31}, {640, 486}} to {{0, 31}, {169, 971}}
+2026-11-21 16:45:02.740 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{640, 31}, {639, 484}} to {{169, 31}, {169, 971}}
+2026-11-21 16:45:02.794 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{1280, 31}, {640, 486}} to {{338, 31}, {169, 971}}
+2026-11-21 16:45:02.912 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 517}, {574, 485}} to {{507, 31}, {574, 971}}
+2026-11-21 16:45:03.034 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{574, 517}, {501, 485}} to {{1081, 31}, {501, 971}}
+2026-11-21 16:45:03.109 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{1075, 517}, {423, 485}} to {{1582, 31}, {169, 971}}
+2026-11-21 16:45:03.120 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1498, 517}, {422, 485}} to {{1751, 31}, {169, 971}}
+2026-11-21 16:45:03.672 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{169, 31}, {177, 964}} to {{169, 31}, {161, 971}}
+2026-11-21 16:45:03.675 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{338, 31}, {500, 970}} to {{338, 31}, {169, 971}}
+2026-11-21 16:45:04.093 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Window 42 (com.apple.Terminal) needs at least 177×0
+2026-11-21 16:45:04.094 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Window 56 (com.google.Chrome) needs at least 500×0
+2026-11-21 16:45:04.103 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {169, 970}} to {{0, 31}, {56, 971}}
+2026-11-21 16:45:04.118 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{169, 31}, {177, 964}} to {{56, 31}, {177, 971}}
+2026-11-21 16:45:04.123 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{338, 31}, {500, 970}} to {{233, 31}, {500, 971}}
+2026-11-21 16:45:04.149 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{507, 31}, {574, 970}} to {{733, 31}, {574, 971}}
+2026-11-21 16:45:04.156 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{1081, 31}, {501, 970}} to {{1307, 31}, {501, 971}}
+2026-11-21 16:45:04.161 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{1582, 31}, {169, 970}} to {{1808, 31}, {56, 971}}
+2026-11-21 16:45:04.189 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1751, 31}, {169, 970}} to {{1864, 31}, {56, 971}}
+2026-11-21 16:45:04.563 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {115, 970}} to {{0, 31}, {56, 971}}
+2026-11-21 16:45:04.575 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{1805, 31}, {115, 970}} to {{1808, 31}, {56, 971}}
+2026-11-21 16:45:04.580 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1805, 31}, {115, 970}} to {{1864, 31}, {56, 971}}
+2026-11-21 16:45:04.775 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:05.004 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Window 39 (com.apple.TextEdit) needs at least 115×0
+2026-11-21 16:45:05.005 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Window 40 (com.apple.TextEdit) needs at least 115×0
+2026-11-21 16:45:05.005 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Window 38 (com.apple.TextEdit) needs at least 115×0
+2026-11-21 16:45:05.012 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {115, 970}} to {{0, 31}, {197, 971}}
+2026-11-21 16:45:05.027 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{56, 31}, {177, 964}} to {{197, 31}, {197, 971}}
+2026-11-21 16:45:05.078 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{233, 31}, {500, 970}} to {{394, 31}, {359, 971}}
+2026-11-21 16:45:05.104 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{733, 31}, {574, 970}} to {{753, 31}, {413, 971}}
+2026-11-21 16:45:05.140 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{1307, 31}, {501, 970}} to {{1166, 31}, {360, 971}}
+2026-11-21 16:45:05.154 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{1808, 31}, {115, 970}} to {{1526, 31}, {197, 971}}
+2026-11-21 16:45:05.178 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1864, 31}, {115, 970}} to {{1723, 31}, {197, 971}}
+2026-11-21 16:45:05.847 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:06.915 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:07.482 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.rows
+2026-11-21 16:45:07.505 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {197, 970}} to {{0, 31}, {1920, 139}}
+2026-11-21 16:45:07.539 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{197, 31}, {198, 964}} to {{0, 170}, {1920, 138}}
+2026-11-21 16:45:07.596 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{394, 31}, {500, 970}} to {{0, 308}, {1920, 139}}
+2026-11-21 16:45:07.650 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{753, 31}, {574, 970}} to {{0, 447}, {1920, 139}}
+2026-11-21 16:45:07.825 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{1166, 31}, {501, 970}} to {{0, 586}, {1920, 139}}
+2026-11-21 16:45:07.999 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{1526, 31}, {197, 970}} to {{0, 725}, {1920, 138}}
+2026-11-21 16:45:08.018 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1723, 31}, {197, 970}} to {{0, 863}, {1920, 139}}
+2026-11-21 16:45:08.659 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{0, 308}, {1920, 375}} to {{0, 308}, {1920, 139}}
+2026-11-21 16:45:08.666 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 447}, {1920, 240}} to {{0, 447}, {1920, 139}}
+2026-11-21 16:45:08.668 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{0, 586}, {1920, 252}} to {{0, 586}, {1920, 139}}
+2026-11-21 16:45:09.082 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Window 56 (com.google.Chrome) needs at least 500×375
+2026-11-21 16:45:09.083 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Window 54 (com.apple.Safari) needs at least 574×240
+2026-11-21 16:45:09.083 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Window 48 (com.apple.finder) needs at least 501×252
+2026-11-21 16:45:09.091 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {1920, 139}} to {{0, 31}, {1920, 26}}
+2026-11-21 16:45:09.115 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 170}, {1920, 139}} to {{0, 57}, {1920, 26}}
+2026-11-21 16:45:09.126 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{0, 308}, {1920, 375}} to {{0, 83}, {1920, 375}}
+2026-11-21 16:45:09.178 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 447}, {1920, 240}} to {{0, 458}, {1920, 240}}
+2026-11-21 16:45:09.195 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{0, 586}, {1920, 252}} to {{0, 698}, {1920, 252}}
+2026-11-21 16:45:09.203 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 725}, {1920, 138}} to {{0, 950}, {1920, 26}}
+2026-11-21 16:45:09.218 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 863}, {1920, 139}} to {{0, 976}, {1920, 26}}
+2026-11-21 16:45:09.544 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:09.598 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {1920, 46}} to {{0, 31}, {1920, 26}}
+2026-11-21 16:45:09.603 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 57}, {1920, 124}} to {{0, 57}, {1920, 26}}
+2026-11-21 16:45:09.611 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 950}, {1920, 46}} to {{0, 950}, {1920, 26}}
+2026-11-21 16:45:09.616 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 956}, {1920, 46}} to {{0, 976}, {1920, 26}}
+2026-11-21 16:45:10.036 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Window 39 (com.apple.TextEdit) needs at least 115×46
+2026-11-21 16:45:10.037 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Window 42 (com.apple.Terminal) needs at least 177×124
+2026-11-21 16:45:10.037 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Window 40 (com.apple.TextEdit) needs at least 115×46
+2026-11-21 16:45:10.037 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Window 38 (com.apple.TextEdit) needs at least 115×46
+2026-11-21 16:45:10.051 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {1920, 46}} to {{0, 31}, {1920, 95}}
+2026-11-21 16:45:10.082 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 57}, {1920, 124}} to {{0, 126}, {1920, 94}}
+2026-11-21 16:45:10.087 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{0, 83}, {1920, 375}} to {{0, 220}, {1920, 257}}
+2026-11-21 16:45:10.105 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 458}, {1920, 240}} to {{0, 477}, {1920, 163}}
+2026-11-21 16:45:10.126 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{0, 698}, {1920, 252}} to {{0, 640}, {1920, 173}}
+2026-11-21 16:45:10.155 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 950}, {1920, 46}} to {{0, 813}, {1920, 94}}
+2026-11-21 16:45:10.176 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 970}, {1920, 46}} to {{0, 907}, {1920, 95}}
+2026-11-21 16:45:10.524 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:11.620 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:12.327 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.grid
+2026-11-21 16:45:12.352 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {1920, 95}} to {{0, 31}, {640, 486}}
+2026-11-21 16:45:12.399 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 126}, {1920, 124}} to {{640, 31}, {640, 486}}
+2026-11-21 16:45:12.454 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{0, 220}, {1920, 375}} to {{1280, 31}, {640, 486}}
+2026-11-21 16:45:12.542 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 477}, {1920, 240}} to {{0, 517}, {574, 485}}
+2026-11-21 16:45:12.646 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{0, 640}, {1920, 252}} to {{574, 517}, {501, 485}}
+2026-11-21 16:45:12.879 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 813}, {1920, 94}} to {{1075, 517}, {423, 485}}
+2026-11-21 16:45:12.912 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 907}, {1920, 94}} to {{1498, 517}, {422, 485}}
+2026-11-21 16:45:15.067 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:16.082 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:16.580 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.mainAndSide
+2026-11-21 16:45:16.598 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {640, 486}} to {{0, 31}, {960, 971}}
+2026-11-21 16:45:16.627 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{640, 31}, {639, 484}} to {{960, 31}, {960, 116}}
+2026-11-21 16:45:16.676 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{1280, 31}, {640, 486}} to {{960, 147}, {960, 269}}
+2026-11-21 16:45:16.744 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 517}, {574, 485}} to {{960, 416}, {960, 173}}
+2026-11-21 16:45:16.858 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{574, 517}, {501, 484}} to {{960, 589}, {960, 181}}
+2026-11-21 16:45:16.976 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{1075, 517}, {423, 484}} to {{960, 770}, {960, 116}}
+2026-11-21 16:45:17.011 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1498, 517}, {422, 484}} to {{960, 886}, {960, 116}}
+2026-11-21 16:45:18.692 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:19.638 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:20.316 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.auto
+2026-11-21 16:45:20.346 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {960, 970}} to {{0, 31}, {640, 486}}
+2026-11-21 16:45:20.396 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{959, 31}, {961, 124}} to {{640, 31}, {640, 486}}
+2026-11-21 16:45:20.466 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{960, 147}, {960, 375}} to {{1280, 31}, {640, 486}}
+2026-11-21 16:45:20.568 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{960, 416}, {960, 240}} to {{0, 517}, {574, 485}}
+2026-11-21 16:45:20.676 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{960, 589}, {960, 252}} to {{574, 517}, {501, 485}}
+2026-11-21 16:45:20.783 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{960, 770}, {960, 116}} to {{1075, 517}, {423, 485}}
+2026-11-21 16:45:20.825 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{960, 886}, {960, 116}} to {{1498, 517}, {422, 485}}
+2026-11-21 16:45:22.494 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:23.577 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:24.116 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.nextLayout
+2026-11-21 16:45:24.135 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {640, 486}} to {{0, 31}, {197, 971}}
+2026-11-21 16:45:24.169 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{640, 31}, {639, 484}} to {{197, 31}, {197, 971}}
+2026-11-21 16:45:24.219 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{1280, 31}, {640, 486}} to {{394, 31}, {359, 971}}
+2026-11-21 16:45:24.375 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 517}, {574, 485}} to {{753, 31}, {413, 971}}
+2026-11-21 16:45:24.450 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{574, 517}, {501, 484}} to {{1166, 31}, {360, 971}}
+2026-11-21 16:45:24.583 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{1075, 517}, {423, 484}} to {{1526, 31}, {197, 971}}
+2026-11-21 16:45:24.633 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1498, 517}, {422, 484}} to {{1723, 31}, {197, 971}}
+2026-11-21 16:45:25.851 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:26.840 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:27.452 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.nextLayout
+2026-11-21 16:45:27.472 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {197, 970}} to {{0, 31}, {1920, 95}}
+2026-11-21 16:45:27.492 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{197, 31}, {198, 964}} to {{0, 126}, {1920, 94}}
+2026-11-21 16:45:27.532 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{394, 31}, {500, 970}} to {{0, 220}, {1920, 257}}
+2026-11-21 16:45:27.574 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{753, 31}, {574, 970}} to {{0, 477}, {1920, 163}}
+2026-11-21 16:45:27.736 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{1166, 31}, {501, 970}} to {{0, 640}, {1920, 173}}
+2026-11-21 16:45:27.965 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{1526, 31}, {197, 970}} to {{0, 813}, {1920, 94}}
+2026-11-21 16:45:28.012 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1723, 31}, {197, 970}} to {{0, 907}, {1920, 95}}
+2026-11-21 16:45:28.854 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:29.833 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:30.327 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.nextLayout
+2026-11-21 16:45:30.351 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {1920, 95}} to {{0, 31}, {640, 486}}
+2026-11-21 16:45:30.374 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 126}, {1920, 124}} to {{640, 31}, {640, 486}}
+2026-11-21 16:45:30.409 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{0, 220}, {1920, 375}} to {{1280, 31}, {640, 486}}
+2026-11-21 16:45:30.442 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 477}, {1920, 240}} to {{0, 517}, {574, 485}}
+2026-11-21 16:45:30.520 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{0, 640}, {1920, 252}} to {{574, 517}, {501, 485}}
+2026-11-21 16:45:30.658 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 813}, {1920, 94}} to {{1075, 517}, {423, 485}}
+2026-11-21 16:45:30.687 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 907}, {1920, 95}} to {{1498, 517}, {422, 485}}
+2026-11-21 16:45:31.911 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:32.918 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:33.427 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.nextLayout
+2026-11-21 16:45:33.439 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {640, 486}} to {{0, 31}, {960, 971}}
+2026-11-21 16:45:33.456 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{640, 31}, {639, 484}} to {{960, 31}, {960, 116}}
+2026-11-21 16:45:33.468 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{1280, 31}, {640, 486}} to {{960, 147}, {960, 269}}
+2026-11-21 16:45:33.488 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 517}, {574, 485}} to {{960, 416}, {960, 173}}
+2026-11-21 16:45:33.558 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{574, 517}, {501, 484}} to {{960, 589}, {960, 181}}
+2026-11-21 16:45:33.658 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{1075, 517}, {423, 484}} to {{960, 770}, {960, 116}}
+2026-11-21 16:45:33.674 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1498, 517}, {422, 484}} to {{960, 886}, {960, 116}}
+2026-11-21 16:45:34.903 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:35.840 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:36.352 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.nextLayout
+2026-11-21 16:45:36.368 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {960, 970}} to {{0, 31}, {640, 486}}
+2026-11-21 16:45:36.393 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{959, 31}, {961, 124}} to {{640, 31}, {640, 486}}
+2026-11-21 16:45:36.428 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{960, 147}, {960, 375}} to {{1280, 31}, {640, 486}}
+2026-11-21 16:45:36.500 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{960, 416}, {960, 240}} to {{0, 517}, {574, 485}}
+2026-11-21 16:45:36.618 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{960, 589}, {960, 252}} to {{574, 517}, {501, 485}}
+2026-11-21 16:45:36.741 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{960, 770}, {960, 116}} to {{1075, 517}, {423, 485}}
+2026-11-21 16:45:36.760 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{960, 886}, {960, 116}} to {{1498, 517}, {422, 485}}
+2026-11-21 16:45:37.801 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:38.805 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:39.469 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.nextLayout
+2026-11-21 16:45:39.481 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {640, 486}} to {{0, 31}, {197, 971}}
+2026-11-21 16:45:39.518 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{640, 31}, {639, 484}} to {{197, 31}, {197, 971}}
+2026-11-21 16:45:39.554 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{1280, 31}, {640, 486}} to {{394, 31}, {359, 971}}
+2026-11-21 16:45:39.654 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 517}, {574, 485}} to {{753, 31}, {413, 971}}
+2026-11-21 16:45:39.714 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{574, 517}, {501, 484}} to {{1166, 31}, {360, 971}}
+2026-11-21 16:45:39.830 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{1075, 517}, {423, 484}} to {{1526, 31}, {197, 971}}
+2026-11-21 16:45:39.838 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1498, 517}, {422, 484}} to {{1723, 31}, {197, 971}}
+2026-11-21 16:45:41.037 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:42.056 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:42.557 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.nextLayout
+2026-11-21 16:45:42.573 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {197, 970}} to {{0, 31}, {1920, 95}}
+2026-11-21 16:45:42.598 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{197, 31}, {198, 964}} to {{0, 126}, {1920, 94}}
+2026-11-21 16:45:42.655 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{394, 31}, {500, 970}} to {{0, 220}, {1920, 257}}
+2026-11-21 16:45:42.740 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{753, 31}, {574, 970}} to {{0, 477}, {1920, 163}}
+2026-11-21 16:45:42.925 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{1166, 31}, {501, 970}} to {{0, 640}, {1920, 173}}
+2026-11-21 16:45:43.075 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{1526, 31}, {197, 970}} to {{0, 813}, {1920, 94}}
+2026-11-21 16:45:43.086 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1723, 31}, {197, 970}} to {{0, 907}, {1920, 95}}
+2026-11-21 16:45:44.167 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:45.151 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:45.624 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.nextLayout
+2026-11-21 16:45:45.657 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {1920, 95}} to {{0, 31}, {640, 486}}
+2026-11-21 16:45:45.699 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 126}, {1920, 124}} to {{640, 31}, {640, 486}}
+2026-11-21 16:45:45.742 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{0, 220}, {1920, 375}} to {{1280, 31}, {640, 486}}
+2026-11-21 16:45:45.838 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 477}, {1920, 240}} to {{0, 517}, {574, 485}}
+2026-11-21 16:45:45.934 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{0, 640}, {1920, 252}} to {{574, 517}, {501, 485}}
+2026-11-21 16:45:46.089 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 813}, {1920, 94}} to {{1075, 517}, {423, 485}}
+2026-11-21 16:45:46.109 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 907}, {1920, 95}} to {{1498, 517}, {422, 485}}
+2026-11-21 16:45:47.151 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:48.174 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:48.654 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.nextLayout
+2026-11-21 16:45:48.666 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {640, 486}} to {{0, 31}, {960, 971}}
+2026-11-21 16:45:48.688 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{640, 31}, {639, 484}} to {{960, 31}, {960, 116}}
+2026-11-21 16:45:48.710 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{1280, 31}, {640, 486}} to {{960, 147}, {960, 269}}
+2026-11-21 16:45:48.750 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 517}, {574, 485}} to {{960, 416}, {960, 173}}
+2026-11-21 16:45:48.827 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{574, 517}, {501, 484}} to {{960, 589}, {960, 181}}
+2026-11-21 16:45:48.916 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{1075, 517}, {423, 484}} to {{960, 770}, {960, 116}}
+2026-11-21 16:45:48.924 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1498, 517}, {422, 484}} to {{960, 886}, {960, 116}}
+2026-11-21 16:45:50.138 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:51.204 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:51.660 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.nextLayout
+2026-11-21 16:45:51.674 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {960, 970}} to {{0, 31}, {640, 486}}
+2026-11-21 16:45:51.687 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{959, 31}, {961, 124}} to {{640, 31}, {640, 486}}
+2026-11-21 16:45:51.713 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{960, 147}, {960, 375}} to {{1280, 31}, {640, 486}}
+2026-11-21 16:45:51.740 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{960, 416}, {960, 240}} to {{0, 517}, {574, 485}}
+2026-11-21 16:45:51.787 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{960, 589}, {960, 252}} to {{574, 517}, {501, 485}}
+2026-11-21 16:45:51.876 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{960, 770}, {960, 116}} to {{1075, 517}, {423, 485}}
+2026-11-21 16:45:51.903 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{960, 886}, {960, 116}} to {{1498, 517}, {422, 485}}
+2026-11-21 16:45:53.143 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:54.140 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:54.711 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.previousLayout
+2026-11-21 16:45:54.731 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {640, 486}} to {{0, 31}, {960, 971}}
+2026-11-21 16:45:54.768 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{640, 31}, {639, 484}} to {{960, 31}, {960, 116}}
+2026-11-21 16:45:54.797 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{1280, 31}, {640, 486}} to {{960, 147}, {960, 269}}
+2026-11-21 16:45:54.867 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 517}, {574, 485}} to {{960, 416}, {960, 173}}
+2026-11-21 16:45:54.971 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{574, 517}, {501, 484}} to {{960, 589}, {960, 181}}
+2026-11-21 16:45:55.125 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{1075, 517}, {423, 484}} to {{960, 770}, {960, 116}}
+2026-11-21 16:45:55.151 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1498, 517}, {422, 484}} to {{960, 886}, {960, 116}}
+2026-11-21 16:45:56.307 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:57.332 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:45:57.971 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.previousLayout
+2026-11-21 16:45:57.987 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {960, 970}} to {{0, 31}, {640, 486}}
+2026-11-21 16:45:58.010 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{959, 31}, {961, 124}} to {{640, 31}, {640, 486}}
+2026-11-21 16:45:58.051 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{960, 147}, {960, 375}} to {{1280, 31}, {640, 486}}
+2026-11-21 16:45:58.117 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{960, 416}, {960, 240}} to {{0, 517}, {574, 485}}
+2026-11-21 16:45:58.210 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{960, 589}, {960, 252}} to {{574, 517}, {501, 485}}
+2026-11-21 16:45:58.328 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{960, 770}, {960, 116}} to {{1075, 517}, {423, 485}}
+2026-11-21 16:45:58.339 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{960, 886}, {960, 116}} to {{1498, 517}, {422, 485}}
+2026-11-21 16:45:59.544 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:00.579 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:01.210 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.previousLayout
+2026-11-21 16:46:01.240 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {640, 486}} to {{0, 31}, {1920, 95}}
+2026-11-21 16:46:01.268 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{640, 31}, {639, 484}} to {{0, 126}, {1920, 94}}
+2026-11-21 16:46:01.311 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{1280, 31}, {640, 486}} to {{0, 220}, {1920, 257}}
+2026-11-21 16:46:01.397 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 517}, {574, 485}} to {{0, 477}, {1920, 163}}
+2026-11-21 16:46:01.499 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{574, 517}, {501, 484}} to {{0, 640}, {1920, 173}}
+2026-11-21 16:46:01.615 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{1075, 517}, {423, 484}} to {{0, 813}, {1920, 94}}
+2026-11-21 16:46:01.631 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1498, 517}, {422, 484}} to {{0, 907}, {1920, 95}}
+2026-11-21 16:46:02.701 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:03.687 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:04.171 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.previousLayout
+2026-11-21 16:46:04.189 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {1920, 95}} to {{0, 31}, {197, 971}}
+2026-11-21 16:46:04.209 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 126}, {1920, 124}} to {{197, 31}, {197, 971}}
+2026-11-21 16:46:04.268 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{0, 220}, {1920, 375}} to {{394, 31}, {359, 971}}
+2026-11-21 16:46:04.342 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 477}, {1920, 240}} to {{753, 31}, {413, 971}}
+2026-11-21 16:46:04.421 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{0, 640}, {1920, 252}} to {{1166, 31}, {360, 971}}
+2026-11-21 16:46:04.550 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 813}, {1920, 94}} to {{1526, 31}, {197, 971}}
+2026-11-21 16:46:04.574 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 907}, {1920, 95}} to {{1723, 31}, {197, 971}}
+2026-11-21 16:46:05.556 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:06.507 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:07.001 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.previousLayout
+2026-11-21 16:46:07.014 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {197, 970}} to {{0, 31}, {640, 486}}
+2026-11-21 16:46:07.030 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{197, 31}, {198, 964}} to {{640, 31}, {640, 486}}
+2026-11-21 16:46:07.045 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{394, 31}, {500, 970}} to {{1280, 31}, {640, 486}}
+2026-11-21 16:46:07.087 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{753, 31}, {574, 970}} to {{0, 517}, {574, 485}}
+2026-11-21 16:46:07.117 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{1166, 31}, {501, 970}} to {{574, 517}, {501, 485}}
+2026-11-21 16:46:07.172 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{1526, 31}, {197, 970}} to {{1075, 517}, {423, 485}}
+2026-11-21 16:46:07.185 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1723, 31}, {197, 970}} to {{1498, 517}, {422, 485}}
+2026-11-21 16:46:08.467 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:09.484 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:09.993 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: menu
+2026-11-21 16:46:12.482 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.mainAndSide
+2026-11-21 16:46:12.497 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {640, 486}} to {{0, 31}, {960, 971}}
+2026-11-21 16:46:12.510 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{640, 31}, {639, 484}} to {{960, 31}, {960, 116}}
+2026-11-21 16:46:12.539 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{1280, 31}, {640, 486}} to {{960, 147}, {960, 269}}
+2026-11-21 16:46:12.590 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 517}, {574, 485}} to {{960, 416}, {960, 173}}
+2026-11-21 16:46:12.689 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{574, 517}, {501, 485}} to {{960, 589}, {960, 181}}
+2026-11-21 16:46:12.793 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{1075, 517}, {423, 485}} to {{960, 770}, {960, 116}}
+2026-11-21 16:46:12.808 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1498, 517}, {422, 485}} to {{960, 886}, {960, 116}}
+2026-11-21 16:46:13.171 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:14.258 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:14.744 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: menu
+2026-11-21 16:46:16.885 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.columns
+2026-11-21 16:46:16.912 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {960, 970}} to {{0, 31}, {197, 971}}
+2026-11-21 16:46:16.937 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{959, 31}, {961, 124}} to {{197, 31}, {197, 971}}
+2026-11-21 16:46:17.000 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{960, 147}, {960, 375}} to {{394, 31}, {359, 971}}
+2026-11-21 16:46:17.121 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{960, 416}, {960, 240}} to {{753, 31}, {413, 971}}
+2026-11-21 16:46:17.252 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{960, 589}, {960, 252}} to {{1166, 31}, {360, 971}}
+2026-11-21 16:46:17.395 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{960, 770}, {960, 116}} to {{1526, 31}, {197, 971}}
+2026-11-21 16:46:17.435 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{960, 886}, {960, 116}} to {{1723, 31}, {197, 971}}
+2026-11-21 16:46:17.719 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:18.708 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:19.153 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: menu
+2026-11-21 16:46:21.313 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.grid
+2026-11-21 16:46:21.333 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {197, 970}} to {{0, 31}, {640, 486}}
+2026-11-21 16:46:21.356 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{197, 31}, {198, 964}} to {{640, 31}, {640, 486}}
+2026-11-21 16:46:21.389 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{394, 31}, {500, 970}} to {{1280, 31}, {640, 486}}
+2026-11-21 16:46:21.466 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{753, 31}, {574, 970}} to {{0, 517}, {574, 485}}
+2026-11-21 16:46:21.525 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{1166, 31}, {501, 970}} to {{574, 517}, {501, 485}}
+2026-11-21 16:46:21.594 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{1526, 31}, {197, 970}} to {{1075, 517}, {423, 485}}
+2026-11-21 16:46:21.626 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1723, 31}, {197, 970}} to {{1498, 517}, {422, 485}}
+2026-11-21 16:46:22.032 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:23.078 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:23.566 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: menu
+2026-11-21 16:46:26.164 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.rows
+2026-11-21 16:46:26.185 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {640, 486}} to {{0, 31}, {1920, 95}}
+2026-11-21 16:46:26.196 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{640, 31}, {639, 484}} to {{0, 126}, {1920, 94}}
+2026-11-21 16:46:26.251 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{1280, 31}, {640, 486}} to {{0, 220}, {1920, 257}}
+2026-11-21 16:46:26.322 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 517}, {574, 485}} to {{0, 477}, {1920, 163}}
+2026-11-21 16:46:26.426 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{574, 517}, {501, 485}} to {{0, 640}, {1920, 173}}
+2026-11-21 16:46:26.562 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{1075, 517}, {423, 485}} to {{0, 813}, {1920, 94}}
+2026-11-21 16:46:26.574 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1498, 517}, {422, 485}} to {{0, 907}, {1920, 95}}
+2026-11-21 16:46:27.977 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:28.944 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:31.224 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {1920, 95}} to {{0, 31}, {1920, 80}}
+2026-11-21 16:46:31.236 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 126}, {1920, 124}} to {{0, 111}, {1920, 81}}
+2026-11-21 16:46:31.243 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{0, 220}, {1920, 375}} to {{0, 192}, {1920, 247}}
+2026-11-21 16:46:31.270 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 477}, {1920, 240}} to {{0, 439}, {1920, 158}}
+2026-11-21 16:46:31.296 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{0, 640}, {1920, 252}} to {{0, 597}, {1920, 166}}
+2026-11-21 16:46:31.324 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 813}, {1920, 94}} to {{0, 763}, {1920, 79}}
+2026-11-21 16:46:31.364 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 907}, {1920, 95}} to {{0, 842}, {1920, 80}}
+2026-11-21 16:46:31.371 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 93 (com.apple.TextEdit) from {{300, 165}, {603, 505}} to {{0, 922}, {1920, 80}}
+2026-11-21 16:46:31.470 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:31.894 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 93 (com.apple.TextEdit) from {{0, 920}, {1920, 82}} to {{0, 922}, {1920, 78}}
+2026-11-21 16:46:32.468 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:33.401 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:34.913 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 111}, {1920, 124}} to {{0, 126}, {1920, 94}}
+2026-11-21 16:46:34.920 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{0, 192}, {1920, 375}} to {{0, 220}, {1920, 257}}
+2026-11-21 16:46:34.933 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 439}, {1920, 240}} to {{0, 477}, {1920, 163}}
+2026-11-21 16:46:34.943 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{0, 597}, {1920, 252}} to {{0, 640}, {1920, 173}}
+2026-11-21 16:46:34.952 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 763}, {1920, 79}} to {{0, 813}, {1920, 94}}
+2026-11-21 16:46:34.973 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 842}, {1920, 80}} to {{0, 907}, {1920, 95}}
+2026-11-21 16:46:35.821 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:36.799 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:38.238 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {1920, 80}} to {{0, 31}, {1920, 77}}
+2026-11-21 16:46:38.245 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 126}, {1920, 124}} to {{0, 108}, {1920, 124}}
+2026-11-21 16:46:38.251 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{0, 220}, {1920, 375}} to {{0, 232}, {1920, 375}}
+2026-11-21 16:46:38.268 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 477}, {1920, 240}} to {{0, 607}, {1920, 240}}
+2026-11-21 16:46:38.277 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 813}, {1920, 94}} to {{0, 847}, {1920, 78}}
+2026-11-21 16:46:38.291 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 907}, {1920, 95}} to {{0, 925}, {1920, 77}}
+2026-11-21 16:46:40.047 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:41.083 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:41.740 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {1920, 77}} to {{0, 31}, {1920, 95}}
+2026-11-21 16:46:41.764 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 108}, {1920, 124}} to {{0, 126}, {1920, 94}}
+2026-11-21 16:46:41.770 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{0, 232}, {1920, 375}} to {{0, 220}, {1920, 257}}
+2026-11-21 16:46:41.806 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 607}, {1920, 240}} to {{0, 477}, {1920, 163}}
+2026-11-21 16:46:41.829 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 847}, {1920, 78}} to {{0, 813}, {1920, 94}}
+2026-11-21 16:46:41.837 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 925}, {1920, 77}} to {{0, 907}, {1920, 95}}
+2026-11-21 16:46:43.119 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:45.660 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:47.774 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 126}, {1920, 124}} to {{0, 31}, {1920, 116}}
+2026-11-21 16:46:47.786 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{0, 220}, {1920, 375}} to {{0, 147}, {1920, 269}}
+2026-11-21 16:46:47.812 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 477}, {1920, 240}} to {{0, 416}, {1920, 173}}
+2026-11-21 16:46:47.846 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{0, 640}, {1920, 252}} to {{0, 589}, {1920, 181}}
+2026-11-21 16:46:47.859 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 813}, {1920, 94}} to {{0, 770}, {1920, 116}}
+2026-11-21 16:46:47.866 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 907}, {1920, 94}} to {{0, 886}, {1920, 116}}
+2026-11-21 16:46:48.138 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:49.138 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:50.340 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 31}, {1920, 124}} to {{0, 126}, {1920, 94}}
+2026-11-21 16:46:50.343 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{0, 147}, {1920, 375}} to {{0, 220}, {1920, 257}}
+2026-11-21 16:46:50.368 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 416}, {1920, 240}} to {{0, 477}, {1920, 163}}
+2026-11-21 16:46:50.376 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{0, 589}, {1920, 252}} to {{0, 640}, {1920, 173}}
+2026-11-21 16:46:50.382 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 770}, {1920, 116}} to {{0, 813}, {1920, 94}}
+2026-11-21 16:46:50.389 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 886}, {1920, 115}} to {{0, 907}, {1920, 95}}
+2026-11-21 16:46:51.015 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:51.962 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:53.284 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {1920, 95}} to {{0, 31}, {1920, 77}}
+2026-11-21 16:46:53.299 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 126}, {1920, 124}} to {{0, 108}, {1920, 124}}
+2026-11-21 16:46:53.305 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{0, 220}, {1920, 375}} to {{0, 232}, {1920, 375}}
+2026-11-21 16:46:53.334 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 477}, {1920, 240}} to {{0, 607}, {1920, 240}}
+2026-11-21 16:46:53.353 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 813}, {1920, 94}} to {{0, 847}, {1920, 78}}
+2026-11-21 16:46:53.363 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 907}, {1920, 95}} to {{0, 925}, {1920, 77}}
+2026-11-21 16:46:53.836 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {1920, 77}} to {{0, 31}, {1920, 149}}
+2026-11-21 16:46:53.845 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 108}, {1920, 124}} to {{0, 180}, {1920, 149}}
+2026-11-21 16:46:53.866 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{0, 232}, {1920, 375}} to {{0, 329}, {1920, 375}}
+2026-11-21 16:46:53.883 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 847}, {1920, 78}} to {{0, 704}, {1920, 149}}
+2026-11-21 16:46:53.891 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 925}, {1920, 77}} to {{0, 853}, {1920, 149}}
+2026-11-21 16:46:54.268 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 180}, {1920, 154}} to {{0, 180}, {1920, 144}}
+2026-11-21 16:46:54.453 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {1920, 149}} to {{0, 31}, {1920, 243}}
+2026-11-21 16:46:54.467 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{-0, 180}, {1920, 139}} to {{0, 274}, {1920, 243}}
+2026-11-21 16:46:54.481 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 704}, {1920, 149}} to {{0, 517}, {1920, 242}}
+2026-11-21 16:46:54.487 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 853}, {1920, 148}} to {{0, 759}, {1920, 243}}
+2026-11-21 16:46:54.968 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {1920, 243}} to {{0, 31}, {1920, 324}}
+2026-11-21 16:46:54.974 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 517}, {1920, 242}} to {{0, 355}, {1920, 323}}
+2026-11-21 16:46:54.984 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 759}, {1920, 242}} to {{0, 678}, {1920, 324}}
+2026-11-21 16:46:56.409 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:57.341 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:46:57.817 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.columns
+2026-11-21 16:46:57.832 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {1920, 324}} to {{0, 31}, {640, 971}}
+2026-11-21 16:46:57.865 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 355}, {1920, 323}} to {{640, 31}, {640, 971}}
+2026-11-21 16:46:57.892 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 678}, {1920, 323}} to {{1280, 31}, {640, 971}}
+2026-11-21 16:46:59.805 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:00.783 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:01.379 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.rows
+2026-11-21 16:47:01.387 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {640, 970}} to {{0, 31}, {1920, 324}}
+2026-11-21 16:47:01.407 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{640, 31}, {640, 970}} to {{0, 355}, {1920, 323}}
+2026-11-21 16:47:01.423 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1280, 31}, {640, 970}} to {{0, 678}, {1920, 324}}
+2026-11-21 16:47:03.299 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:04.364 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:04.924 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.grid
+2026-11-21 16:47:04.936 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {1920, 324}} to {{0, 31}, {640, 971}}
+2026-11-21 16:47:04.965 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 355}, {1920, 323}} to {{640, 31}, {640, 971}}
+2026-11-21 16:47:04.993 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 678}, {1920, 324}} to {{1280, 31}, {640, 971}}
+2026-11-21 16:47:06.920 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:07.904 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:08.423 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.mainAndSide
+2026-11-21 16:47:08.434 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {640, 970}} to {{0, 31}, {960, 971}}
+2026-11-21 16:47:08.451 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{640, 31}, {640, 970}} to {{960, 31}, {960, 486}}
+2026-11-21 16:47:08.468 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1280, 31}, {640, 970}} to {{960, 517}, {960, 485}}
+2026-11-21 16:47:10.329 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:11.246 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:11.788 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.auto
+2026-11-21 16:47:13.709 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:14.642 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:15.266 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.nextLayout
+2026-11-21 16:47:15.275 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {960, 970}} to {{0, 31}, {640, 971}}
+2026-11-21 16:47:15.298 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{960, 31}, {960, 486}} to {{640, 31}, {640, 971}}
+2026-11-21 16:47:15.317 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{960, 517}, {960, 485}} to {{1280, 31}, {640, 971}}
+2026-11-21 16:47:16.794 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:17.872 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:18.432 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.nextLayout
+2026-11-21 16:47:18.441 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {640, 970}} to {{0, 31}, {1920, 324}}
+2026-11-21 16:47:18.468 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{640, 31}, {640, 970}} to {{0, 355}, {1920, 323}}
+2026-11-21 16:47:18.483 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1280, 31}, {640, 970}} to {{0, 678}, {1920, 324}}
+2026-11-21 16:47:19.870 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:20.840 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:21.338 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.nextLayout
+2026-11-21 16:47:21.351 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {1920, 324}} to {{0, 31}, {640, 971}}
+2026-11-21 16:47:21.365 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 355}, {1920, 323}} to {{640, 31}, {640, 971}}
+2026-11-21 16:47:21.383 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 678}, {1920, 324}} to {{1280, 31}, {640, 971}}
+2026-11-21 16:47:22.737 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:23.736 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:24.236 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.nextLayout
+2026-11-21 16:47:24.248 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {640, 970}} to {{0, 31}, {960, 971}}
+2026-11-21 16:47:24.274 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{640, 31}, {640, 970}} to {{960, 31}, {960, 486}}
+2026-11-21 16:47:24.303 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1280, 31}, {640, 970}} to {{960, 517}, {960, 485}}
+2026-11-21 16:47:25.600 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:26.554 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:27.039 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.nextLayout
+2026-11-21 16:47:28.452 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:29.470 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:30.041 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.nextLayout
+2026-11-21 16:47:30.056 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {960, 970}} to {{0, 31}, {640, 971}}
+2026-11-21 16:47:30.088 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{960, 31}, {960, 486}} to {{640, 31}, {640, 971}}
+2026-11-21 16:47:30.105 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{960, 517}, {960, 485}} to {{1280, 31}, {640, 971}}
+2026-11-21 16:47:31.483 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:32.502 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:33.056 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.nextLayout
+2026-11-21 16:47:33.064 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {640, 970}} to {{0, 31}, {1920, 324}}
+2026-11-21 16:47:33.081 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{640, 31}, {640, 970}} to {{0, 355}, {1920, 323}}
+2026-11-21 16:47:33.089 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1280, 31}, {640, 970}} to {{0, 678}, {1920, 324}}
+2026-11-21 16:47:34.417 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:35.351 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:35.913 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.nextLayout
+2026-11-21 16:47:35.921 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {1920, 324}} to {{0, 31}, {640, 971}}
+2026-11-21 16:47:35.944 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 355}, {1920, 323}} to {{640, 31}, {640, 971}}
+2026-11-21 16:47:35.968 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 678}, {1920, 324}} to {{1280, 31}, {640, 971}}
+2026-11-21 16:47:37.351 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:38.356 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:38.930 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.nextLayout
+2026-11-21 16:47:38.941 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {640, 970}} to {{0, 31}, {960, 971}}
+2026-11-21 16:47:38.964 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{640, 31}, {640, 970}} to {{960, 31}, {960, 486}}
+2026-11-21 16:47:38.985 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1280, 31}, {640, 970}} to {{960, 517}, {960, 485}}
+2026-11-21 16:47:40.309 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:41.318 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:41.781 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.nextLayout
+2026-11-21 16:47:43.285 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:44.314 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:44.853 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.previousLayout
+2026-11-21 16:47:46.369 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:47.390 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:48.018 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.previousLayout
+2026-11-21 16:47:48.038 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {960, 970}} to {{0, 31}, {640, 971}}
+2026-11-21 16:47:48.064 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{960, 31}, {960, 486}} to {{640, 31}, {640, 971}}
+2026-11-21 16:47:48.097 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{960, 517}, {960, 485}} to {{1280, 31}, {640, 971}}
+2026-11-21 16:47:49.526 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:50.490 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:51.013 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.previousLayout
+2026-11-21 16:47:51.021 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {640, 970}} to {{0, 31}, {1920, 324}}
+2026-11-21 16:47:51.036 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{640, 31}, {640, 970}} to {{0, 355}, {1920, 323}}
+2026-11-21 16:47:51.063 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1280, 31}, {640, 970}} to {{0, 678}, {1920, 324}}
+2026-11-21 16:47:52.437 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:53.443 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:54.021 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.previousLayout
+2026-11-21 16:47:54.035 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {1920, 324}} to {{0, 31}, {640, 971}}
+2026-11-21 16:47:54.054 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 355}, {1920, 323}} to {{640, 31}, {640, 971}}
+2026-11-21 16:47:54.071 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 678}, {1920, 324}} to {{1280, 31}, {640, 971}}
+2026-11-21 16:47:55.452 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:56.481 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:56.989 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.previousLayout
+2026-11-21 16:47:56.998 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {640, 970}} to {{0, 31}, {960, 971}}
+2026-11-21 16:47:57.014 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{640, 31}, {640, 970}} to {{960, 31}, {960, 486}}
+2026-11-21 16:47:57.033 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1280, 31}, {640, 970}} to {{960, 517}, {960, 485}}
+2026-11-21 16:47:58.428 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:47:59.354 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:48:01.357 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{960, 31}, {960, 486}} to {{0, 31}, {960, 971}}
+2026-11-21 16:48:01.368 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{960, 517}, {960, 485}} to {{960, 31}, {960, 971}}
+2026-11-21 16:48:02.594 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.auto
+2026-11-21 16:48:02.993 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{960, 31}, {960, 970}} to {{0, 31}, {1920, 971}}
+2026-11-21 16:48:04.366 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:48:05.377 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:48:05.934 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.columns
+2026-11-21 16:48:07.750 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:48:08.656 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:48:09.167 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.rows
+2026-11-21 16:48:10.819 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:48:11.784 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:48:12.300 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.grid
+2026-11-21 16:48:14.094 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:48:15.105 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:48:15.610 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.mainAndSide
+2026-11-21 16:48:17.355 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:48:18.298 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:48:19.991 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 31}, {960, 970}} to {{960, 31}, {960, 486}}
+2026-11-21 16:48:20.008 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 31}, {1920, 970}} to {{960, 517}, {960, 485}}
+2026-11-21 16:48:20.172 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{0, 640}, {1920, 252}} to {{960, 31}, {960, 324}}
+2026-11-21 16:48:20.221 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{960, 31}, {960, 486}} to {{960, 355}, {960, 323}}
+2026-11-21 16:48:20.226 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{960, 517}, {960, 485}} to {{960, 678}, {960, 324}}
+2026-11-21 16:48:20.418 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 607}, {1920, 240}} to {{960, 31}, {960, 240}}
+2026-11-21 16:48:20.458 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{960, 31}, {960, 324}} to {{960, 271}, {960, 252}}
+2026-11-21 16:48:20.491 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{960, 355}, {960, 323}} to {{960, 523}, {960, 240}}
+2026-11-21 16:48:20.506 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{960, 678}, {960, 324}} to {{960, 763}, {960, 239}}
+2026-11-21 16:48:20.902 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{0, 329}, {1920, 375}} to {{960, 31}, {960, 375}}
+2026-11-21 16:48:20.923 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{960, 31}, {960, 240}} to {{960, 406}, {960, 240}}
+2026-11-21 16:48:20.943 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{960, 271}, {960, 252}} to {{960, 646}, {960, 252}}
+2026-11-21 16:48:20.956 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{960, 523}, {960, 240}} to {{960, 898}, {960, 52}}
+2026-11-21 16:48:20.969 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{960, 763}, {960, 239}} to {{960, 950}, {960, 52}}
+2026-11-21 16:48:21.334 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 274}, {1920, 244}} to {{960, 31}, {960, 116}}
+2026-11-21 16:48:21.366 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{960, 31}, {960, 375}} to {{960, 147}, {960, 269}}
+2026-11-21 16:48:21.386 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{960, 406}, {960, 240}} to {{960, 416}, {960, 173}}
+2026-11-21 16:48:21.390 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{960, 646}, {960, 252}} to {{960, 589}, {960, 181}}
+2026-11-21 16:48:21.396 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{960, 898}, {960, 52}} to {{960, 770}, {960, 116}}
+2026-11-21 16:48:21.421 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{960, 950}, {960, 52}} to {{960, 886}, {960, 116}}
+2026-11-21 16:48:21.760 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.auto
+2026-11-21 16:48:21.779 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {960, 970}} to {{0, 31}, {640, 486}}
+2026-11-21 16:48:21.798 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{959, 31}, {961, 124}} to {{640, 31}, {640, 486}}
+2026-11-21 16:48:21.810 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{960, 147}, {960, 375}} to {{1280, 31}, {640, 486}}
+2026-11-21 16:48:21.837 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{960, 416}, {960, 240}} to {{0, 517}, {574, 485}}
+2026-11-21 16:48:21.875 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{960, 589}, {960, 252}} to {{574, 517}, {501, 485}}
+2026-11-21 16:48:21.960 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{960, 770}, {960, 116}} to {{1075, 517}, {423, 485}}
+2026-11-21 16:48:21.986 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{960, 886}, {960, 115}} to {{1498, 517}, {422, 485}}
+2026-11-21 16:48:23.803 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:48:24.822 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:48:26.161 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.swapWithMain
+2026-11-21 16:48:26.169 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 517}, {574, 485}} to {{0, 31}, {640, 486}}
+2026-11-21 16:48:26.227 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{-0, 31}, {640, 486}} to {{0, 517}, {473, 485}}
+2026-11-21 16:48:26.247 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{574, 517}, {501, 484}} to {{473, 517}, {501, 485}}
+2026-11-21 16:48:26.256 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{1075, 517}, {423, 484}} to {{974, 517}, {473, 485}}
+2026-11-21 16:48:26.268 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1498, 517}, {422, 484}} to {{1447, 517}, {473, 485}}
+2026-11-21 16:48:28.668 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:48:29.669 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:48:30.989 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.leftHalf
+2026-11-21 16:48:30.994 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{1280, 31}, {640, 486}} to {{0, 31}, {960, 971}}
+2026-11-21 16:48:31.175 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 31}, {640, 486}} to {{960, 31}, {574, 324}}
+2026-11-21 16:48:31.209 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{640, 31}, {639, 484}} to {{1534, 31}, {386, 324}}
+2026-11-21 16:48:31.240 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{0, 517}, {473, 485}} to {{960, 355}, {459, 323}}
+2026-11-21 16:48:31.265 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{473, 517}, {501, 484}} to {{1419, 355}, {501, 323}}
+2026-11-21 16:48:31.300 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{974, 517}, {473, 484}} to {{960, 678}, {480, 324}}
+2026-11-21 16:48:31.323 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1447, 517}, {473, 484}} to {{1440, 678}, {480, 324}}
+2026-11-21 16:48:33.594 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:48:35.073 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.restore
+2026-11-21 16:48:35.087 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{960, 31}, {574, 324}} to {{0, 31}, {640, 486}}
+2026-11-21 16:48:35.143 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{1534, 31}, {387, 319}} to {{640, 31}, {640, 486}}
+2026-11-21 16:48:35.172 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{0, 31}, {960, 970}} to {{1280, 31}, {640, 486}}
+2026-11-21 16:48:35.230 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{960, 355}, {459, 323}} to {{0, 517}, {473, 485}}
+2026-11-21 16:48:35.259 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{1419, 355}, {501, 323}} to {{473, 517}, {501, 485}}
+2026-11-21 16:48:35.290 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{960, 678}, {480, 324}} to {{974, 517}, {473, 485}}
+2026-11-21 16:48:35.302 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1440, 678}, {480, 324}} to {{1447, 517}, {473, 485}}
+2026-11-21 16:48:38.037 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:48:39.598 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.toggleFloat
+2026-11-21 16:48:39.611 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{640, 31}, {639, 484}} to {{0, 517}, {640, 485}}
+2026-11-21 16:48:39.616 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{1280, 31}, {640, 486}} to {{640, 31}, {640, 486}}
+2026-11-21 16:48:39.637 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{473, 517}, {501, 485}} to {{640, 517}, {640, 485}}
+2026-11-21 16:48:39.693 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{974, 517}, {473, 484}} to {{1280, 31}, {640, 486}}
+2026-11-21 16:48:39.708 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1447, 517}, {473, 484}} to {{1280, 517}, {640, 485}}
+2026-11-21 16:48:41.059 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:48:43.060 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:48:43.701 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.toggleFloat
+2026-11-21 16:48:43.711 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 517}, {639, 484}} to {{640, 31}, {640, 486}}
+2026-11-21 16:48:43.724 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{640, 31}, {640, 486}} to {{1280, 31}, {640, 486}}
+2026-11-21 16:48:43.736 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{640, 517}, {640, 485}} to {{473, 517}, {501, 485}}
+2026-11-21 16:48:43.782 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{1280, 31}, {640, 486}} to {{974, 517}, {473, 485}}
+2026-11-21 16:48:43.815 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1280, 517}, {640, 484}} to {{1447, 517}, {473, 485}}
+2026-11-21 16:48:46.768 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:48:47.395 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:48:51.918 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{832, 268}, {473, 485}} to {{640, 31}, {640, 486}}
+2026-11-21 16:48:51.925 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{640, 31}, {639, 484}} to {{0, 517}, {473, 485}}
+2026-11-21 16:48:53.700 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.grid
+2026-11-21 16:48:55.413 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:48:56.383 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:48:57.593 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:48:58.028 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.maximise
+2026-11-21 16:48:58.031 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{640, 31}, {640, 486}} to {{0, 31}, {1920, 971}}
+2026-11-21 16:48:58.185 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{1280, 31}, {640, 486}} to {{640, 31}, {640, 486}}
+2026-11-21 16:48:58.199 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 517}, {471, 484}} to {{1280, 31}, {640, 486}}
+2026-11-21 16:48:58.210 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{473, 517}, {501, 485}} to {{0, 517}, {640, 485}}
+2026-11-21 16:48:58.280 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{974, 517}, {473, 485}} to {{640, 517}, {640, 485}}
+2026-11-21 16:48:58.287 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1447, 517}, {473, 484}} to {{1280, 517}, {640, 485}}
+2026-11-21 16:48:59.733 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:02.819 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:03.237 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.rows
+2026-11-21 16:49:03.247 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{0, 31}, {640, 486}} to {{0, 31}, {1920, 164}}
+2026-11-21 16:49:03.307 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{0, 31}, {1920, 970}} to {{0, 195}, {1920, 95}}
+2026-11-21 16:49:03.324 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{640, 31}, {640, 486}} to {{0, 290}, {1920, 256}}
+2026-11-21 16:49:03.367 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{1280, 31}, {639, 484}} to {{0, 546}, {1920, 94}}
+2026-11-21 16:49:03.399 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{0, 517}, {640, 485}} to {{0, 640}, {1920, 173}}
+2026-11-21 16:49:03.472 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{640, 517}, {640, 485}} to {{0, 813}, {1920, 94}}
+2026-11-21 16:49:03.482 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1280, 517}, {640, 484}} to {{0, 907}, {1920, 95}}
+2026-11-21 16:49:05.217 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:06.170 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:07.460 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: snap.maximise
+2026-11-21 16:49:07.464 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{0, 195}, {1920, 95}} to {{0, 31}, {1920, 971}}
+2026-11-21 16:49:07.623 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{-0, 31}, {1920, 240}} to {{0, 31}, {1920, 172}}
+2026-11-21 16:49:07.625 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{0, 290}, {1920, 375}} to {{0, 203}, {1920, 270}}
+2026-11-21 16:49:07.634 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 546}, {1920, 124}} to {{0, 473}, {1920, 116}}
+2026-11-21 16:49:07.637 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{0, 640}, {1920, 252}} to {{0, 589}, {1920, 181}}
+2026-11-21 16:49:07.640 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 813}, {1920, 94}} to {{0, 770}, {1920, 116}}
+2026-11-21 16:49:07.651 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 907}, {1920, 95}} to {{0, 886}, {1920, 116}}
+2026-11-21 16:49:09.139 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: run:tile.retile
+2026-11-21 16:49:09.139 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.retile
+2026-11-21 16:49:09.154 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{-0, 31}, {1920, 240}} to {{0, 31}, {1920, 164}}
+2026-11-21 16:49:09.156 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{0, 31}, {1920, 970}} to {{0, 195}, {1920, 95}}
+2026-11-21 16:49:09.166 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{0, 203}, {1920, 375}} to {{0, 290}, {1920, 256}}
+2026-11-21 16:49:09.187 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 473}, {1920, 124}} to {{0, 546}, {1920, 94}}
+2026-11-21 16:49:09.190 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{0, 589}, {1920, 252}} to {{0, 640}, {1920, 173}}
+2026-11-21 16:49:09.193 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 770}, {1920, 116}} to {{0, 813}, {1920, 94}}
+2026-11-21 16:49:09.212 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 886}, {1920, 115}} to {{0, 907}, {1920, 95}}
+2026-11-21 16:49:10.906 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:11.943 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:13.919 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Window 39 was maximised outside Tessera: it keeps that spot
+2026-11-21 16:49:14.055 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{-0, 31}, {1920, 240}} to {{0, 31}, {1920, 172}}
+2026-11-21 16:49:14.059 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{0, 290}, {1920, 375}} to {{0, 203}, {1920, 270}}
+2026-11-21 16:49:14.071 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 546}, {1920, 124}} to {{0, 473}, {1920, 116}}
+2026-11-21 16:49:14.076 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{0, 640}, {1920, 252}} to {{0, 589}, {1920, 181}}
+2026-11-21 16:49:14.083 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 813}, {1920, 94}} to {{0, 770}, {1920, 116}}
+2026-11-21 16:49:14.092 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 907}, {1920, 95}} to {{0, 886}, {1920, 116}}
+2026-11-21 16:49:15.275 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:15.677 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.columns
+2026-11-21 16:49:15.689 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{-0, 31}, {1920, 240}} to {{0, 31}, {412, 971}}
+2026-11-21 16:49:15.733 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{0, 31}, {1920, 971}} to {{412, 31}, {198, 971}}
+2026-11-21 16:49:15.750 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{0, 203}, {1920, 375}} to {{610, 31}, {359, 971}}
+2026-11-21 16:49:15.814 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 473}, {1920, 124}} to {{969, 31}, {197, 971}}
+2026-11-21 16:49:15.842 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{0, 589}, {1920, 252}} to {{1166, 31}, {360, 971}}
+2026-11-21 16:49:15.957 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{0, 770}, {1920, 116}} to {{1526, 31}, {197, 971}}
+2026-11-21 16:49:15.968 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{0, 886}, {1920, 115}} to {{1723, 31}, {197, 971}}
+2026-11-21 16:49:17.498 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:18.469 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:20.059 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{-0, 31}, {574, 970}} to {{0, 31}, {435, 971}}
+2026-11-21 16:49:20.067 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{610, 31}, {500, 970}} to {{435, 31}, {378, 971}}
+2026-11-21 16:49:20.085 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{969, 31}, {198, 964}} to {{813, 31}, {243, 971}}
+2026-11-21 16:49:20.103 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{1166, 31}, {501, 970}} to {{1056, 31}, {379, 971}}
+2026-11-21 16:49:20.107 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{1526, 31}, {197, 970}} to {{1435, 31}, {243, 971}}
+2026-11-21 16:49:20.125 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1723, 31}, {197, 970}} to {{1678, 31}, {242, 971}}
+2026-11-21 16:49:20.500 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{242, 107}, {656, 422}} to {{1435, 31}, {243, 971}}
+2026-11-21 16:49:20.509 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{213, 78}, {656, 422}} to {{1678, 31}, {242, 971}}
+2026-11-21 16:49:22.941 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:23.560 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.grid
+2026-11-21 16:49:23.565 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Taking window 39 out of full screen for the new layout
+2026-11-21 16:49:24.712 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{-0, 31}, {574, 970}} to {{0, 31}, {640, 486}}
+2026-11-21 16:49:24.749 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{832, 268}, {473, 485}} to {{640, 31}, {640, 486}}
+2026-11-21 16:49:24.755 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{435, 31}, {500, 970}} to {{1280, 31}, {640, 486}}
+2026-11-21 16:49:24.806 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{813, 31}, {240, 964}} to {{0, 517}, {473, 485}}
+2026-11-21 16:49:24.834 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{1056, 31}, {501, 970}} to {{473, 517}, {501, 485}}
+2026-11-21 16:49:24.886 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{242, 107}, {656, 422}} to {{974, 517}, {473, 485}}
+2026-11-21 16:49:24.890 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{213, 78}, {656, 422}} to {{1447, 517}, {473, 485}}
+2026-11-21 16:49:28.440 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:29.466 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:29.908 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:30.363 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.columns
+2026-11-21 16:49:30.375 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{-0, 31}, {640, 486}} to {{0, 31}, {412, 971}}
+2026-11-21 16:49:30.402 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{640, 31}, {640, 486}} to {{412, 31}, {198, 971}}
+2026-11-21 16:49:30.420 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{1280, 31}, {640, 486}} to {{610, 31}, {359, 971}}
+2026-11-21 16:49:30.458 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{0, 517}, {471, 484}} to {{969, 31}, {197, 971}}
+2026-11-21 16:49:30.476 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{473, 517}, {501, 485}} to {{1166, 31}, {360, 971}}
+2026-11-21 16:49:30.518 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{974, 517}, {473, 485}} to {{1526, 31}, {197, 971}}
+2026-11-21 16:49:30.531 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1447, 517}, {473, 485}} to {{1723, 31}, {197, 971}}
+2026-11-21 16:49:32.841 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:33.877 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:34.349 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:39.536 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:41.016 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:42.014 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:42.734 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:43.660 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:44.301 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:45.406 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 165 (com.apple.TextEdit) from {{300, 165}, {603, 505}} to {{0, 31}, {1920, 971}}
+2026-11-21 16:49:46.668 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 165 (com.apple.TextEdit) from {{0, 31}, {1920, 970}} to {{0, 31}, {960, 971}}
+2026-11-21 16:49:46.681 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 166 (com.apple.TextEdit) from {{329, 194}, {603, 505}} to {{960, 31}, {960, 971}}
+2026-11-21 16:49:47.583 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:49.120 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:50.110 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:50.627 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.rows
+2026-11-21 16:49:50.637 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 165 (com.apple.TextEdit) from {{-0, 31}, {960, 970}} to {{0, 31}, {1920, 486}}
+2026-11-21 16:49:50.657 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 166 (com.apple.TextEdit) from {{960, 31}, {960, 970}} to {{0, 517}, {1920, 485}}
+2026-11-21 16:49:52.636 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:53.647 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:55.200 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:56.225 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:56.748 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:57.158 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:57.950 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:49:58.717 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:02.255 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:03.213 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:03.734 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:04.649 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:05.282 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:06.971 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:07.707 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:08.353 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:10.127 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:11.053 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:11.838 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:13.497 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:14.459 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:15.161 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:16.927 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:17.711 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:18.431 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:20.127 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:21.103 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:21.792 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:23.550 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:24.367 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:25.093 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:26.837 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:27.803 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:28.424 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:31.206 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:32.247 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:33.747 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:34.786 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:39.768 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:40.751 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:41.222 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:42.077 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:42.649 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:44.030 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:45.024 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:45.631 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 165 (com.apple.TextEdit) from {{-0, 31}, {1920, 486}} to {{0, 31}, {1920, 971}}
+2026-11-21 16:50:47.388 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:48.305 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:49.039 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:50.507 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:51.553 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:52.057 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: layout.mainAndSide
+2026-11-21 16:50:52.069 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{-0, 31}, {574, 970}} to {{0, 31}, {960, 971}}
+2026-11-21 16:50:52.137 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{412, 31}, {198, 970}} to {{960, 31}, {960, 73}}
+2026-11-21 16:50:52.158 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{610, 31}, {500, 970}} to {{960, 104}, {960, 375}}
+2026-11-21 16:50:52.224 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{969, 31}, {198, 964}} to {{960, 479}, {960, 124}}
+2026-11-21 16:50:52.256 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{1166, 31}, {501, 970}} to {{960, 603}, {960, 252}}
+2026-11-21 16:50:52.391 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{1526, 31}, {197, 970}} to {{960, 855}, {960, 74}}
+2026-11-21 16:50:52.407 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{1723, 31}, {197, 970}} to {{960, 929}, {960, 73}}
+2026-11-21 16:50:53.843 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:54.800 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:55.310 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.toggleAutoTile
+2026-11-21 16:50:56.499 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:57.014 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.toggleAutoTile
+2026-11-21 16:50:57.022 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 39 (com.apple.TextEdit) from {{960, 31}, {960, 73}} to {{0, 31}, {960, 971}}
+2026-11-21 16:50:57.056 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 56 (com.google.Chrome) from {{960, 104}, {960, 375}} to {{960, 31}, {960, 269}}
+2026-11-21 16:50:57.088 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 54 (com.apple.Safari) from {{-0, 31}, {960, 970}} to {{960, 300}, {960, 173}}
+2026-11-21 16:50:57.118 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 42 (com.apple.Terminal) from {{960, 479}, {961, 124}} to {{960, 473}, {960, 116}}
+2026-11-21 16:50:57.125 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 40 (com.apple.TextEdit) from {{960, 855}, {960, 74}} to {{960, 589}, {960, 116}}
+2026-11-21 16:50:57.141 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 48 (com.apple.finder) from {{960, 603}, {960, 252}} to {{960, 705}, {960, 181}}
+2026-11-21 16:50:57.156 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Move 38 (com.apple.TextEdit) from {{960, 929}, {960, 73}} to {{960, 886}, {960, 116}}
+2026-11-21 16:50:58.797 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:50:59.780 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump
+2026-11-21 16:51:00.266 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Shortcut: tile.toggleAutoTile
+2026-11-21 16:51:01.473 Df Tessera[3471:3d6b] [com.vikram.Tessera:app] Test command: dump

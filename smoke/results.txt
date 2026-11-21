@@ -1,0 +1,490 @@
+460 passed, 28 warnings, 0 failed
+
+PASS Accessibility allowed
+PASS All shortcuts registered
+PASS TextEdit ⌃⌥← Left Half  (got [0, 31, 960, 970], want [0, 31, 960, 971])
+PASS TextEdit ⌃⌥← again: two thirds  (got [0, 31, 1280, 970], want [0, 31, 1280, 971])
+PASS TextEdit ⌃⌥← third time: one third  (got [0, 31, 640, 970], want [0, 31, 640, 971])
+PASS TextEdit ⌃⌥→ Right Half  (got [960, 31, 960, 970], want [960, 31, 960, 971])
+PASS TextEdit ⌃⌥↑ Top Half  (got [0, 31, 1920, 486], want [0, 31, 1920, 486])
+PASS TextEdit ⌃⌥↓ Bottom Half  (got [0, 517, 1920, 485], want [0, 517, 1920, 485])
+PASS TextEdit ⌃⌥U Top Left  (got [0, 31, 960, 486], want [0, 31, 960, 486])
+PASS TextEdit ⌃⌥I Top Right  (got [960, 31, 960, 486], want [960, 31, 960, 486])
+PASS TextEdit ⌃⌥J Bottom Left  (got [0, 517, 960, 485], want [0, 517, 960, 485])
+PASS TextEdit ⌃⌥K Bottom Right  (got [960, 517, 960, 485], want [960, 517, 960, 485])
+PASS TextEdit ⌃⌥D First Third  (got [0, 31, 640, 970], want [0, 31, 640, 971])
+PASS TextEdit ⌃⌥F Centre Third  (got [640, 31, 640, 970], want [640, 31, 640, 971])
+PASS TextEdit ⌃⌥G Last Third  (got [1280, 31, 640, 970], want [1280, 31, 640, 971])
+PASS TextEdit ⌃⌥E First Two Thirds  (got [0, 31, 1280, 970], want [0, 31, 1280, 971])
+PASS TextEdit ⌃⌥T Last Two Thirds  (got [640, 31, 1280, 970], want [640, 31, 1280, 971])
+PASS TextEdit ⌃⌥↩ Maximise  (got [0, 31, 1920, 970], want [0, 31, 1920, 971])
+PASS TextEdit ⌃⌥⌫ Restore  (got [271, 136, 673, 439], want [271, 136, 673, 439])
+PASS TextEdit ⌃⌥C Centre  (got [624, 297, 673, 439], want [624, 297, 673, 439])
+PASS TextEdit ⌃⌥= Make Larger  (got [594, 267, 733, 499], want [594, 267, 733, 499])
+PASS TextEdit ⌃⌥- Make Smaller  (got [624, 297, 673, 439], want [624, 297, 673, 439])
+PASS TextEdit ⌃⌥⇧↑ Maximise Height  (got [624, 31, 673, 970], want [624, 31, 673, 971])
+PASS TextEdit Almost Maximise  (got [96, 80, 1728, 873], want [96, 80, 1728, 873])
+PASS TextEdit Centre Half  (got [480, 31, 960, 970], want [480, 31, 960, 971])
+PASS TextEdit Centre Two Thirds  (got [320, 31, 1280, 970], want [320, 31, 1280, 971])
+PASS TextEdit Top Left Sixth  (got [0, 31, 640, 486], want [0, 31, 640, 486])
+PASS TextEdit Bottom Right Sixth  (got [1280, 517, 640, 485], want [1280, 517, 640, 485])
+PASS TextEdit First Three Quarters  (got [0, 31, 1440, 970], want [0, 31, 1440, 971])
+PASS TextEdit Last Quarter  (got [1440, 31, 480, 970], want [1440, 31, 480, 971])
+PASS TextEdit Restore after many snaps  (got [271, 136, 673, 439], want [271, 136, 673, 439])
+PASS TextEdit Move Right (keeps size)  (got [1247, 136, 673, 439], want [1247, 136, 673, 439])
+PASS TextEdit Move Up  (got [1247, 31, 673, 439], want [1247, 31, 673, 439])
+PASS TextEdit Restore after moving  (got [271, 136, 673, 439], want [271, 136, 673, 439])
+PASS TextEdit Left Half with a 10 pt gap  (got [10, 41, 945, 951], want [10, 41, 945, 951])
+PASS TextEdit Right Half with a 10 pt gap  (got [965, 41, 945, 951], want [965, 41, 945, 951])
+PASS TextEdit Restore  (got [271, 136, 673, 439], want [271, 136, 673, 439])
+PASS Finder Left Half  (got [0, 31, 960, 970], want [0, 31, 960, 971])
+PASS Finder Right Half  (got [960, 31, 960, 970], want [960, 31, 960, 971])
+PASS Finder Top Left  (got [0, 31, 960, 486], want [0, 31, 960, 486])
+PASS Finder Last Third  (got [1280, 31, 640, 970], want [1280, 31, 640, 971])
+PASS Finder Maximise  (got [0, 31, 1920, 970], want [0, 31, 1920, 971])
+PASS Finder Restore  (got [500, 165, 920, 436], want [500, 165, 920, 436])
+PASS Safari Left Half  (got [0, 31, 960, 970], want [0, 31, 960, 971])
+PASS Safari Right Half  (got [960, 31, 960, 970], want [960, 31, 960, 971])
+PASS Safari Top Left  (got [0, 31, 960, 486], want [0, 31, 960, 486])
+PASS Safari Last Third  (got [1280, 31, 640, 970], want [1280, 31, 640, 971])
+PASS Safari Maximise  (got [0, 31, 1920, 970], want [0, 31, 1920, 971])
+PASS Safari Restore  (got [298, 47, 1324, 940], want [298, 47, 1324, 940])
+PASS Chrome Left Half  (got [0, 31, 960, 970], want [0, 31, 960, 971])
+PASS Chrome Right Half  (got [960, 31, 960, 970], want [960, 31, 960, 971])
+PASS Chrome Top Left  (got [0, 31, 960, 486], want [0, 31, 960, 486])
+PASS Chrome Last Third  (got [1280, 31, 640, 970], want [1280, 31, 640, 971])
+PASS Chrome Maximise  (got [0, 31, 1920, 970], want [0, 31, 1920, 971])
+PASS Chrome Restore  (got [22, 53, 1200, 927], want [22, 53, 1200, 927])
+PASS Terminal Left Half  (got [0, 31, 961, 964], want [0, 31, 960, 971])
+PASS Terminal Right Half  (got [960, 31, 961, 964], want [960, 31, 960, 971])
+PASS Terminal Top Left  (got [0, 31, 961, 484], want [0, 31, 960, 486])
+PASS Terminal Last Third  (got [1280, 31, 639, 964], want [1280, 31, 640, 971])
+PASS Terminal Maximise  (got [0, 31, 1920, 964], want [0, 31, 1920, 971])
+PASS Terminal Restore  (got [40, 51, 877, 499], want [40, 51, 877, 499])
+PASS macOS edge tiling was on at the start
+PASS Tessera turns off macOS edge tiling  (EnableTilingByEdgeDrag = '0')
+PASS Drag TextEdit to the left edge: Left Half  (got [0, 31, 960, 970])
+PASS Drag it out again: old size back  (got [874, 166, 673, 439], start [271, 136, 673, 439])
+PASS Drag TextEdit to the top edge: Maximise  (got [0, 31, 1920, 970])
+PASS Drag TextEdit to the right edge: Right Half  (got [960, 31, 960, 970])
+PASS ⌃⌥A turns auto-tile on
+PASS 7 windows, Auto: style is Auto  (setting ['auto'], arranged as auto)
+PASS 7 windows, Auto: all 7 windows tiled  (tiled 7)
+PASS 7 windows, Auto: looks like Auto
+PASS 7 windows, Auto: windows are where planned
+PASS 7 windows, Auto: no overlaps  ([])
+PASS 7 windows: ⌃⌥2 Columns: style is Columns  (setting ['columns'], arranged as columns)
+PASS 7 windows: ⌃⌥2 Columns: all 7 windows tiled  (tiled 7)
+PASS 7 windows: ⌃⌥2 Columns: looks like Columns
+PASS 7 windows: ⌃⌥2 Columns: windows are where planned  ( (3 held at their app's minimum size))
+WARN 7 windows: ⌃⌥2 Columns: everything fits  (some apps can't get small enough for this layout)
+PASS 7 windows: ⌃⌥3 Rows: style is Rows  (setting ['rows'], arranged as rows)
+PASS 7 windows: ⌃⌥3 Rows: all 7 windows tiled  (tiled 7)
+PASS 7 windows: ⌃⌥3 Rows: looks like Rows
+PASS 7 windows: ⌃⌥3 Rows: windows are where planned  ( (4 held at their app's minimum size))
+WARN 7 windows: ⌃⌥3 Rows: everything fits  (some apps can't get small enough for this layout)
+PASS 7 windows: ⌃⌥4 Grid: style is Grid  (setting ['grid'], arranged as grid)
+PASS 7 windows: ⌃⌥4 Grid: all 7 windows tiled  (tiled 7)
+PASS 7 windows: ⌃⌥4 Grid: looks like Grid
+PASS 7 windows: ⌃⌥4 Grid: windows are where planned
+PASS 7 windows: ⌃⌥4 Grid: no overlaps  ([])
+PASS 7 windows: ⌃⌥5 Main + Side: style is Main + Side  (setting ['mainAndSide'], arranged as mainAndSide)
+PASS 7 windows: ⌃⌥5 Main + Side: all 7 windows tiled  (tiled 7)
+PASS 7 windows: ⌃⌥5 Main + Side: looks like Main + Side
+PASS 7 windows: ⌃⌥5 Main + Side: windows are where planned  ( (3 held at their app's minimum size))
+WARN 7 windows: ⌃⌥5 Main + Side: everything fits  (some apps can't get small enough for this layout)
+PASS 7 windows: ⌃⌥1 Auto: style is Auto  (setting ['auto'], arranged as auto)
+PASS 7 windows: ⌃⌥1 Auto: all 7 windows tiled  (tiled 7)
+PASS 7 windows: ⌃⌥1 Auto: looks like Auto
+PASS 7 windows: ⌃⌥1 Auto: windows are where planned
+PASS 7 windows: ⌃⌥1 Auto: no overlaps  ([])
+PASS 7 windows: Columns, Rows and Main + Side all look different  (3 different)
+PASS 7 windows: ⌃⌥L press 1 → Columns: style is Columns  (setting ['columns'], arranged as columns)
+PASS 7 windows: ⌃⌥L press 1 → Columns: all 7 windows tiled  (tiled 7)
+PASS 7 windows: ⌃⌥L press 1 → Columns: looks like Columns
+PASS 7 windows: ⌃⌥L press 1 → Columns: windows are where planned  ( (3 held at their app's minimum size))
+WARN 7 windows: ⌃⌥L press 1 → Columns: everything fits  (some apps can't get small enough for this layout)
+PASS 7 windows: ⌃⌥L press 2 → Rows: style is Rows  (setting ['rows'], arranged as rows)
+PASS 7 windows: ⌃⌥L press 2 → Rows: all 7 windows tiled  (tiled 7)
+PASS 7 windows: ⌃⌥L press 2 → Rows: looks like Rows
+PASS 7 windows: ⌃⌥L press 2 → Rows: windows are where planned  ( (4 held at their app's minimum size))
+WARN 7 windows: ⌃⌥L press 2 → Rows: everything fits  (some apps can't get small enough for this layout)
+PASS 7 windows: ⌃⌥L press 3 → Grid: style is Grid  (setting ['grid'], arranged as grid)
+PASS 7 windows: ⌃⌥L press 3 → Grid: all 7 windows tiled  (tiled 7)
+PASS 7 windows: ⌃⌥L press 3 → Grid: looks like Grid
+PASS 7 windows: ⌃⌥L press 3 → Grid: windows are where planned
+PASS 7 windows: ⌃⌥L press 3 → Grid: no overlaps  ([])
+PASS 7 windows: ⌃⌥L press 4 → Main + Side: style is Main + Side  (setting ['mainAndSide'], arranged as mainAndSide)
+PASS 7 windows: ⌃⌥L press 4 → Main + Side: all 7 windows tiled  (tiled 7)
+PASS 7 windows: ⌃⌥L press 4 → Main + Side: looks like Main + Side
+PASS 7 windows: ⌃⌥L press 4 → Main + Side: windows are where planned  ( (3 held at their app's minimum size))
+WARN 7 windows: ⌃⌥L press 4 → Main + Side: everything fits  (some apps can't get small enough for this layout)
+PASS 7 windows: ⌃⌥L press 5 → Auto: style is Auto  (setting ['auto'], arranged as auto)
+PASS 7 windows: ⌃⌥L press 5 → Auto: all 7 windows tiled  (tiled 7)
+PASS 7 windows: ⌃⌥L press 5 → Auto: looks like Auto
+PASS 7 windows: ⌃⌥L press 5 → Auto: windows are where planned
+PASS 7 windows: ⌃⌥L press 5 → Auto: no overlaps  ([])
+PASS 7 windows: ⌃⌥L press 6 → Columns: style is Columns  (setting ['columns'], arranged as columns)
+PASS 7 windows: ⌃⌥L press 6 → Columns: all 7 windows tiled  (tiled 7)
+PASS 7 windows: ⌃⌥L press 6 → Columns: looks like Columns
+PASS 7 windows: ⌃⌥L press 6 → Columns: windows are where planned  ( (3 held at their app's minimum size))
+WARN 7 windows: ⌃⌥L press 6 → Columns: everything fits  (some apps can't get small enough for this layout)
+PASS 7 windows: Columns looks the same on the second round  ([[0, 31, 197, 971], [197, 31, 197, 971], [394, 31, 359, 971], [753, 31, 413, 971], [1166, 31, 360, 971], [1526, 31, 197, 971], [1723, 31, 197, 971]] vs [[0, 31, 197, 971], [197, 31, 197, 971], [394, 31, 359, 971], [753, 31, 413, 971], [1166, 31, 360, 971], [1526, 31, 197, 971], [1723, 31, 197, 971]])
+PASS 7 windows: ⌃⌥L press 7 → Rows: style is Rows  (setting ['rows'], arranged as rows)
+PASS 7 windows: ⌃⌥L press 7 → Rows: all 7 windows tiled  (tiled 7)
+PASS 7 windows: ⌃⌥L press 7 → Rows: looks like Rows
+PASS 7 windows: ⌃⌥L press 7 → Rows: windows are where planned  ( (4 held at their app's minimum size))
+WARN 7 windows: ⌃⌥L press 7 → Rows: everything fits  (some apps can't get small enough for this layout)
+PASS 7 windows: Rows looks the same on the second round  ([[0, 31, 1920, 95], [0, 126, 1920, 94], [0, 220, 1920, 257], [0, 477, 1920, 163], [0, 640, 1920, 173], [0, 813, 1920, 94], [0, 907, 1920, 95]] vs [[0, 31, 1920, 95], [0, 126, 1920, 94], [0, 220, 1920, 257], [0, 477, 1920, 163], [0, 640, 1920, 173], [0, 813, 1920, 94], [0, 907, 1920, 95]])
+PASS 7 windows: ⌃⌥L press 8 → Grid: style is Grid  (setting ['grid'], arranged as grid)
+PASS 7 windows: ⌃⌥L press 8 → Grid: all 7 windows tiled  (tiled 7)
+PASS 7 windows: ⌃⌥L press 8 → Grid: looks like Grid
+PASS 7 windows: ⌃⌥L press 8 → Grid: windows are where planned
+PASS 7 windows: ⌃⌥L press 8 → Grid: no overlaps  ([])
+PASS 7 windows: Grid looks the same on the second round  ([[0, 31, 640, 486], [640, 31, 640, 486], [1280, 31, 640, 486], [0, 517, 574, 485], [574, 517, 501, 485], [1075, 517, 423, 485], [1498, 517, 422, 485]] vs [[0, 31, 640, 486], [640, 31, 640, 486], [1280, 31, 640, 486], [0, 517, 574, 485], [574, 517, 501, 485], [1075, 517, 423, 485], [1498, 517, 422, 485]])
+PASS 7 windows: ⌃⌥L press 9 → Main + Side: style is Main + Side  (setting ['mainAndSide'], arranged as mainAndSide)
+PASS 7 windows: ⌃⌥L press 9 → Main + Side: all 7 windows tiled  (tiled 7)
+PASS 7 windows: ⌃⌥L press 9 → Main + Side: looks like Main + Side
+PASS 7 windows: ⌃⌥L press 9 → Main + Side: windows are where planned  ( (3 held at their app's minimum size))
+WARN 7 windows: ⌃⌥L press 9 → Main + Side: everything fits  (some apps can't get small enough for this layout)
+PASS 7 windows: Main + Side looks the same on the second round  ([[0, 31, 960, 971], [960, 31, 960, 116], [960, 147, 960, 269], [960, 416, 960, 173], [960, 589, 960, 181], [960, 770, 960, 116], [960, 886, 960, 116]] vs [[0, 31, 960, 971], [960, 31, 960, 116], [960, 147, 960, 269], [960, 416, 960, 173], [960, 589, 960, 181], [960, 770, 960, 116], [960, 886, 960, 116]])
+PASS 7 windows: ⌃⌥L press 10 → Auto: style is Auto  (setting ['auto'], arranged as auto)
+PASS 7 windows: ⌃⌥L press 10 → Auto: all 7 windows tiled  (tiled 7)
+PASS 7 windows: ⌃⌥L press 10 → Auto: looks like Auto
+PASS 7 windows: ⌃⌥L press 10 → Auto: windows are where planned
+PASS 7 windows: ⌃⌥L press 10 → Auto: no overlaps  ([])
+PASS 7 windows: Auto looks the same on the second round  ([[0, 31, 640, 486], [640, 31, 640, 486], [1280, 31, 640, 486], [0, 517, 574, 485], [574, 517, 501, 485], [1075, 517, 423, 485], [1498, 517, 422, 485]] vs [[0, 31, 640, 486], [640, 31, 640, 486], [1280, 31, 640, 486], [0, 517, 574, 485], [574, 517, 501, 485], [1075, 517, 423, 485], [1498, 517, 422, 485]])
+PASS 7 windows: ⌃⌥⇧L press 1 → Main + Side: style is Main + Side  (setting ['mainAndSide'], arranged as mainAndSide)
+PASS 7 windows: ⌃⌥⇧L press 1 → Main + Side: all 7 windows tiled  (tiled 7)
+PASS 7 windows: ⌃⌥⇧L press 1 → Main + Side: looks like Main + Side
+PASS 7 windows: ⌃⌥⇧L press 1 → Main + Side: windows are where planned  ( (3 held at their app's minimum size))
+WARN 7 windows: ⌃⌥⇧L press 1 → Main + Side: everything fits  (some apps can't get small enough for this layout)
+PASS 7 windows: ⌃⌥⇧L press 2 → Grid: style is Grid  (setting ['grid'], arranged as grid)
+PASS 7 windows: ⌃⌥⇧L press 2 → Grid: all 7 windows tiled  (tiled 7)
+PASS 7 windows: ⌃⌥⇧L press 2 → Grid: looks like Grid
+PASS 7 windows: ⌃⌥⇧L press 2 → Grid: windows are where planned
+PASS 7 windows: ⌃⌥⇧L press 2 → Grid: no overlaps  ([])
+PASS 7 windows: ⌃⌥⇧L press 3 → Rows: style is Rows  (setting ['rows'], arranged as rows)
+PASS 7 windows: ⌃⌥⇧L press 3 → Rows: all 7 windows tiled  (tiled 7)
+PASS 7 windows: ⌃⌥⇧L press 3 → Rows: looks like Rows
+PASS 7 windows: ⌃⌥⇧L press 3 → Rows: windows are where planned  ( (4 held at their app's minimum size))
+WARN 7 windows: ⌃⌥⇧L press 3 → Rows: everything fits  (some apps can't get small enough for this layout)
+PASS 7 windows: ⌃⌥⇧L press 4 → Columns: style is Columns  (setting ['columns'], arranged as columns)
+PASS 7 windows: ⌃⌥⇧L press 4 → Columns: all 7 windows tiled  (tiled 7)
+PASS 7 windows: ⌃⌥⇧L press 4 → Columns: looks like Columns
+PASS 7 windows: ⌃⌥⇧L press 4 → Columns: windows are where planned  ( (3 held at their app's minimum size))
+WARN 7 windows: ⌃⌥⇧L press 4 → Columns: everything fits  (some apps can't get small enough for this layout)
+PASS 7 windows: ⌃⌥⇧L press 5 → Auto: style is Auto  (setting ['auto'], arranged as auto)
+PASS 7 windows: ⌃⌥⇧L press 5 → Auto: all 7 windows tiled  (tiled 7)
+PASS 7 windows: ⌃⌥⇧L press 5 → Auto: looks like Auto
+PASS 7 windows: ⌃⌥⇧L press 5 → Auto: windows are where planned
+PASS 7 windows: ⌃⌥⇧L press 5 → Auto: no overlaps  ([])
+PASS Test helper may read menus
+PASS Menu shows Auto with ⌃⌥1  ({'checked': '✓', 'enabled': True, 'key': '1', 'mods': 14, 'title': 'Auto'})
+PASS Menu shows Columns with ⌃⌥2  ({'checked': '', 'enabled': True, 'key': '2', 'mods': 14, 'title': 'Columns'})
+PASS Menu shows Rows with ⌃⌥3  ({'checked': '', 'enabled': True, 'key': '3', 'mods': 14, 'title': 'Rows'})
+PASS Menu shows Grid with ⌃⌥4  ({'checked': '', 'enabled': True, 'key': '4', 'mods': 14, 'title': 'Grid'})
+PASS Menu shows Main + Side with ⌃⌥5  ({'checked': '', 'enabled': True, 'key': '5', 'mods': 14, 'title': 'Main + Side'})
+PASS Menu shows Next Layout ⌃⌥L  ({'checked': '', 'enabled': True, 'key': 'L', 'mods': 14, 'title': 'Next Layout'})
+PASS Menu shows Previous Layout ⌃⌥⇧L  ({'checked': '', 'enabled': True, 'key': 'L', 'mods': 15, 'title': 'Previous Layout'})
+PASS Menu ticks the current layout (Auto)  (ticked ['Auto-Tile', 'Auto'])
+PASS Menu › Main + Side: style is Main + Side  (setting ['mainAndSide'], arranged as mainAndSide)
+PASS Menu › Main + Side: all 7 windows tiled  (tiled 7)
+PASS Menu › Main + Side: looks like Main + Side
+PASS Menu › Main + Side: windows are where planned  ( (3 held at their app's minimum size))
+WARN Menu › Main + Side: everything fits  (some apps can't get small enough for this layout)
+PASS Menu › Columns: style is Columns  (setting ['columns'], arranged as columns)
+PASS Menu › Columns: all 7 windows tiled  (tiled 7)
+PASS Menu › Columns: looks like Columns
+PASS Menu › Columns: windows are where planned  ( (3 held at their app's minimum size))
+WARN Menu › Columns: everything fits  (some apps can't get small enough for this layout)
+PASS Menu › Grid: style is Grid  (setting ['grid'], arranged as grid)
+PASS Menu › Grid: all 7 windows tiled  (tiled 7)
+PASS Menu › Grid: looks like Grid
+PASS Menu › Grid: windows are where planned
+PASS Menu › Grid: no overlaps  ([])
+PASS Menu ticks the new layout (Grid)
+PASS Rows before changes: style is Rows  (setting ['rows'], arranged as rows)
+PASS Rows before changes: all 7 windows tiled  (tiled 7)
+PASS Rows before changes: looks like Rows
+PASS Rows before changes: windows are where planned  ( (4 held at their app's minimum size))
+WARN Rows before changes: everything fits  (some apps can't get small enough for this layout)
+PASS Rows after a new window: style is Rows  (setting ['rows'], arranged as rows)
+PASS Rows after a new window: all 8 windows tiled  (tiled 8)
+PASS Rows after a new window: looks like Rows
+PASS Rows after a new window: windows are where planned  ( (4 held at their app's minimum size))
+WARN Rows after a new window: everything fits  (some apps can't get small enough for this layout)
+PASS Rows after closing it: style is Rows  (setting ['rows'], arranged as rows)
+PASS Rows after closing it: all 7 windows tiled  (tiled 7)
+PASS Rows after closing it: looks like Rows
+PASS Rows after closing it: windows are where planned  ( (4 held at their app's minimum size))
+WARN Rows after closing it: everything fits  (some apps can't get small enough for this layout)
+PASS Rows after hiding Finder: style is Rows  (setting ['rows'], arranged as rows)
+PASS Rows after hiding Finder: all 6 windows tiled  (tiled 6)
+PASS Rows after hiding Finder: looks like Rows
+PASS Rows after hiding Finder: windows are where planned
+PASS Rows after hiding Finder: no overlaps  ([])
+PASS Rows after showing Finder again: style is Rows  (setting ['rows'], arranged as rows)
+PASS Rows after showing Finder again: all 7 windows tiled  (tiled 7)
+PASS Rows after showing Finder again: looks like Rows
+PASS Rows after showing Finder again: windows are where planned  ( (4 held at their app's minimum size))
+WARN Rows after showing Finder again: everything fits  (some apps can't get small enough for this layout)
+PASS Rows after minimising a window: style is Rows  (setting ['rows'], arranged as rows)
+PASS Rows after minimising a window: all 6 windows tiled  (tiled 6)
+PASS Rows after minimising a window: looks like Rows
+PASS Rows after minimising a window: windows are where planned  ( (3 held at their app's minimum size))
+WARN Rows after minimising a window: everything fits  (some apps can't get small enough for this layout)
+PASS Rows after bringing it back: style is Rows  (setting ['rows'], arranged as rows)
+PASS Rows after bringing it back: all 7 windows tiled  (tiled 7)
+PASS Rows after bringing it back: looks like Rows
+PASS Rows after bringing it back: windows are where planned  ( (4 held at their app's minimum size))
+WARN Rows after bringing it back: everything fits  (some apps can't get small enough for this layout)
+PASS 3 windows, Rows: style is Rows  (setting ['rows'], arranged as rows)
+PASS 3 windows, Rows: all 3 windows tiled  (tiled 3)
+PASS 3 windows, Rows: looks like Rows
+PASS 3 windows, Rows: windows are where planned
+PASS 3 windows, Rows: no overlaps  ([])
+PASS 3 windows: ⌃⌥2 Columns: style is Columns  (setting ['columns'], arranged as columns)
+PASS 3 windows: ⌃⌥2 Columns: all 3 windows tiled  (tiled 3)
+PASS 3 windows: ⌃⌥2 Columns: looks like Columns
+PASS 3 windows: ⌃⌥2 Columns: windows are where planned
+PASS 3 windows: ⌃⌥2 Columns: no overlaps  ([])
+PASS 3 windows: ⌃⌥3 Rows: style is Rows  (setting ['rows'], arranged as rows)
+PASS 3 windows: ⌃⌥3 Rows: all 3 windows tiled  (tiled 3)
+PASS 3 windows: ⌃⌥3 Rows: looks like Rows
+PASS 3 windows: ⌃⌥3 Rows: windows are where planned
+PASS 3 windows: ⌃⌥3 Rows: no overlaps  ([])
+PASS 3 windows: ⌃⌥4 Grid: style is Grid  (setting ['grid'], arranged as grid)
+PASS 3 windows: ⌃⌥4 Grid: all 3 windows tiled  (tiled 3)
+PASS 3 windows: ⌃⌥4 Grid: looks like Grid
+PASS 3 windows: ⌃⌥4 Grid: windows are where planned
+PASS 3 windows: ⌃⌥4 Grid: no overlaps  ([])
+PASS 3 windows: ⌃⌥5 Main + Side: style is Main + Side  (setting ['mainAndSide'], arranged as mainAndSide)
+PASS 3 windows: ⌃⌥5 Main + Side: all 3 windows tiled  (tiled 3)
+PASS 3 windows: ⌃⌥5 Main + Side: looks like Main + Side
+PASS 3 windows: ⌃⌥5 Main + Side: windows are where planned
+PASS 3 windows: ⌃⌥5 Main + Side: no overlaps  ([])
+PASS 3 windows: ⌃⌥1 Auto: style is Auto  (setting ['auto'], arranged as auto)
+PASS 3 windows: ⌃⌥1 Auto: all 3 windows tiled  (tiled 3)
+PASS 3 windows: ⌃⌥1 Auto: looks like Auto
+PASS 3 windows: ⌃⌥1 Auto: windows are where planned
+PASS 3 windows: ⌃⌥1 Auto: no overlaps  ([])
+PASS 3 windows: Columns, Rows and Main + Side all look different  (3 different)
+PASS 3 windows: ⌃⌥L press 1 → Columns: style is Columns  (setting ['columns'], arranged as columns)
+PASS 3 windows: ⌃⌥L press 1 → Columns: all 3 windows tiled  (tiled 3)
+PASS 3 windows: ⌃⌥L press 1 → Columns: looks like Columns
+PASS 3 windows: ⌃⌥L press 1 → Columns: windows are where planned
+PASS 3 windows: ⌃⌥L press 1 → Columns: no overlaps  ([])
+PASS 3 windows: ⌃⌥L press 2 → Rows: style is Rows  (setting ['rows'], arranged as rows)
+PASS 3 windows: ⌃⌥L press 2 → Rows: all 3 windows tiled  (tiled 3)
+PASS 3 windows: ⌃⌥L press 2 → Rows: looks like Rows
+PASS 3 windows: ⌃⌥L press 2 → Rows: windows are where planned
+PASS 3 windows: ⌃⌥L press 2 → Rows: no overlaps  ([])
+PASS 3 windows: ⌃⌥L press 3 → Grid: style is Grid  (setting ['grid'], arranged as grid)
+PASS 3 windows: ⌃⌥L press 3 → Grid: all 3 windows tiled  (tiled 3)
+PASS 3 windows: ⌃⌥L press 3 → Grid: looks like Grid
+PASS 3 windows: ⌃⌥L press 3 → Grid: windows are where planned
+PASS 3 windows: ⌃⌥L press 3 → Grid: no overlaps  ([])
+PASS 3 windows: ⌃⌥L press 4 → Main + Side: style is Main + Side  (setting ['mainAndSide'], arranged as mainAndSide)
+PASS 3 windows: ⌃⌥L press 4 → Main + Side: all 3 windows tiled  (tiled 3)
+PASS 3 windows: ⌃⌥L press 4 → Main + Side: looks like Main + Side
+PASS 3 windows: ⌃⌥L press 4 → Main + Side: windows are where planned
+PASS 3 windows: ⌃⌥L press 4 → Main + Side: no overlaps  ([])
+PASS 3 windows: ⌃⌥L press 5 → Auto: style is Auto  (setting ['auto'], arranged as auto)
+PASS 3 windows: ⌃⌥L press 5 → Auto: all 3 windows tiled  (tiled 3)
+PASS 3 windows: ⌃⌥L press 5 → Auto: looks like Auto
+PASS 3 windows: ⌃⌥L press 5 → Auto: windows are where planned
+PASS 3 windows: ⌃⌥L press 5 → Auto: no overlaps  ([])
+PASS 3 windows: ⌃⌥L press 6 → Columns: style is Columns  (setting ['columns'], arranged as columns)
+PASS 3 windows: ⌃⌥L press 6 → Columns: all 3 windows tiled  (tiled 3)
+PASS 3 windows: ⌃⌥L press 6 → Columns: looks like Columns
+PASS 3 windows: ⌃⌥L press 6 → Columns: windows are where planned
+PASS 3 windows: ⌃⌥L press 6 → Columns: no overlaps  ([])
+PASS 3 windows: Columns looks the same on the second round  ([[0, 31, 640, 971], [640, 31, 640, 971], [1280, 31, 640, 971]] vs [[0, 31, 640, 971], [640, 31, 640, 971], [1280, 31, 640, 971]])
+PASS 3 windows: ⌃⌥L press 7 → Rows: style is Rows  (setting ['rows'], arranged as rows)
+PASS 3 windows: ⌃⌥L press 7 → Rows: all 3 windows tiled  (tiled 3)
+PASS 3 windows: ⌃⌥L press 7 → Rows: looks like Rows
+PASS 3 windows: ⌃⌥L press 7 → Rows: windows are where planned
+PASS 3 windows: ⌃⌥L press 7 → Rows: no overlaps  ([])
+PASS 3 windows: Rows looks the same on the second round  ([[0, 31, 1920, 324], [0, 355, 1920, 323], [0, 678, 1920, 324]] vs [[0, 31, 1920, 324], [0, 355, 1920, 323], [0, 678, 1920, 324]])
+PASS 3 windows: ⌃⌥L press 8 → Grid: style is Grid  (setting ['grid'], arranged as grid)
+PASS 3 windows: ⌃⌥L press 8 → Grid: all 3 windows tiled  (tiled 3)
+PASS 3 windows: ⌃⌥L press 8 → Grid: looks like Grid
+PASS 3 windows: ⌃⌥L press 8 → Grid: windows are where planned
+PASS 3 windows: ⌃⌥L press 8 → Grid: no overlaps  ([])
+PASS 3 windows: Grid looks the same on the second round  ([[0, 31, 640, 971], [640, 31, 640, 971], [1280, 31, 640, 971]] vs [[0, 31, 640, 971], [640, 31, 640, 971], [1280, 31, 640, 971]])
+PASS 3 windows: ⌃⌥L press 9 → Main + Side: style is Main + Side  (setting ['mainAndSide'], arranged as mainAndSide)
+PASS 3 windows: ⌃⌥L press 9 → Main + Side: all 3 windows tiled  (tiled 3)
+PASS 3 windows: ⌃⌥L press 9 → Main + Side: looks like Main + Side
+PASS 3 windows: ⌃⌥L press 9 → Main + Side: windows are where planned
+PASS 3 windows: ⌃⌥L press 9 → Main + Side: no overlaps  ([])
+PASS 3 windows: Main + Side looks the same on the second round  ([[0, 31, 960, 971], [960, 31, 960, 486], [960, 517, 960, 485]] vs [[0, 31, 960, 971], [960, 31, 960, 486], [960, 517, 960, 485]])
+PASS 3 windows: ⌃⌥L press 10 → Auto: style is Auto  (setting ['auto'], arranged as auto)
+PASS 3 windows: ⌃⌥L press 10 → Auto: all 3 windows tiled  (tiled 3)
+PASS 3 windows: ⌃⌥L press 10 → Auto: looks like Auto
+PASS 3 windows: ⌃⌥L press 10 → Auto: windows are where planned
+PASS 3 windows: ⌃⌥L press 10 → Auto: no overlaps  ([])
+PASS 3 windows: Auto looks the same on the second round  ([[0, 31, 960, 971], [960, 31, 960, 486], [960, 517, 960, 485]] vs [[0, 31, 960, 971], [960, 31, 960, 486], [960, 517, 960, 485]])
+PASS 3 windows: ⌃⌥⇧L press 1 → Main + Side: style is Main + Side  (setting ['mainAndSide'], arranged as mainAndSide)
+PASS 3 windows: ⌃⌥⇧L press 1 → Main + Side: all 3 windows tiled  (tiled 3)
+PASS 3 windows: ⌃⌥⇧L press 1 → Main + Side: looks like Main + Side
+PASS 3 windows: ⌃⌥⇧L press 1 → Main + Side: windows are where planned
+PASS 3 windows: ⌃⌥⇧L press 1 → Main + Side: no overlaps  ([])
+PASS 3 windows: ⌃⌥⇧L press 2 → Grid: style is Grid  (setting ['grid'], arranged as grid)
+PASS 3 windows: ⌃⌥⇧L press 2 → Grid: all 3 windows tiled  (tiled 3)
+PASS 3 windows: ⌃⌥⇧L press 2 → Grid: looks like Grid
+PASS 3 windows: ⌃⌥⇧L press 2 → Grid: windows are where planned
+PASS 3 windows: ⌃⌥⇧L press 2 → Grid: no overlaps  ([])
+PASS 3 windows: ⌃⌥⇧L press 3 → Rows: style is Rows  (setting ['rows'], arranged as rows)
+PASS 3 windows: ⌃⌥⇧L press 3 → Rows: all 3 windows tiled  (tiled 3)
+PASS 3 windows: ⌃⌥⇧L press 3 → Rows: looks like Rows
+PASS 3 windows: ⌃⌥⇧L press 3 → Rows: windows are where planned
+PASS 3 windows: ⌃⌥⇧L press 3 → Rows: no overlaps  ([])
+PASS 3 windows: ⌃⌥⇧L press 4 → Columns: style is Columns  (setting ['columns'], arranged as columns)
+PASS 3 windows: ⌃⌥⇧L press 4 → Columns: all 3 windows tiled  (tiled 3)
+PASS 3 windows: ⌃⌥⇧L press 4 → Columns: looks like Columns
+PASS 3 windows: ⌃⌥⇧L press 4 → Columns: windows are where planned
+PASS 3 windows: ⌃⌥⇧L press 4 → Columns: no overlaps  ([])
+PASS 3 windows: ⌃⌥⇧L press 5 → Auto: style is Auto  (setting ['auto'], arranged as auto)
+PASS 3 windows: ⌃⌥⇧L press 5 → Auto: all 3 windows tiled  (tiled 3)
+PASS 3 windows: ⌃⌥⇧L press 5 → Auto: looks like Auto
+PASS 3 windows: ⌃⌥⇧L press 5 → Auto: windows are where planned
+PASS 3 windows: ⌃⌥⇧L press 5 → Auto: no overlaps  ([])
+PASS 1 window: Auto: style is Auto  (setting ['auto'], arranged as auto)
+PASS 1 window: Auto: all 1 windows tiled  (tiled 1)
+PASS 1 window: Auto: looks like Auto
+PASS 1 window: Auto: windows are where planned
+PASS 1 window: Auto: no overlaps  ([])
+PASS 1 window: Columns: style is Columns  (setting ['columns'], arranged as columns)
+PASS 1 window: Columns: all 1 windows tiled  (tiled 1)
+PASS 1 window: Columns: looks like Columns
+PASS 1 window: Columns: windows are where planned
+PASS 1 window: Columns: no overlaps  ([])
+PASS 1 window: Rows: style is Rows  (setting ['rows'], arranged as rows)
+PASS 1 window: Rows: all 1 windows tiled  (tiled 1)
+PASS 1 window: Rows: looks like Rows
+PASS 1 window: Rows: windows are where planned
+PASS 1 window: Rows: no overlaps  ([])
+PASS 1 window: Grid: style is Grid  (setting ['grid'], arranged as grid)
+PASS 1 window: Grid: all 1 windows tiled  (tiled 1)
+PASS 1 window: Grid: looks like Grid
+PASS 1 window: Grid: windows are where planned
+PASS 1 window: Grid: no overlaps  ([])
+PASS 1 window: Main + Side: style is Main + Side  (setting ['mainAndSide'], arranged as mainAndSide)
+PASS 1 window: Main + Side: all 1 windows tiled  (tiled 1)
+PASS 1 window: Main + Side: looks like Main + Side
+PASS 1 window: Main + Side: windows are where planned
+PASS 1 window: Main + Side: no overlaps  ([])
+PASS Back to 7 windows, Auto: style is Auto  (setting ['auto'], arranged as auto)
+PASS Back to 7 windows, Auto: all 7 windows tiled  (tiled 7)
+PASS Back to 7 windows, Auto: looks like Auto
+PASS Back to 7 windows, Auto: windows are where planned
+PASS Back to 7 windows, Auto: no overlaps  ([])
+PASS ⌃⌥M puts Safari in the main spot  (order [54, 42, 56, 39, 48, 40, 38], focused 54)
+PASS Auto-tile: Chrome ⌃⌥← keeps the left half  (got [0, 31, 960, 970], want [0, 31, 960, 971])
+PASS Others fill the right half: all 6 windows tiled  (tiled 6 of 6: )
+PASS Others fill the right half: all inside the screen
+PASS Others fill the right half: no overlaps
+PASS Tiles stay out of Chrome's half  ([])
+PASS ⌃⌥⌫ puts Chrome back: all 7 windows tiled  (tiled 7 of 7: )
+PASS ⌃⌥⌫ puts Chrome back: all inside the screen
+PASS ⌃⌥⌫ puts Chrome back: no overlaps
+PASS ⌃⌥W floats the window  (floating [39])
+PASS Others retile around the floating window: all 6 windows tiled  (tiled 6 of 6: )
+PASS Others retile around the floating window: all inside the screen
+PASS Others retile around the floating window: no overlaps
+PASS ⌃⌥W tiles it again: all 7 windows tiled  (tiled 7 of 7: )
+PASS ⌃⌥W tiles it again: all inside the screen
+PASS ⌃⌥W tiles it again: no overlaps
+PASS Drag a tile onto another: they swap  (a [640, 31, 640, 486] was [0, 517, 473, 485]; b [0, 517, 471, 484] was [640, 31, 639, 484])
+PASS Grid before maximising: style is Grid  (setting ['grid'], arranged as grid)
+PASS Grid before maximising: all 7 windows tiled  (tiled 7)
+PASS Grid before maximising: looks like Grid
+PASS Grid before maximising: windows are where planned
+PASS Grid before maximising: no overlaps  ([])
+PASS Maximise while tiling: TextEdit fills the screen  (got [0, 31, 1920, 970])
+PASS Maximise while tiling: it stays there (pinned)  (pinned ['39'])
+PASS Maximised window is left alone while you wait  ([0, 31, 1920, 970] → [0, 31, 1920, 970])
+PASS ⌃⌥3 after maximising: all 7 in Rows: style is Rows  (setting ['rows'], arranged as rows)
+PASS ⌃⌥3 after maximising: all 7 in Rows: all 7 windows tiled  (tiled 7)
+PASS ⌃⌥3 after maximising: all 7 in Rows: looks like Rows
+PASS ⌃⌥3 after maximising: all 7 in Rows: windows are where planned  ( (4 held at their app's minimum size))
+WARN ⌃⌥3 after maximising: all 7 in Rows: everything fits  (some apps can't get small enough for this layout)
+PASS ⌃⌥3 after maximising: nothing is pinned  (pinned [])
+PASS The maximised window goes back to its old place  (was 1, now 1)
+PASS Retile after maximising: all 7 in Rows: style is Rows  (setting ['rows'], arranged as rows)
+PASS Retile after maximising: all 7 in Rows: all 7 windows tiled  (tiled 7)
+PASS Retile after maximising: all 7 in Rows: looks like Rows
+PASS Retile after maximising: all 7 in Rows: windows are where planned  ( (4 held at their app's minimum size))
+WARN Retile after maximising: all 7 in Rows: everything fits  (some apps can't get small enough for this layout)
+PASS Retile after maximising: nothing is pinned
+PASS macOS Fill while tiling: TextEdit keeps the whole screen  (got [0, 31, 1920, 971], pinned ['39'])
+PASS ⌃⌥2 after macOS Fill: all 7 in Columns: style is Columns  (setting ['columns'], arranged as columns)
+PASS ⌃⌥2 after macOS Fill: all 7 in Columns: all 7 windows tiled  (tiled 7)
+PASS ⌃⌥2 after macOS Fill: all 7 in Columns: looks like Columns
+PASS ⌃⌥2 after macOS Fill: all 7 in Columns: windows are where planned  ( (3 held at their app's minimum size))
+WARN ⌃⌥2 after macOS Fill: all 7 in Columns: everything fits  (some apps can't get small enough for this layout)
+PASS ⌃⌥2 after macOS Fill: nothing is pinned
+PASS macOS full screen: TextEdit went full screen  (pressed View › Enter Full Screen: 0; full screen: [39])
+PASS ⌃⌥4 from macOS full screen: TextEdit is back, all 7 in Grid: style is Grid  (setting ['grid'], arranged as grid)
+PASS ⌃⌥4 from macOS full screen: TextEdit is back, all 7 in Grid: all 7 windows tiled  (tiled 7)
+PASS ⌃⌥4 from macOS full screen: TextEdit is back, all 7 in Grid: looks like Grid
+PASS ⌃⌥4 from macOS full screen: TextEdit is back, all 7 in Grid: windows are where planned
+PASS ⌃⌥4 from macOS full screen: TextEdit is back, all 7 in Grid: no overlaps  ([])
+PASS ⌃⌥4 from macOS full screen: TextEdit left full screen
+PASS Tessera can see desktops (Spaces)  (supported True, desktops [{'current': 1, 'display': 'EEBC8EBB-1747-4179-8CB3-7038F756154C', 'spaces': [{'id': 1, 'type': 0}]}])
+PASS Desktop 1: Columns: style is Columns  (setting ['columns'], arranged as columns)
+PASS Desktop 1: Columns: all 7 windows tiled  (tiled 7)
+PASS Desktop 1: Columns: looks like Columns
+PASS Desktop 1: Columns: windows are where planned  ( (3 held at their app's minimum size))
+WARN Desktop 1: Columns: everything fits  (some apps can't get small enough for this layout)
+PASS Test helper adds a second desktop  (desktops [1, 49])
+PASS Switch to desktop 2  (on 49, desktop 2 is 49)
+PASS New windows open on desktop 2  (on 49)
+PASS Desktop 2: its two new windows tile, Columns like desktop 1: style is Columns  (setting ['columns'], arranged as columns)
+PASS Desktop 2: its two new windows tile, Columns like desktop 1: all 2 windows tiled  (tiled 2)
+PASS Desktop 2: its two new windows tile, Columns like desktop 1: looks like Columns
+PASS Desktop 2: its two new windows tile, Columns like desktop 1: windows are where planned
+PASS Desktop 2: its two new windows tile, Columns like desktop 1: no overlaps  ([])
+PASS Desktop 2 tiles only its own windows  (desktop 2 [165, 166], desktop 1 [54, 39, 56, 42, 48, 40, 38])
+PASS Desktop 2: ⌃⌥3 Rows: style is Rows  (setting ['rows'], arranged as rows)
+PASS Desktop 2: ⌃⌥3 Rows: all 2 windows tiled  (tiled 2)
+PASS Desktop 2: ⌃⌥3 Rows: looks like Rows
+PASS Desktop 2: ⌃⌥3 Rows: windows are where planned
+PASS Desktop 2: ⌃⌥3 Rows: no overlaps  ([])
+PASS Desktop 1 keeps Columns after desktop 2 chose Rows: style is Columns  (setting ['columns'], arranged as columns)
+PASS Desktop 1 keeps Columns after desktop 2 chose Rows: all 7 windows tiled  (tiled 7)
+PASS Desktop 1 keeps Columns after desktop 2 chose Rows: looks like Columns
+PASS Desktop 1 keeps Columns after desktop 2 chose Rows: windows are where planned  ( (3 held at their app's minimum size))
+WARN Desktop 1 keeps Columns after desktop 2 chose Rows: everything fits  (some apps can't get small enough for this layout)
+PASS Back to desktop 1: no window jumped
+PASS Switching desktops 8 more times: Tessera moved nothing  (0 moves)
+PASS Switching desktops 8 more times: no window jumped
+PASS Desktop 1 is still Columns: style is Columns  (setting ['columns'], arranged as columns)
+PASS Desktop 1 is still Columns: all 7 windows tiled  (tiled 7)
+PASS Desktop 1 is still Columns: looks like Columns
+PASS Desktop 1 is still Columns: windows are where planned  ( (3 held at their app's minimum size))
+WARN Desktop 1 is still Columns: everything fits  (some apps can't get small enough for this layout)
+PASS Mission Control open and shut: Tessera moved nothing  (0 moves)
+PASS Desktop 2 still Rows: style is Rows  (setting ['rows'], arranged as rows)
+PASS Desktop 2 still Rows: all 2 windows tiled  (tiled 2)
+PASS Desktop 2 still Rows: looks like Rows
+PASS Desktop 2 still Rows: windows are where planned
+PASS Desktop 2 still Rows: no overlaps  ([])
+PASS Home again: Columns with 7 windows: style is Columns  (setting ['columns'], arranged as columns)
+PASS Home again: Columns with 7 windows: all 7 windows tiled  (tiled 7)
+PASS Home again: Columns with 7 windows: looks like Columns
+PASS Home again: Columns with 7 windows: windows are where planned  ( (3 held at their app's minimum size))
+WARN Home again: Columns with 7 windows: everything fits  (some apps can't get small enough for this layout)
+PASS Main + Side before switching off: style is Main + Side  (setting ['mainAndSide'], arranged as mainAndSide)
+PASS Main + Side before switching off: all 7 windows tiled  (tiled 7)
+PASS Main + Side before switching off: looks like Main + Side
+PASS Main + Side before switching off: windows are where planned
+PASS Main + Side before switching off: no overlaps  ([])
+PASS ⌃⌥A turns auto-tile off
+PASS ⌃⌥A on again remembers Main + Side: style is Main + Side  (setting ['mainAndSide'], arranged as mainAndSide)
+PASS ⌃⌥A on again remembers Main + Side: all 7 windows tiled  (tiled 7)
+PASS ⌃⌥A on again remembers Main + Side: looks like Main + Side
+PASS ⌃⌥A on again remembers Main + Side: windows are where planned  ( (3 held at their app's minimum size))
+WARN ⌃⌥A on again remembers Main + Side: everything fits  (some apps can't get small enough for this layout)
+PASS ⌃⌥A turns auto-tile off

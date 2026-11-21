@@ -1,0 +1,16 @@
++ 16:42:27 local secs=20
++ 16:42:27 shift
++ 16:42:27 perl -e 'alarm shift; exec @ARGV' 20 /tmp/keys resolution
+mode 800x600 usable=true
+mode 960x540 usable=true
+mode 1024x576 usable=true
+mode 1024x768 usable=true
+mode 1280x720 usable=true
+mode 1280x960 usable=true
+mode 1344x756 usable=true
+mode 1344x1008 usable=true
+mode 1600x900 usable=true
+mode 1600x1200 usable=true
+mode 1920x1080 usable=true
+mode 640x480 usable=false
+set 1920x1080: 0
