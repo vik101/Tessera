@@ -947,6 +947,133 @@ def front_windows():
 
 # ---------- the tests ----------
 
+
+# ---------- Rectangle's other actions, links and settings files (auto-tile off) ----------
+
+def link(url, wait=0.9):
+    """Opens a tessera:// link in the background, as a script would."""
+    subprocess.run(["open", "-g", url], capture_output=True, timeout=20)
+    time.sleep(wait)
+
+
+def link_check(label, name, expect, tol=1, allow_minimum=False):
+    link("tessera://execute-action?name=" + name)
+    got, _ = front()
+    ok = close(got, expect, tol) or (allow_minimum and fits_or_minimum(got, expect, VISIBLE, tol))
+    record(label, ok, f"got {got}, want {expect}")
+
+
+def screen_windows(V):
+    """Normal windows on the main screen, with their frames as the window server sees them."""
+    d = dump()
+    ids = {w["id"] for w in d["windows"] if w["standard"]}
+    return {w["id"]: [round(v) for v in w["frame"]] for w in windows()["windows"]
+            if w["id"] in ids and inside([round(v) for v in w["frame"]], V, tol=40)}
+
+
+def rectangle_parity(F, V):
+    activate("com.apple.TextEdit")
+    start, _ = front()
+    # Single-window actions with no default key, run through links (this also tests the links).
+    link_check("Link: Top Left Ninth", "top-left-ninth", F(0, 0, 1 / 3, 1 / 3))
+    link_check("Link: Middle Center Ninth", "middle-center-ninth", F(1 / 3, 1 / 3, 1 / 3, 1 / 3))
+    link_check("Link: Bottom Right Ninth (Tessera's own name)", "bottomRightNinth", F(2 / 3, 2 / 3, 1 / 3, 1 / 3))
+    link_check("Link: Top Center Right Eighth", "top-center-right-eighth", F(.5, 0, .25, .5))
+    link_check("Link: Bottom Left Eighth", "bottom-left-eighth", F(0, .5, .25, .5))
+    link_check("Link: Top Left Third (corner)", "top-left-third", F(0, 0, 2 / 3, .5))
+    link_check("Link: Bottom Right Third (corner)", "bottom-right-third", F(1 / 3, .5, 2 / 3, .5))
+    link_check("Link: Restore", "restore", start)
+    w, h = start[2], start[3]
+    link_check("Link: Center Prominently", "center-prominently",
+               [rnd(V[0] + V[2] / 2 - w / 2), rnd(V[1] + (V[3] - h) / 4), w, h])
+    sw, sh = min(1680, V[2]), min(1050, V[3])
+    link_check("Link: Specified (1680 × 1050)", "specified", [rnd(V[0] + V[2] / 2 - sw / 2), rnd(V[1] + V[3] / 2 - sh / 2), sw, sh])
+    link_check("Link: Rectangle's own link form, maximize", "maximize", F(0, 0, 1, 1))
+    link_check("Link: Restore again", "restore", start)
+    link("tessera://execute-action?name=no-such-action")
+    got, _ = front()
+    record("Link: an unknown action moves nothing", close(got, start), f"got {got}")
+
+    # Ignoring an app by link: Tessera then leaves it alone.
+    link("tessera://execute-task?name=ignore-app&app-bundle-id=com.apple.TextEdit")
+    press(CO, K["left"])
+    got, _ = front()
+    record("Link: ignore TextEdit, then ⌃⌥← does nothing", close(got, start, 2), f"got {got}")
+    link("tessera://execute-task?name=unignore-app&app-bundle-id=com.apple.TextEdit")
+    snap_check("Link: unignore TextEdit, then ⌃⌥← works", CO, K["left"], F(0, 0, .5, 1))
+    press(CO, K["delete"])
+
+    # Settings files: export, change by hand, import.
+    path = "/tmp/tessera-settings.json"
+    try:
+        os.remove(path)
+    except FileNotFoundError:
+        pass
+    link(f"tessera://export-settings?path={path}", 1.5)
+    try:
+        exported = json.load(open(path))
+    except (OSError, json.JSONDecodeError):
+        exported = {}
+    record("Link: export settings writes a JSON file", "gap" in exported and "shortcuts" in exported,
+           f"keys {sorted(exported)[:8]}")
+    with open(path, "w") as f:
+        json.dump({"gap": 6}, f)
+    link(f"tessera://import-settings?path={path}", 1.5)
+    record("Link: import a file with only a gap changes only the gap", dump().get("gap") == 6, f"gap {dump().get('gap')}")
+    post("set:gap=0")
+
+    # Many windows at once.
+    before = screen_windows(V)
+    n = len(before)
+    record("Several windows to arrange", n >= 5, f"{n} windows")
+    post("run:arrange.tileAll", 2.0)
+    after = screen_windows(V)
+    cols = math.ceil(math.sqrt(n))
+    rows = math.ceil(n / cols)
+    xs = sorted({rnd(V[0] + V[2] * c / cols) for c in range(cols)})
+    tops = sorted({rnd(V[1] + V[3] * r / rows) for r in range(rows)})
+    placed = [f for f in after.values() if any(abs(f[1] - t) <= 2 for t in tops) and inside(f, V, tol=2)]
+    record(f"Tile All: {n} windows in a {cols}×{rows} grid", len(placed) == n and len({(f[0], f[1]) for f in after.values()}) == n,
+           f"{after}")
+    shot("arrange-tile-all")
+    post("run:arrange.tileColumns", 2.0)
+    after = screen_windows(V)
+    lefts = {rnd(V[0] + V[2] * c / 3) for c in range(3)}
+    record("Tile in Columns: three columns", all(any(abs(f[0] - x) <= 2 for x in lefts) for f in after.values())
+           and len({f[0] for f in after.values()}) == min(n, 3), f"{after}")
+    before = screen_windows(V)
+    post("run:arrange.reverseAll", 2.0)
+    after = screen_windows(V)
+    mirrored = all(close(after.get(i), [V[0] + V[0] + V[2] - (f[0] + f[2]), f[1], f[2], f[3]], 2) for i, f in before.items())
+    record("Reverse All mirrors every window left to right", mirrored, f"before {before}, after {after}")
+    post("run:arrange.cascadeAll", 2.0)
+    after = screen_windows(V)
+    corners = sorted((f[0], f[1]) for f in after.values())
+    steps = [(b[0] - a[0], b[1] - a[1]) for a, b in zip(corners, corners[1:])]
+    record("Cascade All: each window 30 points down and right of the last", steps and all(s == (30, 30) for s in steps),
+           f"corners {corners}")
+    shot("arrange-cascade")
+
+    # Two TextEdit windows on one spot: step between them.
+    activate("com.apple.TextEdit")
+    _, first = front()
+    press(CO, K["left"])
+    keys("press", "cmd", "0x32")   # ⌘` next TextEdit window
+    time.sleep(0.6)
+    _, second = front()
+    press(CO, K["left"])
+    if first and second and first["id"] != second["id"]:
+        post("run:arrange.nextInStack", 1.0)
+        _, now = front()
+        record("Next Stacked Window brings the other window on that spot forward", now and now["id"] == first["id"],
+               f"front {now and now['id']}, want {first['id']}")
+        post("run:arrange.previousInStack", 1.0)
+        _, now = front()
+        record("Previous Stacked Window goes back", now and now["id"] == second["id"], f"front {now and now['id']}")
+    else:
+        record("Two TextEdit windows to stack", False, f"{first} {second}")
+    press(CO, K["delete"])
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     d = dump()
@@ -1055,6 +1182,9 @@ def main():
     got, _ = front()
     record("Drag TextEdit to the right edge: Right Half", close(got, F(.5, 0, .5, 1)), f"got {got}")
     press(CO, K["delete"])
+
+    # --- Rectangle's other actions, links, settings files, many windows at once ---
+    rectangle_parity(F, V)
 
     # --- Menu and Settings ---
     post("menu", 1.5)

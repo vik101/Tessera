@@ -327,8 +327,23 @@ final class AutoTiler {
         wanted[id] = Date()
     }
 
+    /// Reverse All while auto-tile is on: the windows in front on this screen swap ends.
+    /// Waiting windows keep their places in the order.
+    func reverseOrder() {
+        guard isOn, let window = registry.focusedWindow(), let screen = home[window.id], let list = order[screen] else {
+            NSSound.beep()
+            return
+        }
+        let front = Set(plans[screen]?.ids ?? list)
+        let spots = list.indices.filter { front.contains(list[$0]) }
+        var reversed = list
+        for (i, spot) in spots.enumerated() { reversed[spot] = list[spots[spots.count - 1 - i]] }
+        order[screen] = reversed
+        retile()
+    }
+
     /// Switches to a window: raises it and makes its app the active one.
-    private func focus(_ window: TrackedWindow) {
+    func focus(_ window: TrackedWindow) {
         window.element.set(kAXMainAttribute, bool: true)
         window.element.perform(kAXRaiseAction)
         AXElement.application(window.pid).set(kAXFrontmostAttribute, bool: true)

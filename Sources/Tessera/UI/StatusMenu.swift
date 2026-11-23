@@ -91,6 +91,15 @@ final class StatusMenu: NSObject, NSMenuDelegate {
             parent.submenu = submenu
             menu.addItem(parent)
         }
+        // Many windows at once: Tile All, Cascade, Reverse All, stacks.
+        let all = NSMenu()
+        all.autoenablesItems = false
+        for action in ArrangeAction.allCases {
+            all.addItem(commandItem(.arrange(action), shortcuts: shortcuts, icon: nil))
+        }
+        let allParent = NSMenuItem(title: "All Windows", action: nil, keyEquivalent: "")
+        allParent.submenu = all
+        menu.addItem(allParent)
         menu.addItem(.separator())
 
         // Auto-tile: the switch, then each layout with a picture of what it would do here.

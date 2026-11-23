@@ -123,6 +123,26 @@ struct SettingsView: View {
             }
 
             Section {
+                LabeledContent("Specified Size") {
+                    HStack {
+                        TextField("Width", value: $settings.specifiedWidth, format: .number).frame(width: 70)
+                        Text("×")
+                        TextField("Height", value: $settings.specifiedHeight, format: .number).frame(width: 70)
+                        Text("points").foregroundStyle(.secondary)
+                    }
+                }
+                HStack {
+                    Button("Export Settings…", action: exportSettings)
+                    Button("Import Settings…", action: importSettings)
+                }
+            } header: {
+                Text("More")
+            } footer: {
+                Text("Settings files are plain JSON. Scripts can run any action with a link such as tessera://execute-action?name=left-half.")
+                    .font(.callout).foregroundStyle(.secondary)
+            }
+
+            Section {
                 Text("Tessera \(AppInfo.version)").foregroundStyle(.secondary)
             }
         }
@@ -146,6 +166,21 @@ struct SettingsView: View {
             get: { AutoTiler.shared.layout(for: display) },
             set: { AutoTiler.shared.setLayout($0, for: display, notify: false) }
         )
+    }
+
+    private func exportSettings() {
+        let panel = NSSavePanel()
+        panel.allowedContentTypes = [.json]
+        panel.nameFieldStringValue = "TesseraConfig.json"
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        do { try settings.export(to: url) } catch { NSAlert(error: error).runModal() }
+    }
+
+    private func importSettings() {
+        let panel = NSOpenPanel()
+        panel.allowedContentTypes = [.json]
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        do { try settings.importFile(at: url) } catch { NSAlert(error: error).runModal() }
     }
 
     private func addIgnoredApp() {
@@ -175,6 +210,7 @@ struct SettingsView: View {
         }
         groups.append(ShortcutGroup(title: "Auto-Tile", commands: TileCommand.allCases.map(Command.tile)))
         groups.append(ShortcutGroup(title: "Layouts", commands: LayoutStyle.allCases.map(Command.layout)))
+        groups.append(ShortcutGroup(title: "All Windows", commands: ArrangeAction.allCases.map(Command.arrange)))
         return groups
     }()
 }

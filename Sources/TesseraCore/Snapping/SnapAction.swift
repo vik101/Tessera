@@ -5,7 +5,7 @@ import CoreGraphics
 
 /// Groups of snap actions, in menu order.
 public enum SnapGroup: String, CaseIterable, Sendable {
-    case halves, corners, thirds, size, displays, edges, quarters, sixths
+    case halves, corners, thirds, size, displays, edges, quarters, sixths, cornerThirds, eighths, ninths
 
     /// Groups shown in a submenu instead of the main menu.
     public var submenuTitle: String? {
@@ -13,6 +13,9 @@ public enum SnapGroup: String, CaseIterable, Sendable {
         case .edges: "Move to Edge"
         case .quarters: "Quarters"
         case .sixths: "Sixths"
+        case .cornerThirds: "Corner Thirds"
+        case .eighths: "Eighths"
+        case .ninths: "Ninths"
         default: nil
         }
     }
@@ -23,12 +26,17 @@ public enum SnapAction: String, CaseIterable, Codable, Sendable {
     case leftHalf, rightHalf, centreHalf, topHalf, bottomHalf
     case topLeft, topRight, bottomLeft, bottomRight
     case firstThird, centreThird, lastThird, firstTwoThirds, centreTwoThirds, lastTwoThirds
-    case maximise, almostMaximise, maximiseHeight, larger, smaller, centre, restore
+    case maximise, almostMaximise, maximiseHeight, larger, smaller, centre, centreProminently, specified, restore
     case nextDisplay, previousDisplay
     case moveLeft, moveRight, moveUp, moveDown
     case firstQuarter, secondQuarter, thirdQuarter, lastQuarter
     case firstThreeQuarters, centreThreeQuarters, lastThreeQuarters
     case topLeftSixth, topCentreSixth, topRightSixth, bottomLeftSixth, bottomCentreSixth, bottomRightSixth
+    case topLeftThird, topRightThird, bottomLeftThird, bottomRightThird
+    case topLeftEighth, topCentreLeftEighth, topCentreRightEighth, topRightEighth
+    case bottomLeftEighth, bottomCentreLeftEighth, bottomCentreRightEighth, bottomRightEighth
+    case topLeftNinth, topCentreNinth, topRightNinth, middleLeftNinth, middleCentreNinth, middleRightNinth
+    case bottomLeftNinth, bottomCentreNinth, bottomRightNinth
 
     public var title: String {
         switch self {
@@ -53,6 +61,8 @@ public enum SnapAction: String, CaseIterable, Codable, Sendable {
         case .larger: "Make Larger"
         case .smaller: "Make Smaller"
         case .centre: "Centre"
+        case .centreProminently: "Centre Prominently"
+        case .specified: "Specified Size"
         case .restore: "Restore"
         case .nextDisplay: "Next Display"
         case .previousDisplay: "Previous Display"
@@ -73,6 +83,27 @@ public enum SnapAction: String, CaseIterable, Codable, Sendable {
         case .bottomLeftSixth: "Bottom Left Sixth"
         case .bottomCentreSixth: "Bottom Centre Sixth"
         case .bottomRightSixth: "Bottom Right Sixth"
+        case .topLeftThird: "Top Left Third"
+        case .topRightThird: "Top Right Third"
+        case .bottomLeftThird: "Bottom Left Third"
+        case .bottomRightThird: "Bottom Right Third"
+        case .topLeftEighth: "Top Left Eighth"
+        case .topCentreLeftEighth: "Top Centre Left Eighth"
+        case .topCentreRightEighth: "Top Centre Right Eighth"
+        case .topRightEighth: "Top Right Eighth"
+        case .bottomLeftEighth: "Bottom Left Eighth"
+        case .bottomCentreLeftEighth: "Bottom Centre Left Eighth"
+        case .bottomCentreRightEighth: "Bottom Centre Right Eighth"
+        case .bottomRightEighth: "Bottom Right Eighth"
+        case .topLeftNinth: "Top Left Ninth"
+        case .topCentreNinth: "Top Centre Ninth"
+        case .topRightNinth: "Top Right Ninth"
+        case .middleLeftNinth: "Middle Left Ninth"
+        case .middleCentreNinth: "Middle Centre Ninth"
+        case .middleRightNinth: "Middle Right Ninth"
+        case .bottomLeftNinth: "Bottom Left Ninth"
+        case .bottomCentreNinth: "Bottom Centre Ninth"
+        case .bottomRightNinth: "Bottom Right Ninth"
         }
     }
 
@@ -81,14 +112,44 @@ public enum SnapAction: String, CaseIterable, Codable, Sendable {
         case .leftHalf, .rightHalf, .centreHalf, .topHalf, .bottomHalf: .halves
         case .topLeft, .topRight, .bottomLeft, .bottomRight: .corners
         case .firstThird, .centreThird, .lastThird, .firstTwoThirds, .centreTwoThirds, .lastTwoThirds: .thirds
-        case .maximise, .almostMaximise, .maximiseHeight, .larger, .smaller, .centre, .restore: .size
+        case .maximise, .almostMaximise, .maximiseHeight, .larger, .smaller, .centre, .centreProminently, .specified, .restore: .size
         case .nextDisplay, .previousDisplay: .displays
         case .moveLeft, .moveRight, .moveUp, .moveDown: .edges
         case .firstQuarter, .secondQuarter, .thirdQuarter, .lastQuarter,
              .firstThreeQuarters, .centreThreeQuarters, .lastThreeQuarters: .quarters
         case .topLeftSixth, .topCentreSixth, .topRightSixth,
              .bottomLeftSixth, .bottomCentreSixth, .bottomRightSixth: .sixths
+        case .topLeftThird, .topRightThird, .bottomLeftThird, .bottomRightThird: .cornerThirds
+        case .topLeftEighth, .topCentreLeftEighth, .topCentreRightEighth, .topRightEighth,
+             .bottomLeftEighth, .bottomCentreLeftEighth, .bottomCentreRightEighth, .bottomRightEighth: .eighths
+        case .topLeftNinth, .topCentreNinth, .topRightNinth, .middleLeftNinth, .middleCentreNinth,
+             .middleRightNinth, .bottomLeftNinth, .bottomCentreNinth, .bottomRightNinth: .ninths
         }
+    }
+
+    /// The action's name in Rectangle's URLs (`rectangle://execute-action?name=left-half`).
+    /// Tessera's own URLs take these names too, so scripts written for Rectangle keep working.
+    public var rectangleName: String {
+        var name = ""
+        for character in rawValue {
+            if character.isUppercase { name += "-" }
+            name += character.lowercased()
+        }
+        return name
+            .replacingOccurrences(of: "centre", with: "center")
+            .replacingOccurrences(of: "maximise", with: "maximize")
+            .replacingOccurrences(of: "quarters", with: "fourths")
+            .replacingOccurrences(of: "quarter", with: "fourth")
+    }
+
+    /// Finds an action by Rectangle's URL name or Tessera's own name.
+    public init?(urlName: String) {
+        if let action = SnapAction(rawValue: urlName) {
+            self = action
+            return
+        }
+        guard let action = SnapAction.allCases.first(where: { $0.rectangleName == urlName.lowercased() }) else { return nil }
+        self = action
     }
 
     /// Rectangle's default shortcuts.
@@ -173,6 +234,29 @@ public enum SnapAction: String, CaseIterable, Codable, Sendable {
         case .bottomLeftSixth: return UnitRect(x: 0, y: 0.5, width: third, height: 0.5)
         case .bottomCentreSixth: return UnitRect(x: third, y: 0.5, width: third, height: 0.5)
         case .bottomRightSixth: return UnitRect(x: 2 * third, y: 0.5, width: third, height: 0.5)
+        // Corner thirds: two thirds wide and half high (on a portrait screen, half wide and two thirds high).
+        case .topLeftThird, .topRightThird, .bottomLeftThird, .bottomRightThird:
+            let right = self == .topRightThird || self == .bottomRightThird
+            let bottom = self == .bottomLeftThird || self == .bottomRightThird
+            if portrait {
+                return UnitRect(x: right ? 0.5 : 0, y: bottom ? third : 0, width: 0.5, height: 2 * third)
+            }
+            return UnitRect(x: right ? third : 0, y: bottom ? 0.5 : 0, width: 2 * third, height: 0.5)
+        // Eighths: 4 across and 2 down (2 across and 4 down on a portrait screen).
+        case .topLeftEighth, .topCentreLeftEighth, .topCentreRightEighth, .topRightEighth,
+             .bottomLeftEighth, .bottomCentreLeftEighth, .bottomCentreRightEighth, .bottomRightEighth:
+            let order: [SnapAction] = [.topLeftEighth, .topCentreLeftEighth, .topCentreRightEighth, .topRightEighth,
+                                       .bottomLeftEighth, .bottomCentreLeftEighth, .bottomCentreRightEighth, .bottomRightEighth]
+            let index = order.firstIndex(of: self) ?? 0
+            let unit = UnitRect(x: CGFloat(index % 4) / 4, y: CGFloat(index / 4) / 2, width: 0.25, height: 0.5)
+            return portrait ? unit.transposed : unit
+        // Ninths: a 3 × 3 grid.
+        case .topLeftNinth, .topCentreNinth, .topRightNinth, .middleLeftNinth, .middleCentreNinth,
+             .middleRightNinth, .bottomLeftNinth, .bottomCentreNinth, .bottomRightNinth:
+            let order: [SnapAction] = [.topLeftNinth, .topCentreNinth, .topRightNinth, .middleLeftNinth, .middleCentreNinth,
+                                       .middleRightNinth, .bottomLeftNinth, .bottomCentreNinth, .bottomRightNinth]
+            let index = order.firstIndex(of: self) ?? 0
+            return UnitRect(x: CGFloat(index % 3) * third, y: CGFloat(index / 3) * third, width: third, height: third)
         default: return nil
         }
     }
@@ -185,6 +269,8 @@ public enum SnapAction: String, CaseIterable, Codable, Sendable {
         case .larger: UnitRect(x: 0.1, y: 0.1, width: 0.8, height: 0.8)
         case .smaller: UnitRect(x: 0.3, y: 0.3, width: 0.4, height: 0.4)
         case .centre: UnitRect(x: 0.25, y: 0.25, width: 0.5, height: 0.5)
+        case .centreProminently: UnitRect(x: 0.25, y: 0.12, width: 0.5, height: 0.5)
+        case .specified: UnitRect(x: 0.2, y: 0.2, width: 0.6, height: 0.6)
         case .restore: UnitRect(x: 0.15, y: 0.2, width: 0.5, height: 0.5)
         case .nextDisplay: UnitRect(x: 0.5, y: 0.2, width: 0.5, height: 0.6)
         case .previousDisplay: UnitRect(x: 0, y: 0.2, width: 0.5, height: 0.6)

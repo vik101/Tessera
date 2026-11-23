@@ -62,6 +62,8 @@ final class Shortcuts {
             WindowPicker.shared.toggle()
         case .tile(.keepInFront):
             AutoTiler.shared.toggleKeep()
+        case .arrange(let action):
+            Arranger.shared.perform(action)
         }
     }
 }

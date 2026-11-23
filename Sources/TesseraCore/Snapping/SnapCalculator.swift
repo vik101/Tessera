@@ -15,13 +15,17 @@ public struct SnapContext: Sendable {
     public var cycle: Int
     /// How far Make Larger and Make Smaller move each edge.
     public var step: CGFloat
+    /// The size Specified Size gives a window. A value of 1 or less is a share of the screen.
+    public var specified: CGSize
 
-    public init(window: CGRect, visible: CGRect, gap: CGFloat = 0, cycle: Int = 0, step: CGFloat = 30) {
+    public init(window: CGRect, visible: CGRect, gap: CGFloat = 0, cycle: Int = 0, step: CGFloat = 30,
+                specified: CGSize = CGSize(width: 1680, height: 1050)) {
         self.window = window
         self.visible = visible
         self.gap = gap
         self.cycle = cycle
         self.step = step
+        self.specified = specified
     }
 }
 
@@ -43,6 +47,26 @@ public enum SnapCalculator {
             return CGRect(x: x, y: usable.minY, width: width, height: usable.height)
         case .centre:
             let size = CGSize(width: min(c.window.width, usable.width), height: min(c.window.height, usable.height))
+            return CGRect(
+                x: (usable.midX - size.width / 2).rounded(),
+                y: (usable.midY - size.height / 2).rounded(),
+                width: size.width,
+                height: size.height
+            )
+        case .centreProminently:
+            // Centred left to right, and a little high: a quarter of the spare height above, three quarters below.
+            let size = CGSize(width: min(c.window.width, usable.width), height: min(c.window.height, usable.height))
+            return CGRect(
+                x: (usable.midX - size.width / 2).rounded(),
+                y: (usable.minY + (usable.height - size.height) / 4).rounded(),
+                width: size.width,
+                height: size.height
+            )
+        case .specified:
+            func length(_ wanted: CGFloat, _ room: CGFloat) -> CGFloat {
+                (wanted <= 1 ? room * max(wanted, 0.1) : min(wanted, room)).rounded()
+            }
+            let size = CGSize(width: length(c.specified.width, usable.width), height: length(c.specified.height, usable.height))
             return CGRect(
                 x: (usable.midX - size.width / 2).rounded(),
                 y: (usable.midY - size.height / 2).rounded(),

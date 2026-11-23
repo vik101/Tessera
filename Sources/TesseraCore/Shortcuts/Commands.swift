@@ -51,10 +51,41 @@ public enum Command: Hashable, Sendable {
     case tile(TileCommand)
     /// Switch this screen to one layout style.
     case layout(LayoutStyle)
+    /// Move every window on the screen at once (Tile All, Cascade, Reverse All, stacks).
+    case arrange(ArrangeAction)
 
     public static var allCases: [Command] {
         SnapAction.allCases.map(Command.snap) + TileCommand.allCases.map(Command.tile)
-            + LayoutStyle.allCases.map(Command.layout)
+            + LayoutStyle.allCases.map(Command.layout) + ArrangeAction.allCases.map(Command.arrange)
+    }
+
+    /// Finds a command by its URL name: Rectangle's names (`left-half`, `tile-all`), Tessera's ids
+    /// (`snap.leftHalf`, `tile.retile`), or a bare Tessera name (`leftHalf`, `retile`, `columns`).
+    public init?(urlName raw: String) {
+        let name = raw.trimmingCharacters(in: .whitespaces)
+        if let command = Command(id: name) {
+            self = command
+        } else if let action = SnapAction(urlName: name) {
+            self = .snap(action)
+        } else if let action = ArrangeAction(urlName: name) {
+            self = .arrange(action)
+        } else if let command = TileCommand(rawValue: name) ?? TileCommand.allCases.first(where: { $0.urlName == name.lowercased() }) {
+            self = .tile(command)
+        } else if let style = LayoutStyle(rawValue: name) ?? LayoutStyle.allCases.first(where: { $0.urlName == name.lowercased() }) {
+            self = .layout(style)
+        } else {
+            return nil
+        }
+    }
+
+    /// The command's name in URLs.
+    public var urlName: String {
+        switch self {
+        case .snap(let action): action.rectangleName
+        case .tile(let command): command.urlName
+        case .layout(let style): style.urlName
+        case .arrange(let action): action.urlName
+        }
     }
 
     /// Stable name used in saved settings.
@@ -63,6 +94,7 @@ public enum Command: Hashable, Sendable {
         case .snap(let action): "snap." + action.rawValue
         case .tile(let command): "tile." + command.rawValue
         case .layout(let style): "layout." + style.rawValue
+        case .arrange(let action): "arrange." + action.rawValue
         }
     }
 
@@ -73,6 +105,8 @@ public enum Command: Hashable, Sendable {
             self = .tile(command)
         } else if id.hasPrefix("layout."), let style = LayoutStyle(rawValue: String(id.dropFirst(7))) {
             self = .layout(style)
+        } else if id.hasPrefix("arrange."), let action = ArrangeAction(rawValue: String(id.dropFirst(8))) {
+            self = .arrange(action)
         } else {
             return nil
         }
@@ -83,6 +117,7 @@ public enum Command: Hashable, Sendable {
         case .snap(let action): action.title
         case .tile(let command): command.title
         case .layout(let style): style.title
+        case .arrange(let action): action.title
         }
     }
 
@@ -91,6 +126,7 @@ public enum Command: Hashable, Sendable {
         case .snap(let action): action.defaultShortcut
         case .tile(let command): command.defaultShortcut
         case .layout(let style): style.defaultShortcut
+        case .arrange: nil
         }
     }
 }
@@ -144,4 +180,24 @@ public struct ShortcutSet: Codable, Equatable, Sendable {
         custom.removeValue(forKey: command.id)
         if command.defaultShortcut != nil { cleared.insert(command.id) } else { cleared.remove(command.id) }
     }
+}
+
+/// camelCase → kebab-case, for URL names.
+func kebab(_ name: String) -> String {
+    var out = ""
+    for character in name {
+        if character.isUppercase { out += "-" }
+        out += character.lowercased()
+    }
+    return out
+}
+
+extension TileCommand {
+    /// The command's name in Tessera's URLs, such as `next-layout`.
+    public var urlName: String { kebab(rawValue) }
+}
+
+extension LayoutStyle {
+    /// The layout's name in Tessera's URLs, such as `main-and-side`.
+    public var urlName: String { kebab(rawValue) }
 }

@@ -26,6 +26,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         Shortcuts.shared.start()
         TestHooks.shared.start()
         Updater.shared.start()
+        Settings.shared.importDroppedFile()
 
         // Window work needs Accessibility. Start as soon as it's allowed.
         PermissionWindow.shared.onGranted = { [weak self] in self?.startEngine() }
@@ -38,6 +39,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
         Log.info("Tessera \(AppInfo.version) started")
+    }
+
+    /// tessera:// links, for scripts, Shortcuts and launchers (see URLCommand).
+    func application(_ application: NSApplication, open urls: [URL]) {
+        for url in urls { Automation.open(url) }
     }
 
     /// Waiting windows sit just off screen: put them back before Tessera goes.

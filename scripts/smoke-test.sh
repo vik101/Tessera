@@ -51,6 +51,8 @@ limit 30 open -na "Google Chrome" --args --no-first-run --no-default-browser-che
 sleep 8
 limit 20 /tmp/keys windows > "$OUT/windows-before.json"
 
+# tessera:// links must reach this copy of Tessera.
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$APP"
 limit 30 open "$APP"
 sleep 6
 screencapture -x "$OUT/0-start.png"

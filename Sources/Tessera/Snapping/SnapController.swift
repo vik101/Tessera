@@ -125,6 +125,7 @@ final class SnapController {
     func forget(_ window: TrackedWindow) { memory[window.id] = nil }
 
     private func context(window: CGRect, on display: DisplayInfo, cycle: Int) -> SnapContext {
-        SnapContext(window: window, visible: display.visibleFrame, gap: CGFloat(settings.gap), cycle: cycle)
+        SnapContext(window: window, visible: display.visibleFrame, gap: CGFloat(settings.gap), cycle: cycle,
+                    specified: CGSize(width: settings.specifiedWidth, height: settings.specifiedHeight))
     }
 }
