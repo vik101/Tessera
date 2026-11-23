@@ -49,9 +49,13 @@ final class SnapController {
             mem = Memory(restore: frame)
         }
 
+        // Make Larger / Smaller on a tile: it grows into its neighbours, and they shrink to make room.
+        if action == .larger || action == .smaller, tiler.resizeTile(window, larger: action == .larger) { return }
+
         switch action {
         case .restore:
             if tiler.isOn, tiler.unpin(window) { return }   // Back into auto-tile.
+            if tiler.evenOut(window) { return }             // A tile you made larger or smaller: back to even.
             guard let saved = memory[window.id] else {
                 NSSound.beep()
                 return

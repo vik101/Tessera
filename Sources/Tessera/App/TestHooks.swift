@@ -39,6 +39,8 @@ final class TestHooks: NSObject {
         default:
             if command.hasPrefix("run:"), let target = Command(id: String(command.dropFirst(4))) {
                 Shortcuts.run(target)
+            } else if command.hasPrefix("focus:"), let id = UInt32(command.dropFirst(6)) {
+                AutoTiler.shared.bringForward(CGWindowID(id))
             } else if command.hasPrefix("send:") {
                 // send:<window id>=<screen stable id>
                 let parts = command.dropFirst(5).split(separator: "=", maxSplits: 1).map(String.init)

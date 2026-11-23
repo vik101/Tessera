@@ -94,11 +94,17 @@ How Auto chooses: it tries every grid, plus columns, rows and main + side. It sc
 
 - **New windows** join at the end. Closed windows leave a space that the rest fill.
 - **Drag** one tile onto another to swap them. Drag a tile to another screen to move it there.
+- **Make a tile larger or smaller** with **⌃⌥=** and **⌃⌥−**. It grows into the tiles around it, and they all shrink to make room, so the layout keeps its shape. Or drag the edge between two tiles: that edge stays where you let go, and only the tile on the other side gives way. **⌃⌥⌫** (Restore) evens a tile out again, and picking a layout evens them all out.
 - **Snap or maximise a window by hand** (⌃⌥←, ⌃⌥↩, or macOS **Window › Fill**) and it keeps that spot. The other windows tile in the rest of the screen. Press **⌃⌥⌫** (Restore) to put it back.
 - **Float** a window with ⌃⌥W. Tessera then leaves it where you put it, even when you change layout.
 - **Ignore an app** from the menu (**Ignore Safari**, for example). Tessera won't snap or tile it.
 
 **The latest command wins.** Picking a layout (⌃⌥1–5, ⌃⌥L, the menu) or **Retile** puts every window on that desktop into it. A window you snapped or maximised joins again, in its old place. A window in macOS full screen leaves full screen and joins too. Only floating windows (⌃⌥W) stay out.
+
+```mermaid
+flowchart LR
+    A["3 even columns"] -- "⌃⌥= on the middle one" --> B["Middle one wider<br/>left and right both narrower<br/>still at the screen's edges"]
+```
 
 ```mermaid
 flowchart LR
@@ -207,6 +213,14 @@ A tiler that moves windows when nothing changed feels broken. Three rules in `Au
 
 macOS has no public way to read desktops. `Spaces.swift` uses the window server's own functions, like yabai and Amethyst do. If a future macOS removes them, Tessera still works, and rule 2 keeps it calm.
 
+### How tile sizes work
+
+Each tile has a width share and a height share (`TileSizes.swift`); 1 is an even share. `TilePlanner` shares out each line (a row or a column of tiles) by those shares, and each line's thickness by the biggest share in it. App minimum sizes still win. So:
+
+- ⌃⌥= multiplies a tile's shares by 1.25, ⌃⌥− divides them, between a quarter and four times even. Six presses back undo six presses exactly.
+- Dragging an edge (`TileSizes.afterDrag`) finds every tile that ends at that edge and every tile that starts just past it, moves the edge for all of them, and turns the new sizes into shares.
+- In Main + Side, the edge next to the main window sets the main window's share of the screen, as before.
+
 ### How the front-window limit works
 
 All the rules are small functions in `FrontWindows.swift`, with tests in `FrontWindowsTests.swift`. Each one only reorders the list of windows on a screen (the tile order). The first few in the list sit in front; the rest wait. Because the list is the same one swapping and dragging use, those keep working unchanged.
@@ -248,7 +262,7 @@ Add a test in `Tests/TesseraCoreTests` with each change. The `everyWindowGetsIts
 
 ### Testing on a real Mac
 
-`.github/workflows/tessera-build.yml` runs on GitHub's Macs for every push, on macOS 15 and macOS 26 (Tahoe). It builds, runs the unit tests, then `scripts/smoke-test.sh` opens TextEdit, Finder, Safari, Chrome and Terminal on a 1920×1080 screen and presses the real shortcuts. `scripts/ci/check.py` makes about 520 checks:
+`.github/workflows/tessera-build.yml` runs on GitHub's Macs for every push, on macOS 15 and macOS 26 (Tahoe). It builds, runs the unit tests, then `scripts/smoke-test.sh` opens TextEdit, Finder, Safari, Chrome and Terminal on a 1920×1080 screen and presses the real shortcuts. `scripts/ci/check.py` makes about 600 checks:
 
 - Every snap: each window's exact position against what it should be, and drags to every edge.
 - Every layout: picked with ⌃⌥1–5, two full rounds of ⌃⌥L, back again with ⌃⌥⇧L, and clicked in the menu (through Accessibility, as a person would). Each time it checks the layout really has that shape (Columns are side by side and full height, and so on), the windows are where planned, nothing overlaps when it fits, and the second round matches the first.
@@ -256,6 +270,7 @@ Add a test in `Tests/TesseraCoreTests` with each change. The `everyWindowGetsIts
 - The latest command wins: maximise (Tessera's, and macOS Fill and full screen), then a layout. Every window must join it.
 - Desktops: it adds a second desktop, gives it its own layout, then swipes back and forth. It watches every window ten times a second, and fails if any moves.
 - Several screens (`scripts/ci/screens.py`): it adds a pretend 49-inch and a squarish Dell beside the main screen, spreads 12 windows across them, drags one, rearranges the screens, unplugs and replugs the Dell. After each step it checks every screen keeps its own limit, nothing overlaps, no waiting window shows on any screen, no window is lost, and nothing moves once settled.
+- Tile sizes: three columns, ⌃⌥= three times on the middle one: it must grow, the left and right columns must shrink evenly, and they must still reach the screen's edges with no holes. Then ⌃⌥− back to even, ⌃⌥⌫, Rows, Main + Side, and dragging the edge between two columns with the mouse.
 - Windows in front: with a limit of 3, the other windows wait off screen. It then brings windows forward from their app, the menu and the ⌃⌥Space picker, and checks each one takes the right spot and nothing else moves. It also covers new and closed windows, minimising, ⌃⌥P, Auto, turning auto-tile off and No Limit.
 
 Results and screenshots go to the `tessera-ci` branch (`tessera-ci-latest` for Tahoe).

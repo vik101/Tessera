@@ -41,7 +41,8 @@ public enum LayoutStyle: String, CaseIterable, Codable, Sendable {
 ///
 /// Layouts are built from "lines": rows stacked top to bottom, or columns side by side,
 /// each holding some windows. Space is shared out evenly, except that a window an app
-/// won't shrink gets at least its minimum size and its neighbours share the rest.
+/// won't shrink gets at least its minimum size and its neighbours share the rest, and a window
+/// you made larger or smaller (`sizes`, see `TileSizes`) gets a bigger or smaller share.
 public enum TilePlanner {
     /// The cell shape we aim for in Auto and Grid: a little wider than tall, like most windows.
     static let idealAspect: CGFloat = 4.0 / 3.0
@@ -71,9 +72,10 @@ public enum TilePlanner {
         style: LayoutStyle,
         gap: CGFloat = 0,
         mainRatio: CGFloat = 0.5,
-        minimumSizes: [CGSize?] = []
+        minimumSizes: [CGSize?] = [],
+        sizes: [CGSize] = []
     ) -> [CGRect] {
-        plan(count: count, in: area, style: style, gap: gap, mainRatio: mainRatio, minimumSizes: minimumSizes).frames
+        plan(count: count, in: area, style: style, gap: gap, mainRatio: mainRatio, minimumSizes: minimumSizes, sizes: sizes).frames
     }
 
     /// Plans a screen.
@@ -81,17 +83,21 @@ public enum TilePlanner {
     /// - Parameter minimumSizes: sizes some windows refuse to go below. Auto picks the best
     ///   arrangement in which every window fits. A style you chose (say Columns) always keeps
     ///   its shape: if the windows can't all fit, neighbours share the overlap and `fits` is false.
+    /// - Parameter sizes: each window's share, in window order: width share and height share,
+    ///   1 meaning an even share. Missing ones count as 1.
     public static func plan(
         count: Int,
         in area: CGRect,
         style: LayoutStyle,
         gap: CGFloat = 0,
         mainRatio: CGFloat = 0.5,
-        minimumSizes: [CGSize?] = []
+        minimumSizes: [CGSize?] = [],
+        sizes: [CGSize] = []
     ) -> Plan {
         guard count > 0, area.width > 0, area.height > 0 else { return Plan(frames: [], fits: true) }
         let shape = ScreenShape.of(area.size)
         let minimums = (0..<count).map { $0 < minimumSizes.count ? minimumSizes[$0] ?? .zero : .zero }
+        let shares = (0..<count).map { $0 < sizes.count ? sizes[$0] : TileSizes.even }
 
         if style == .auto, count == 1, shape == .ultrawide, minimums[0].width <= area.width * 2 / 3 {
             // One window on a very wide screen: centred, not stretched edge to edge.
@@ -107,7 +113,7 @@ public enum TilePlanner {
                 ? assignments(arrangement, minimums: minimums, area: area, gap: gap)
                 : [Array(0..<count)]
             for order in orders {
-                let frames = build(arrangement, order: order, minimums: minimums, in: area, gap: gap)
+                let frames = build(arrangement, order: order, minimums: minimums, in: area, gap: gap, sizes: shares)
                 let over = overflow(frames, minimums)
                 if over == 0 { return Plan(frames: frames, fits: true) }
                 if best == nil || over < best!.overflow { best = (frames, over) }
@@ -215,7 +221,13 @@ public enum TilePlanner {
     }
 
     /// Frames for an arrangement, returned in window order. `order[slot]` is the window in that slot.
-    static func build(_ arrangement: Arrangement, order: [Int], minimums: [CGSize], in area: CGRect, gap: CGFloat) -> [CGRect] {
+    ///
+    /// `sizes` (window order) share out the space: along a line by each window's share in that
+    /// direction; across lines by the biggest share in each line.
+    static func build(
+        _ arrangement: Arrangement, order: [Int], minimums: [CGSize], in area: CGRect, gap: CGFloat, sizes: [CGSize] = []
+    ) -> [CGRect] {
+        func share(_ window: Int) -> CGSize { window < sizes.count ? sizes[window] : TileSizes.even }
         let rows = arrangement.rows
         var lines: [[Int]] = []
         var next = 0
@@ -230,10 +242,13 @@ public enum TilePlanner {
             // A window alone on a line loses a full gap on both sides, so allow for two.
             return value > 0 ? value + 2 * gap : 0
         }
+        let base = arrangement.weights ?? Array(repeating: 1, count: lines.count)
         let thickness = waterFill(
             rows ? area.height : area.width,
             needs: lines.map { line in line.map { need($0, across: false) }.max() ?? 0 },
-            weights: arrangement.weights ?? Array(repeating: 1, count: lines.count)
+            weights: zip(lines, base).map { line, weight in
+                weight * (line.map { rows ? share($0).height : share($0).width }.max() ?? 1)
+            }
         )
         var frames = [CGRect](repeating: .zero, count: order.count)
         var lineStart = rows ? area.minY : area.minX
@@ -242,7 +257,7 @@ public enum TilePlanner {
             let lengths = waterFill(
                 rows ? area.width : area.height,
                 needs: line.map { need($0, across: true) },
-                weights: Array(repeating: 1, count: line.count)
+                weights: line.map { rows ? share($0).width : share($0).height }
             )
             var start = rows ? area.minX : area.minY
             for (window, length) in zip(line, lengths) {

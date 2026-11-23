@@ -93,6 +93,11 @@ final class AutoTiler {
     /// Until then, windows belong to the screen they're on now: a screen was just plugged in,
     /// unplugged or moved, and macOS is moving windows between screens.
     private var followScreensUntil = Date.distantPast
+    /// Tiles you made larger or smaller (⌃⌥= and ⌃⌥-, or by dragging an edge): their width and
+    /// height shares. A window that isn't here has an even share. See `TileSizes`.
+    private var sizes: [CGWindowID: CGSize] = [:]
+    /// Counts arrangements, so a resize can tell whether one happened.
+    private var arrangements = 0
     /// When you last sent each window to a screen yourself (Next Display, or a drag). That
     /// choice wins over following macOS.
     private var sentAt: [CGWindowID: Date] = [:]
@@ -197,6 +202,7 @@ final class AutoTiler {
         if let screen = currentScreen() {
             if leaveFullScreen(on: screen, style: nil) { return }
             unpinVisible(on: screen)
+            evenOut(on: screen)
         }
         retile()
     }
@@ -224,6 +230,7 @@ final class AutoTiler {
         }
         spaceLayouts[layoutKey(screen, Spaces.current(for: Screens.all()))] = style
         unpinVisible(on: screen)
+        evenOut(on: screen)
         retile()
         guard notify else { return }
         var text = style.title
@@ -429,6 +436,7 @@ final class AutoTiler {
         order[display.stableID, default: []].append(window.id)
         wanted[window.id] = Date()   // You sent it there to use it.
         sentAt[window.id] = Date()
+        sizes[window.id] = nil       // A fresh, even share on its new screen.
         touch(window.id)
         retile()
     }
@@ -467,25 +475,82 @@ final class AutoTiler {
 
     /// You resized a tiled window with the mouse. In Main + Side this sets the main window's size;
     /// otherwise the window goes back to its tile.
+    /// You resized a tile with the mouse: the edge you dragged stays where you let go, and the
+    /// tiles on the other side of it give or take the room. (Dragging a screen edge snaps back.)
     func userResized(_ window: TrackedWindow, from old: CGRect, to new: CGRect) {
         pendingAfterMouse = false
         defer { retile() }
-        guard isOn, let screen = home[window.id], let list = plans[screen]?.ids,
-              let display = Screens.all().first(where: { $0.stableID == screen }),
-              layout(for: display) == .mainAndSide else { return }
-        let area = freeArea(on: display)
+        guard isOn, let screen = home[window.id], let plan = plans[screen], let index = plan.ids.firstIndex(of: window.id),
+              let display = Screens.all().first(where: { $0.stableID == screen }) else { return }
         let gap = CGFloat(settings.gap)
-        let portrait = ScreenShape.of(area.size) == .portrait
-        let length = portrait ? area.height : area.width
-        let ratio: CGFloat
-        if list.first == window.id {
-            ratio = ((portrait ? new.height : new.width) + gap * 1.5) / length
-        } else if list.contains(window.id) {
-            ratio = ((portrait ? new.minY - area.minY : new.minX - area.minX) - gap / 2) / length
-        } else {
-            return
+        let tile = plan.frames[index]
+        if layout(for: display) == .mainAndSide, plan.ids.count > 1 {
+            // The edge between the main window and the others is the main window's share of the screen.
+            let area = plan.area
+            let portrait = ScreenShape.of(area.size) == .portrait
+            let moved = index == 0
+                ? abs(portrait ? new.maxY - tile.maxY : new.maxX - tile.maxX)
+                : abs(portrait ? new.minY - tile.minY : new.minX - tile.minX)
+            if moved > 4 {
+                let length = portrait ? area.height : area.width
+                let ratio = index == 0
+                    ? ((portrait ? new.height : new.width) + gap * 1.5) / length
+                    : ((portrait ? new.minY - area.minY : new.minX - area.minX) - gap / 2) / length
+                settings.mainRatio = Double(min(max(ratio, 0.2), 0.8))
+                // Shares across that edge go back to even, so it lands where you let go.
+                for id in plan.ids {
+                    var share = sizes[id] ?? TileSizes.even
+                    if portrait { share.height = 1 } else { share.width = 1 }
+                    sizes[id] = share == TileSizes.even ? nil : share
+                }
+                return
+            }
         }
-        settings.mainRatio = Double(min(max(ratio, 0.2), 0.8))
+        let shares = plan.ids.map { sizes[$0] ?? TileSizes.even }
+        guard let updated = TileSizes.afterDrag(frames: plan.frames, shares: shares, index: index, to: new,
+                                                area: plan.area, gap: gap) else { return }
+        for (id, share) in zip(plan.ids, updated) { sizes[id] = share == TileSizes.even ? nil : share }
+    }
+
+    /// Make Larger (⌃⌥=) or Make Smaller (⌃⌥-) on a tile: its share grows or shrinks one step,
+    /// and the tiles around it give or take the room. The layout keeps its shape.
+    ///
+    /// Returns false if the window isn't a tile with neighbours (then it's resized the usual way).
+    func resizeTile(_ window: TrackedWindow, larger: Bool) -> Bool {
+        guard isOn, isTiled(window), let screen = home[window.id], let plan = plans[screen],
+              let index = plan.ids.firstIndex(of: window.id), plan.ids.count > 1 else { return false }
+        let before = plan.frames[index]
+        let old = sizes[window.id] ?? TileSizes.even
+        guard let next = TileSizes.resized(old, larger: larger) else {
+            NSSound.beep()
+            Notice.shared.show(larger ? "As large as a tile gets" : "As small as a tile gets")
+            return true
+        }
+        sizes[window.id] = next == TileSizes.even ? nil : next
+        let count = arrangements
+        retile()
+        if arrangements != count, let after = plans[screen], let i = after.ids.firstIndex(of: window.id),
+           after.frames[i].isClose(to: before, tolerance: 2) {
+            // Nothing changed: the other windows can't give any more room (apps have a smallest size).
+            sizes[window.id] = old == TileSizes.even ? nil : old
+            NSSound.beep()
+            Notice.shared.show(larger ? "The other windows can't get any smaller" : "This window can't get any smaller")
+            retile()
+        }
+        return true
+    }
+
+    /// Restore (⌃⌥⌫) on a tile you made larger or smaller: back to an even share.
+    func evenOut(_ window: TrackedWindow) -> Bool {
+        guard isOn, isTiled(window), sizes.removeValue(forKey: window.id) != nil else { return false }
+        retile()
+        return true
+    }
+
+    /// Picking a layout, or Retile, evens out the windows on that screen's desktop.
+    private func evenOut(on screen: DisplayInfo) {
+        let visible = Set(currentMembers(Screens.all()).ids)
+        for id in visible where home[id] == screen.stableID { sizes[id] = nil }
     }
 
     /// The mouse button went up. Catch up on anything that happened during the drag.
@@ -656,6 +721,7 @@ final class AutoTiler {
 
         let gap = CGFloat(settings.gap)
         var moved: [CGWindowID] = []
+        arrangements += 1
         for display in displays {
             let screen = display.stableID
             let here = present[screen] ?? []
@@ -718,7 +784,8 @@ final class AutoTiler {
                 style: style,
                 gap: gap,
                 mainRatio: style == .mainAndSide ? CGFloat(settings.mainRatio) : 0.5,
-                minimumSizes: active.map { minimums[$0] }
+                minimumSizes: active.map { minimums[$0] },
+                sizes: active.map { sizes[$0] ?? TileSizes.even }
             )
             if plan.fits { crowded.remove(screen) } else { crowded.insert(screen) }
             plans[screen] = ScreenPlan(style: style, ids: active, frames: plan.frames, area: freeArea(on: display),
@@ -932,6 +999,7 @@ final class AutoTiler {
         kept.remove(id)
         lastFrontFrame[id] = nil
         sentAt[id] = nil
+        sizes[id] = nil
         floating.remove(id)
         pinned[id] = nil
         appMoveTicket[id] = nil
@@ -957,6 +1025,7 @@ final class AutoTiler {
             "floating": floating.map(Int.init),
             "pinned": Dictionary(uniqueKeysWithValues: pinned.map { (String($0.key), NSStringFromRect($0.value)) }),
             "crowded": Array(crowded),
+            "sizes": Dictionary(uniqueKeysWithValues: sizes.map { (String($0.key), [Double($0.value.width), Double($0.value.height)]) }),
             "frontLimit": settings.frontLimit.raw,
             "limits": Dictionary(Screens.all().map { ($0.stableID, frontLimit(on: $0) ?? 0) }, uniquingKeysWith: { a, _ in a }),
             "waiting": plans.mapValues { $0.waiting.map(Int.init) },

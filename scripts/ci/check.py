@@ -424,6 +424,121 @@ def hide(bundle):
     time.sleep(0.8)
 
 
+# ---------- making tiles larger and smaller ----------
+
+def resize_tiles():
+    """⌃⌥= and ⌃⌥- on a tile: it grows into its neighbours, and they shrink to make room.
+    The layout keeps its shape. Uses three TextEdit windows (no app minimum gets in the way)."""
+    choose("columns", "Resizing: 3 even columns", 3)
+    d = settled_dump()
+    V = [round(v) for v in d["displays"][0]["visible"]]
+    ids = sorted(plan_ids(d), key=lambda i: frame_of(i)[0])
+    if len(ids) != 3:
+        record("Resizing: 3 columns to work with", False, f"{ids}", warn=True)
+        return
+    left, middle, right = ids
+    post(f"focus:{middle}", 1.0)
+    record("Resizing: the middle column is the one in use", dump().get("focused") == middle, f"{dump().get('focused')} vs {middle}")
+    even = {i: frame_of(i) for i in ids}
+
+    def columns_ok(label, now):
+        L, M, R = now[left], now[middle], now[right]
+        record(f"{label}: the outer columns still reach the screen's edges, with no holes or overlaps",
+               abs(L[0] - V[0]) <= 2 and abs(R[0] + R[2] - (V[0] + V[2])) <= 2
+               and abs(L[0] + L[2] - M[0]) <= 2 and abs(M[0] + M[2] - R[0]) <= 2, f"{L} {M} {R} on {V}")
+
+    last = even
+    for n in range(1, 4):
+        press(CO, K["equal"], 0.6)
+        d = settled_dump()
+        now = {i: frame_of(i) for i in ids}
+        L, M, R = now[left], now[middle], now[right]
+        record(f"⌃⌥= ×{n}: the middle column grows", M[2] > last[middle][2] + 30, f"{last[middle][2]} → {M[2]}")
+        record(f"⌃⌥= ×{n}: the left and right columns both shrink, evenly",
+               L[2] < last[left][2] - 10 and R[2] < last[right][2] - 10 and abs(L[2] - R[2]) <= 2,
+               f"left {last[left][2]} → {L[2]}, right {last[right][2]} → {R[2]}")
+        columns_ok(f"⌃⌥= ×{n}", now)
+        plan = screen_plan(d) or {}
+        record(f"⌃⌥= ×{n}: still Columns with 3, nothing snapped by hand",
+               plan.get("style") == "columns" and len(plan.get("ids", [])) == 3 and not d["autoTile"]["pinned"],
+               f"{plan.get('style')}, pinned {list(d['autoTile']['pinned'])}")
+        last = now
+    shot("resize-middle-larger")
+    for _ in range(3):
+        press(CO, K["minus"], 0.6)
+    d = settled_dump()
+    back = {i: frame_of(i) for i in ids}
+    record("⌃⌥- three times: even columns again", all(close(back[i], even[i], 2) for i in ids), f"{back} vs {even}")
+    press(CO, K["minus"], 0.8)
+    d = settled_dump()
+    now = {i: frame_of(i) for i in ids}
+    record("⌃⌥- on an even column: it shrinks, both neighbours grow",
+           now[middle][2] < even[middle][2] - 30 and now[left][2] > even[left][2] + 10 and now[right][2] > even[right][2] + 10,
+           f"{now}")
+    columns_ok("⌃⌥- once", now)
+    press(CO, K["delete"], 1.0)
+    d = settled_dump()
+    record("⌃⌥⌫ on a resized tile: back to even", all(close(frame_of(i), even[i], 2) for i in ids),
+           f"{ {i: frame_of(i) for i in ids} }")
+    press(CO, K["equal"], 0.6)
+    press(CO, K["equal"], 0.6)
+    choose("columns", "Picking Columns again", 3)
+    record("Picking a layout evens the tiles out", all(close(frame_of(i), even[i], 2) for i in ids))
+
+    # Rows: the same, up and down.
+    choose("rows", "Resizing: 3 even rows", 3)
+    d = settled_dump()
+    top, mid, bottom = sorted(plan_ids(d), key=lambda i: frame_of(i)[1])
+    before = {i: frame_of(i) for i in (top, mid, bottom)}
+    post(f"focus:{mid}", 1.0)
+    press(CO, K["equal"], 0.8)
+    d = settled_dump()
+    T, M, B = frame_of(top), frame_of(mid), frame_of(bottom)
+    record("Rows ⌃⌥=: the middle row grows, the top and bottom rows both shrink",
+           M[3] > before[mid][3] + 30 and T[3] < before[top][3] - 10 and B[3] < before[bottom][3] - 10 and abs(T[3] - B[3]) <= 2,
+           f"{before} → {T} {M} {B}")
+    record("Rows ⌃⌥=: the bottom row still reaches the bottom", abs(B[1] + B[3] - (V[1] + V[3])) <= 2, f"{B} on {V}")
+
+    # Main + Side: a larger main window takes room from the side.
+    choose("mainAndSide", "Resizing: Main + Side", 3)
+    d = settled_dump()
+    main = plan_ids(d)[0]
+    before = {i: frame_of(i) for i in plan_ids(d)}
+    post(f"focus:{main}", 1.0)
+    press(CO, K["equal"], 0.8)
+    d = settled_dump()
+    sides = plan_ids(d)[1:]
+    record("Main + Side ⌃⌥=: the main window gets wider, the side windows narrower",
+           frame_of(main)[2] > before[main][2] + 30 and all(frame_of(i)[2] < before[i][2] - 10 for i in sides),
+           f"{before} → { {i: frame_of(i) for i in plan_ids(d)} }")
+    record("Main + Side ⌃⌥=: the side windows still reach the right edge",
+           all(abs(frame_of(i)[0] + frame_of(i)[2] - (V[0] + V[2])) <= 2 for i in sides))
+
+    # The mouse: drag the edge between the middle and right columns 150 points to the right.
+    choose("columns", "Resizing by mouse: 3 even columns", 3)
+    d = settled_dump()
+    left, middle, right = sorted(plan_ids(d), key=lambda i: frame_of(i)[0])
+    even = {i: frame_of(i) for i in (left, middle, right)}
+    post(f"focus:{middle}", 1.0)
+    M = even[middle]
+    edge, y = M[0] + M[2] - 1, M[1] + M[3] // 2
+    keys("drag", str(edge), str(y), str(edge + 150), str(y))
+    time.sleep(1.5)
+    d = settled_dump()
+    now = {i: frame_of(i) for i in (left, middle, right)}
+    if close(now[middle], M, 3):
+        record("Resizing by mouse: the test's mouse caught the window's edge", False, f"{now[middle]}", warn=True)
+    else:
+        record("Dragging the edge between two columns: it stays where you let go",
+               abs(now[middle][0] + now[middle][2] - (edge + 151)) <= 15 and close(now[middle][:2], M[:2], 3),
+               f"middle {M} → {now[middle]}")
+        record("Dragging that edge: the right column gives way, the left one doesn't move",
+               close(now[left], even[left], 3) and now[right][2] < even[right][2] - 100
+               and abs(now[right][0] + now[right][2] - (V[0] + V[2])) <= 2, f"{now}")
+        columns_ok("After the drag", now)
+    choose("columns", "Even columns again", 3)
+
+
 # ---------- the latest command wins ----------
 
 def plan_ids(d):
@@ -1018,6 +1133,7 @@ def main():
         print(keys("hide", bundle).strip(), flush=True)
     check_layout("3 windows, Rows", "rows", 3)
     layout_suite("3 windows", 3)
+    resize_tiles()
     activate("com.apple.TextEdit")
     keys("press", "cmd", K["m"])
     time.sleep(0.8)
