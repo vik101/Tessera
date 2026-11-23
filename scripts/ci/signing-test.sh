@@ -155,6 +155,34 @@ else
 fi
 [[ -d "$SRC/Contents/Frameworks/Sparkle.framework" ]] && result "PASS Sparkle.framework is inside the app" || result "FAIL Sparkle.framework missing from the app"
 
+# --- Homebrew: tap this repo the way the README says, then install the latest release.
+if command -v brew >/dev/null; then
+  { brew --version; brew trust --help; brew tap --help | grep -i -A2 trust; } > "$OUT/homebrew.txt" 2>&1
+  brew untap vik101/tessera >/dev/null 2>&1
+  if limit 300 brew tap vik101/tessera "$PWD" >> "$OUT/homebrew.txt" 2>&1; then
+    result "PASS Homebrew taps the repo"
+  else
+    result "FAIL Homebrew can't tap the repo ($(tail -1 "$OUT/homebrew.txt"))"
+  fi
+  limit 60 brew trust vik101/tessera >> "$OUT/homebrew.txt" 2>&1 || true
+  limit 120 brew style --cask vik101/tessera/tessera >> "$OUT/homebrew.txt" 2>&1 \
+    && result "PASS the cask passes brew style" || result "WARN brew style has notes on the cask (see homebrew.txt)"
+  if limit 20 curl -fsIL -o /dev/null "https://github.com/vik101/Tessera/releases/latest/download/Tessera.zip"; then
+    pkill -x Tessera; sudo rm -rf /Applications/Tessera.app
+    if limit 600 brew install --cask vik101/tessera/tessera >> "$OUT/homebrew.txt" 2>&1 && [[ -d /Applications/Tessera.app ]]; then
+      result "PASS brew install --cask puts Tessera in Applications"
+      xattr -p com.apple.quarantine /Applications/Tessera.app >/dev/null 2>&1 \
+        && result "FAIL the installed app is still quarantined" || result "PASS the installed app opens without the download warning"
+      limit 120 brew uninstall --cask vik101/tessera/tessera >> "$OUT/homebrew.txt" 2>&1
+    else
+      result "FAIL brew install --cask failed ($(tail -1 "$OUT/homebrew.txt"))"
+    fi
+  else
+    result "WARN no GitHub release yet, so the Homebrew install wasn't tried"
+  fi
+  brew untap vik101/tessera >/dev/null 2>&1
+fi
+
 ls ~/Library/Logs/DiagnosticReports/ 2>/dev/null | grep -i tessera > "$OUT/crashes.txt" && cp ~/Library/Logs/DiagnosticReports/*essera* "$OUT/" 2>/dev/null
 security delete-keychain "$KC" 2>/dev/null
 fails=$(grep -c '^FAIL' "$OUT/results.txt"); passes=$(grep -c '^PASS' "$OUT/results.txt"); warns=$(grep -c '^WARN' "$OUT/results.txt")

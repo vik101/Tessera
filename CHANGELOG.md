@@ -4,10 +4,15 @@ Newest first. Each version's lines become the release notes in the update window
 
 ## 2.5.0
 
-- Tessera can update itself. Settings has a switch to turn automatic checks off, and the menu has Check for Updates….
-- Install with Homebrew: `brew tap vik101/tessera https://github.com/vik101/Tessera` then `brew install --cask tessera`.
-- Builds signed with the Tessera Signing certificate keep the Accessibility permission when they update.
-- Each version is now a GitHub release, with a download that never changes address.
+- Rectangle's other window actions: ninths, eighths, corner thirds, Centre Prominently, Specified Size, Tile All, Tile in Rows and Columns, Cascade, Reverse All, and stepping through windows stacked on one spot.
+- Links for scripts and launchers, such as tessera://execute-action?name=left-half. Rectangle's links work too.
+- Export and import settings as a JSON file. A TesseraConfig.json in Tessera's folder is read once at launch.
+- Focus the window to the left, right, above or below with ⌃⇧⌘ + arrow.
+- Send a window to desktop 1–9 with ⌃⌥⇧ + number.
+- App rules: always float an app, always keep it in front, or open its windows on a chosen screen.
+- Saved setups: save the apps on your screens and where their windows are, and open them again with ⌃⌥⌘ + number.
+- Tessera can update itself, once release keys are set up. Install with Homebrew too.
+- Waiting windows find a hiding place even with screens on both sides.
 
 ## 2.4.0
 

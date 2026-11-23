@@ -57,7 +57,7 @@ The snap shortcuts are Rectangle's defaults. Change any of them in **Settings**.
 | ⌃⌥⌘→ | Next Display | ⌃⌥C | Centre |
 | ⌃⌥⌘← | Previous Display | ⌃⌥⌫ | Restore |
 
-More actions are in the menu with no shortcut yet: Centre Half, Centre Two Thirds, Almost Maximise, Centre Prominently (centred, a little high), Specified Size (1680 × 1050 points unless you change it in Settings), Move to Edge, Quarters, Sixths, Corner Thirds (two thirds wide, half high), Eighths and Ninths. That is every one of Rectangle's single-window actions. Give any of them a key in Settings, or run it from a script (see [Scripts and links](#scripts-and-links)).
+More actions are in the menu with no shortcut yet: Centre Half, Centre Two Thirds, Almost Maximise, Centre Prominently (centred, a little high), Specified Size (1680 × 1050 points unless you change it in Settings), Move to Edge, Quarters, Sixths, Corner Thirds (two thirds wide, half high), Eighths and Ninths. With these, Tessera has every single-window action in Rectangle's free version. Give any of them a key in Settings, or run it from a script (see [Scripts and links](#scripts-and-links)).
 
 **Auto-tile shortcuts** use keys Rectangle doesn't, so the two never clash:
 
@@ -244,8 +244,14 @@ flowchart TB
         HK["Hotkeys<br/>Carbon hot keys"] --> CMD["Shortcuts.run"]
         MENU["StatusMenu<br/>menu bar"] --> CMD
         DRAG["DragSnapper<br/>mouse watcher"] --> SNAP
+        LINK["Automation<br/>tessera:// links"] --> CMD
         CMD --> SNAP["SnapController<br/>one window"]
         CMD --> TILE["AutoTiler<br/>every window"]
+        CMD --> ARR["Arranger<br/>Tile All, Cascade"]
+        CMD --> KM["KeyboardMoves<br/>focus, desktops"]
+        CMD --> SET["Setups<br/>save and open"]
+        ARR --> MOVE
+        SET --> MOVE
         SNAP --> MOVE["WindowMover"]
         TILE --> MOVE
         REG["WindowRegistry<br/>watches apps and windows"] --> TILE
@@ -256,11 +262,16 @@ flowchart TB
         PLAN["TilePlanner<br/>where tiles go"]
         FRONT["FrontWindows<br/>which windows sit in front"]
         KEYS["ShortcutSet<br/>who owns which key"]
+        AUTO["URLCommand, SettingsFile,<br/>AppRule, Setup"]
+        NAV["Arrange, Navigation"]
     end
     SNAP --> CALC
     TILE --> PLAN
     TILE --> FRONT
     CMD --> KEYS
+    LINK --> AUTO
+    ARR --> NAV
+    KM --> NAV
     MOVE --> AX["macOS Accessibility"]
 ```
 
@@ -271,6 +282,7 @@ All the maths lives in **TesseraCore**, which has no AppKit. That is where almos
 | `Sources/TesseraCore/Snapping` | `SnapAction` (every action, its title, default shortcut and screen region) and `SnapCalculator` |
 | `Sources/TesseraCore/Tiling` | `TilePlanner` (layout styles, Auto's scoring, space left by snapped windows) and `FrontWindows` (the front-window limit: who sits in front, who waits, who steps back) |
 | `Sources/TesseraCore/Shortcuts` | Key combos, commands, and the user's shortcut set |
+| `Sources/TesseraCore/Automation` | Links (`URLCommand`), settings files, app rules, setups |
 | `Sources/Tessera/Snapping` | Keyboard and mouse snapping |
 | `Sources/Tessera/Tiling` | `AutoTiler`: decides which windows to tile and when |
 | `Sources/Tessera/Windows` | Window tracking, screens, desktops (`Spaces.swift`), moving windows |

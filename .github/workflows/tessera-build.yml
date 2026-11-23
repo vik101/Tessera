@@ -162,7 +162,7 @@ jobs:
         id: signing
         if: steps.build.outcome == 'success'
         continue-on-error: true
-        timeout-minutes: 15
+        timeout-minutes: 25
         run: ./scripts/ci/signing-test.sh build/debug/Tessera.app signing-results
       - name: Publish results
         if: ${{ !cancelled() }}
