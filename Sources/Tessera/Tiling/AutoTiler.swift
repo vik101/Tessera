@@ -327,6 +327,13 @@ final class AutoTiler {
         wanted[id] = Date()
     }
 
+    /// Floating: by ⌃⌥W, or because the app's rule says "Always Float".
+    private func isFloating(_ id: CGWindowID) -> Bool {
+        if floating.contains(id) { return true }
+        guard let app = registry.window(id)?.bundleID else { return false }
+        return settings.rule(for: app)?.float == true
+    }
+
     /// Reverse All while auto-tile is on: the windows in front on this screen swap ends.
     /// Waiting windows keep their places in the order.
     func reverseOrder() {
@@ -423,7 +430,7 @@ final class AutoTiler {
     var currentLayoutScreen: DisplayInfo? { currentScreen() }
 
     func isTiled(_ window: TrackedWindow) -> Bool {
-        home[window.id] != nil && pinned[window.id] == nil && !floating.contains(window.id)
+        home[window.id] != nil && pinned[window.id] == nil && !isFloating(window.id)
     }
 
     /// A window you snapped by hand keeps that spot; the others tile around it.
@@ -478,7 +485,7 @@ final class AutoTiler {
     func userDropped(_ window: TrackedWindow, at point: CGPoint) {
         pendingAfterMouse = false
         let id = window.id
-        guard isOn, !floating.contains(id), canTile(window) else { return }
+        guard isOn, !isFloating(id), canTile(window) else { return }
         rejoin(id)
         guard let target = Screens.display(containing: point, in: Screens.all()) else {
             retile()
@@ -599,7 +606,7 @@ final class AutoTiler {
         switch event {
         case .moved(let id), .resized(let id):
             // Floating and pinned windows go where you put them.
-            guard running, !mover.isOwnMove(id), home[id] != nil, pinned[id] == nil, !floating.contains(id) else { return }
+            guard running, !mover.isOwnMove(id), home[id] != nil, pinned[id] == nil, !isFloating(id) else { return }
             if DragSnapper.shared.isMouseDown {
                 pendingAfterMouse = true
             } else {
@@ -763,7 +770,7 @@ final class AutoTiler {
             // new windows join at the end.
             var list = (order[screen] ?? []).filter { (registry.window($0) != nil || closing.contains($0)) && home[$0] == screen }
             for id in here where !list.contains(id) { list.append(id) }
-            let taking = Set(here.filter { pinned[$0] == nil && !floating.contains($0) })
+            let taking = Set(here.filter { pinned[$0] == nil && !isFloating($0) })
             let key = layoutKey(display, spaces)
             // Front windows: the first few take part in the layout; the rest wait off screen.
             let limit = frontLimit(on: display)
@@ -840,10 +847,18 @@ final class AutoTiler {
             }
             // Waiting windows: just off the bottom corner, keeping their size.
             let otherScreens = displays.filter { $0.stableID != screen }.map(\.frame)
+            let allScreens = displays.map(\.frame)
             for id in waiting {
                 guard let window = windows[id], let frame = window.frame else { continue }
                 planned[id] = nil
-                mover.move(window, to: FrontWindows.waitingFrame(size: frame.size, screen: display.frame, otherScreens: otherScreens))
+                // Already hanging out of sight off this screen: leave it.
+                if FrontWindows.isOutOfSight(frame, on: display.frame, screens: allScreens) { continue }
+                // macOS may refuse a spot (it keeps title bars above the Dock): try the next one.
+                let spots = FrontWindows.waitingFrames(size: frame.size, screen: display.frame, otherScreens: otherScreens)
+                for spot in spots.prefix(8) {
+                    let got = mover.move(window, to: spot) ?? spot
+                    if FrontWindows.isOutOfSight(got, on: display.frame, screens: allScreens) { break }
+                }
             }
         }
         for id in closing { home[id] = nil }
@@ -862,7 +877,17 @@ final class AutoTiler {
         var learned = false
         var suspects: [CGWindowID] = []
         for id in ids {
-            guard let window = registry.window(id), let target = planned[id], let actual = window.frame else { continue }
+            guard let window = registry.window(id), let target = planned[id], var actual = window.frame else { continue }
+            // An app that grew a moment after the move (Terminal rounds to whole lines) may now poke off
+            // the screen's edge. Slide it back inside; its neighbours are handled below.
+            if let visible = Screens.display(for: target, in: Screens.all())?.visibleFrame,
+               !visible.insetBy(dx: -1, dy: -1).contains(actual) {
+                let inside = actual.clamped(to: visible)
+                if inside.origin != actual.origin {
+                    window.element.setPosition(inside.origin)
+                    actual = window.frame ?? inside
+                }
+            }
             mover.noteSettled(id, at: actual)
             if var known = minimums[id] {
                 if actual.width < known.width - 4 { known.width = actual.width }

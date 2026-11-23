@@ -21,7 +21,7 @@ make_certificate() {   # folder → tessera-signing.p12 and p12-password in it
   local dir="$1"
   mkdir -p "$dir"
   local password
-  password=$(LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 32)
+  password=$(/usr/bin/openssl rand -hex 16)
   cat > "$dir/cert.cnf" <<'EOF'
 [req]
 distinguished_name = dn

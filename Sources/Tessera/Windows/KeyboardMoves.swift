@@ -87,21 +87,35 @@ enum KeyboardMoves {
                 DragSnapper.shared.suspended = false
                 sending = false
             }
-            mouse(.mouseMoved, grab)
-            try? await Task.sleep(for: .milliseconds(80))
-            mouse(.leftMouseDown, grab)
-            try? await Task.sleep(for: .milliseconds(180))
-            mouse(.leftMouseDragged, CGPoint(x: grab.x + 3, y: grab.y))
-            try? await Task.sleep(for: .milliseconds(180))
-            for _ in 0..<abs(presses) {
-                key.press()
-                try? await Task.sleep(for: .milliseconds(700))
+            // Press, then drag a few points the way a hand does, so macOS starts moving the window.
+            var point = grab
+            mouse(.mouseMoved, point)
+            try? await Task.sleep(for: .milliseconds(60))
+            mouse(.leftMouseDown, point)
+            try? await Task.sleep(for: .milliseconds(150))
+            for _ in 0..<10 {
+                point.x += 2
+                mouse(.leftMouseDragged, point)
+                try? await Task.sleep(for: .milliseconds(20))
             }
-            mouse(.leftMouseDragged, CGPoint(x: grab.x + 4, y: grab.y))
-            try? await Task.sleep(for: .milliseconds(120))
-            mouse(.leftMouseUp, CGPoint(x: grab.x + 4, y: grab.y))
-            try? await Task.sleep(for: .milliseconds(250))
+            try? await Task.sleep(for: .milliseconds(150))
+            let held = window.frame.map { abs($0.minX - frame.minX) >= 4 } ?? false
+            Log.info("Send: holding window \(window.id) at \(Int(grab.x)),\(Int(grab.y)): \(held ? "it follows the pointer" : "it didn't move")")
+            if held {
+                for _ in 0..<abs(presses) {
+                    key.press()
+                    try? await Task.sleep(for: .milliseconds(700))
+                    mouse(.leftMouseDragged, point)   // Keep the drag alive while the desktop slides.
+                    try? await Task.sleep(for: .milliseconds(60))
+                }
+            }
+            mouse(.leftMouseUp, point)
+            try? await Task.sleep(for: .milliseconds(300))
             CGWarpMouseCursorPosition(home)
+            guard held else {
+                Notice.shared.show("Couldn't hold the window to move it")
+                return
+            }
             let landed = target.map { Spaces.spaces(of: window.id).contains($0) } ?? true
             Log.info("Sent window \(window.id) \(presses) desktops along: \(landed ? "done" : "didn't land")")
             if !landed { Notice.shared.show("macOS didn't move the window") }
@@ -126,6 +140,7 @@ enum KeyboardMoves {
                 guard let hit = AXElement.element(at: point), hit.pid == window.pid,
                       let role = hit.role, draggable.contains(role) else { continue }
                 if role == kAXWindowRole, hit.windowID != window.id { continue }
+                Log.info("Send: grab point on \(role)")
                 return point
             }
         }
@@ -133,7 +148,8 @@ enum KeyboardMoves {
     }
 
     private static func mouse(_ type: CGEventType, _ point: CGPoint) {
-        CGEvent(mouseEventSource: nil, mouseType: type, mouseCursorPosition: point, mouseButton: .left)?.post(tap: .cghidEventTap)
+        let source = CGEventSource(stateID: .hidSystemState)
+        CGEvent(mouseEventSource: source, mouseType: type, mouseCursorPosition: point, mouseButton: .left)?.post(tap: .cghidEventTap)
     }
 }
 
@@ -160,7 +176,7 @@ private struct SpaceKey {
 
     func press() {
         for down in [true, false] {
-            let event = CGEvent(keyboardEventSource: nil, virtualKey: keyCode, keyDown: down)
+            let event = CGEvent(keyboardEventSource: CGEventSource(stateID: .hidSystemState), virtualKey: keyCode, keyDown: down)
             event?.flags = flags
             event?.post(tap: .cghidEventTap)
         }

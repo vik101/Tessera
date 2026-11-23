@@ -145,6 +145,13 @@ public enum FrontWindows {
     /// bottom, right or left edge: whichever reaches least onto other screens. Never past the top
     /// edge, because macOS keeps title bars on screen.
     public static func waitingFrame(size: CGSize, screen: CGRect, otherScreens: [CGRect]) -> CGRect {
+        waitingFrames(size: size, screen: screen, otherScreens: otherScreens).first
+            ?? CGRect(x: screen.maxX - 1, y: screen.maxY - 1, width: size.width, height: size.height)
+    }
+
+    /// Every place a waiting window could hang, best first. macOS refuses some (it keeps a window's
+    /// title bar above the Dock), so the app tries them in turn until the window is out of sight.
+    public static func waitingFrames(size: CGSize, screen: CGRect, otherScreens: [CGRect]) -> [CGRect] {
         let width = size.width, height = size.height
         func spot(_ x: CGFloat, _ y: CGFloat) -> CGRect { CGRect(x: x, y: y, width: width, height: height) }
         let right = screen.maxX - 1, left = screen.minX - width + 1, below = screen.maxY - 1
@@ -159,7 +166,22 @@ public enum FrontWindows {
         func overlap(_ rect: CGRect) -> CGFloat {
             otherScreens.reduce(0) { $0 + $1.intersectionArea(rect) }
         }
-        return spots.min { overlap($0) < overlap($1) } ?? spots[0]
+        // Least overlap with other screens first; a one-point strip on a neighbour counts as none.
+        let thin = max(width, height) + 1
+        return spots.enumerated().sorted { a, b in
+            let oa = overlap(a.element), ob = overlap(b.element)
+            let ca = oa <= thin ? 0 : oa, cb = ob <= thin ? 0 : ob
+            return ca != cb ? ca < cb : a.offset < b.offset
+        }.map(\.element)
+    }
+
+    /// True when no screen shows more than a sliver (`allowed` points) of the frame, and it still touches `screen`.
+    public static func isOutOfSight(_ frame: CGRect, on screen: CGRect, screens: [CGRect], allowed: CGFloat = 4) -> Bool {
+        guard frame.insetBy(dx: -1, dy: -1).intersects(screen) else { return false }
+        return screens.allSatisfy { other in
+            let part = other.intersection(frame)
+            return part.isNull || min(part.width, part.height) <= allowed
+        }
     }
 
     /// After screens change (one plugged in, unplugged or moved), windows may have moved from

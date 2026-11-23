@@ -202,4 +202,20 @@ struct FrontWindowsTests {
         // A window on screen is not waiting.
         #expect(!FrontWindows.isWaiting(CGRect(x: 100, y: 100, width: 800, height: 600), screens: [main]))
     }
+
+    @Test func screensOnBothSidesStillLeaveAHidingPlace() {
+        // The office: a Dell to the left, a 49-inch to the right with bottoms lined up.
+        let main = CGRect(x: 0, y: 0, width: 1920, height: 1080)
+        let dell = CGRect(x: -1600, y: 0, width: 1600, height: 1200)
+        let wide = CGRect(x: 1920, y: -360, width: 5120, height: 1440)
+        let size = CGSize(width: 601, height: 491)
+        let spots = FrontWindows.waitingFrames(size: size, screen: main, otherScreens: [dell, wide])
+        // Off the bottom right corner: only a one-point strip touches the 49-inch's bottom row.
+        #expect(spots.first == CGRect(x: 1919, y: 1079, width: 601, height: 491))
+        #expect(FrontWindows.isOutOfSight(spots[0], on: main, screens: [main, dell, wide]))
+        // Every spot is tried in turn if macOS refuses one, and none is left out.
+        #expect(spots.count == 25)
+        // Where macOS put one when it refused: 101 points showing above the Dock. Not out of sight.
+        #expect(!FrontWindows.isOutOfSight(CGRect(x: 29, y: 979, width: 601, height: 491), on: main, screens: [main, dell, wide]))
+    }
 }

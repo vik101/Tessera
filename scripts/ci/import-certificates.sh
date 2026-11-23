@@ -3,7 +3,7 @@
 # SIGN_IDENTITY=<sha1> for $GITHUB_ENV. A Developer ID certificate wins over Tessera Signing.
 set -euo pipefail
 KC="$RUNNER_TEMP/signing.keychain-db"
-PW=$(LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 24)
+PW=$(/usr/bin/openssl rand -hex 12)
 security create-keychain -p "$PW" "$KC" >&2
 security set-keychain-settings -lut 7200 "$KC" >&2
 security unlock-keychain -p "$PW" "$KC" >&2

@@ -213,7 +213,8 @@ def check_tiling(label, strict=True, ignore=()):
     cg = {w["id"]: [round(v) for v in w["frame"]] for w in windows()["windows"]}
     frames = {w["id"]: cg.get(w["id"], w["frame"]) for w in tiled}
     outside = [w["app"] for w in tiled if not inside(frames[w["id"]], vis)]
-    record(f"{label}: all inside the screen", not outside, ", ".join(outside))
+    record(f"{label}: all inside the screen", not outside,
+           ", ".join(f"{w['app']} {frames[w['id']]}" for w in tiled if not inside(frames[w["id"]], vis)) + f" on {vis}")
     pairs = []
     ids = list(frames)
     for i, a in enumerate(ids):
@@ -746,7 +747,7 @@ def desktops_never_jump():
                 record(label, True)
                 return True
         record(label, False, f"on desktop {now}, window spaces {mine and mine[0]['spaces']}, desktops {spaces}; "
-               + " | ".join(l for l in d.get("log", []) if "Sent" in l or "Link" in l)[-300:])
+               + " | ".join(l for l in d.get("log", []) if "Sen" in l or "Link" in l)[-300:])
         shot("fail-send-to-desktop")
         return False
     press("ctrl,opt,shift", NUMBER[1], 0.5)
@@ -964,7 +965,8 @@ def front_windows():
     press(CO, K["a"], 1.5)
     d = dump()
     screen = d["displays"][0]["frame"]
-    off = [w["id"] for w in windows()["windows"] if w["owner"] in ("TextEdit", "Finder", "Safari", "Google Chrome", "Terminal")
+    off = [(w["id"], w["owner"], w.get("name", ""), [round(v) for v in w["frame"]]) for w in windows()["windows"]
+           if w["owner"] in ("TextEdit", "Finder", "Safari", "Google Chrome", "Terminal")
            and min(showing([round(v) for v in w["frame"]], screen)) <= 4]
     record("Auto-tile off: every waiting window comes back on screen", not off, f"still off screen: {off}")
     press(CO, K["a"], 0.5)
