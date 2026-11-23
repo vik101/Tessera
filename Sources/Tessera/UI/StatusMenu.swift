@@ -100,6 +100,16 @@ final class StatusMenu: NSObject, NSMenuDelegate {
         let allParent = NSMenuItem(title: "All Windows", action: nil, keyEquivalent: "")
         allParent.submenu = all
         menu.addItem(allParent)
+        // Focus by direction and sending to another desktop.
+        let moves = NSMenu()
+        moves.autoenablesItems = false
+        for action in MoveAction.allCases {
+            if action == .desktop1 || action == .nextDesktop { moves.addItem(.separator()) }
+            moves.addItem(commandItem(.move(action), shortcuts: shortcuts, icon: nil))
+        }
+        let movesParent = NSMenuItem(title: "Focus and Desktops", action: nil, keyEquivalent: "")
+        movesParent.submenu = moves
+        menu.addItem(movesParent)
         menu.addItem(.separator())
 
         // Auto-tile: the switch, then each layout with a picture of what it would do here.

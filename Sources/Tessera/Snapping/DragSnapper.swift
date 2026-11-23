@@ -35,8 +35,12 @@ final class DragSnapper {
         }
     }
 
+    /// True while Tessera itself drives the mouse (sending a window to another desktop).
+    var suspended = false
+
     private func mouseDown() {
         isMouseDown = true
+        if suspended { return }
         isMoving = false
         lastSample = nil
         zone = nil
@@ -50,7 +54,7 @@ final class DragSnapper {
     }
 
     private func mouseDragged() {
-        guard let window, let startFrame else { return }
+        guard !suspended, let window, let startFrame else { return }
         // Reading a window's frame is slow-ish; 30 times a second is plenty.
         guard Date().timeIntervalSince(lastCheck) > 0.033 else { return }
         lastCheck = Date()
@@ -83,6 +87,12 @@ final class DragSnapper {
     private func mouseUp() {
         isMouseDown = false
         SnapPreview.shared.hide()
+        if suspended {
+            window = nil
+            startFrame = nil
+            AutoTiler.shared.mouseReleased()
+            return
+        }
         defer {
             window = nil
             startFrame = nil

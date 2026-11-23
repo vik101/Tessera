@@ -53,10 +53,13 @@ public enum Command: Hashable, Sendable {
     case layout(LayoutStyle)
     /// Move every window on the screen at once (Tile All, Cascade, Reverse All, stacks).
     case arrange(ArrangeAction)
+    /// Focus by direction, send to a desktop.
+    case move(MoveAction)
 
     public static var allCases: [Command] {
         SnapAction.allCases.map(Command.snap) + TileCommand.allCases.map(Command.tile)
             + LayoutStyle.allCases.map(Command.layout) + ArrangeAction.allCases.map(Command.arrange)
+            + MoveAction.allCases.map(Command.move)
     }
 
     /// Finds a command by its URL name: Rectangle's names (`left-half`, `tile-all`), Tessera's ids
@@ -69,6 +72,8 @@ public enum Command: Hashable, Sendable {
             self = .snap(action)
         } else if let action = ArrangeAction(urlName: name) {
             self = .arrange(action)
+        } else if let action = MoveAction(rawValue: name) ?? MoveAction.allCases.first(where: { $0.urlName == name.lowercased() }) {
+            self = .move(action)
         } else if let command = TileCommand(rawValue: name) ?? TileCommand.allCases.first(where: { $0.urlName == name.lowercased() }) {
             self = .tile(command)
         } else if let style = LayoutStyle(rawValue: name) ?? LayoutStyle.allCases.first(where: { $0.urlName == name.lowercased() }) {
@@ -85,6 +90,7 @@ public enum Command: Hashable, Sendable {
         case .tile(let command): command.urlName
         case .layout(let style): style.urlName
         case .arrange(let action): action.urlName
+        case .move(let action): action.urlName
         }
     }
 
@@ -95,6 +101,7 @@ public enum Command: Hashable, Sendable {
         case .tile(let command): "tile." + command.rawValue
         case .layout(let style): "layout." + style.rawValue
         case .arrange(let action): "arrange." + action.rawValue
+        case .move(let action): "move." + action.rawValue
         }
     }
 
@@ -107,6 +114,8 @@ public enum Command: Hashable, Sendable {
             self = .layout(style)
         } else if id.hasPrefix("arrange."), let action = ArrangeAction(rawValue: String(id.dropFirst(8))) {
             self = .arrange(action)
+        } else if id.hasPrefix("move."), let action = MoveAction(rawValue: String(id.dropFirst(5))) {
+            self = .move(action)
         } else {
             return nil
         }
@@ -118,6 +127,7 @@ public enum Command: Hashable, Sendable {
         case .tile(let command): command.title
         case .layout(let style): style.title
         case .arrange(let action): action.title
+        case .move(let action): action.title
         }
     }
 
@@ -127,6 +137,7 @@ public enum Command: Hashable, Sendable {
         case .tile(let command): command.defaultShortcut
         case .layout(let style): style.defaultShortcut
         case .arrange: nil
+        case .move(let action): action.defaultShortcut
         }
     }
 }

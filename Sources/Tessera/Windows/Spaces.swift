@@ -73,6 +73,25 @@ enum Spaces {
         }
     }
 
+    /// A screen's Spaces in Mission Control order (`isDesktop` is false for full-screen apps), and the one it shows.
+    static func ordered(for display: DisplayInfo) -> (spaces: [(id: UInt64, isDesktop: Bool)], current: SpaceID)? {
+        guard let connection, let copyDisplaySpaces,
+              let list = copyDisplaySpaces(connection)?.takeRetainedValue() as? [[String: Any]] else { return nil }
+        let uuid = CGDisplayCreateUUIDFromDisplayID(display.displayID)?.takeRetainedValue()
+        let text = uuid.flatMap { CFUUIDCreateString(nil, $0) as String? }?.uppercased()
+        let entry = list.first { ($0["Display Identifier"] as? String)?.uppercased() == text }
+            ?? list.first { ($0["Display Identifier"] as? String) == "Main" }
+            ?? (list.count == 1 ? list.first : nil)
+        guard let entry,
+              let current = (entry["Current Space"] as? [String: Any]).flatMap({ ($0["ManagedSpaceID"] ?? $0["id64"]) as? NSNumber })
+        else { return nil }
+        let spaces = (entry["Spaces"] as? [[String: Any]] ?? []).compactMap { space -> (id: UInt64, isDesktop: Bool)? in
+            guard let id = (space["ManagedSpaceID"] ?? space["id64"]) as? NSNumber else { return nil }
+            return (id: id.uint64Value, isDesktop: ((space["type"] as? NSNumber)?.intValue ?? 0) == 0)
+        }
+        return (spaces, current.uint64Value)
+    }
+
     /// The Spaces a window lives on. A window set to appear on every desktop lists several.
     static func spaces(of window: CGWindowID) -> Set<SpaceID> {
         guard let connection, let copySpacesForWindows else { return [] }

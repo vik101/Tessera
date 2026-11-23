@@ -211,6 +211,7 @@ struct SettingsView: View {
         groups.append(ShortcutGroup(title: "Auto-Tile", commands: TileCommand.allCases.map(Command.tile)))
         groups.append(ShortcutGroup(title: "Layouts", commands: LayoutStyle.allCases.map(Command.layout)))
         groups.append(ShortcutGroup(title: "All Windows", commands: ArrangeAction.allCases.map(Command.arrange)))
+        groups.append(ShortcutGroup(title: "Focus and Desktops", commands: MoveAction.allCases.map(Command.move)))
         return groups
     }()
 }

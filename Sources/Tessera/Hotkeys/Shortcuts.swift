@@ -64,6 +64,8 @@ final class Shortcuts {
             AutoTiler.shared.toggleKeep()
         case .arrange(let action):
             Arranger.shared.perform(action)
+        case .move(let action):
+            KeyboardMoves.perform(action)
         }
     }
 }

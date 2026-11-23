@@ -729,6 +729,36 @@ def desktops_never_jump():
     go_to_desktop(1, "home")
     check_layout("Home again: Columns with 7 windows", "columns", 7)
 
+    # Send a window to desktop 2 (⌃⌥⇧2), then back (⌃⌥⇧1). macOS shows the desktop it went to.
+    activate("com.apple.TextEdit")
+    _, win = front()
+    if not win:
+        record("A TextEdit window to send", False)
+        return
+    wid = win["id"]
+    def where(label, number):
+        for _ in range(20):
+            time.sleep(0.3)
+            d = dump()
+            now, spaces = desktops(d)
+            mine = [w for w in d["windows"] if w["id"] == wid]
+            if now == spaces[number - 1] and mine and spaces[number - 1] in mine[0]["spaces"]:
+                record(label, True)
+                return True
+        record(label, False, f"on desktop {now}, window spaces {mine and mine[0]['spaces']}, desktops {spaces}; "
+               + " | ".join(l for l in d.get("log", []) if "Sent" in l or "Link" in l)[-300:])
+        shot("fail-send-to-desktop")
+        return False
+    press("ctrl,opt,shift", NUMBER[1], 0.5)
+    if where("⌃⌥⇧2 sends the window to desktop 2, and macOS shows it", 2):
+        time.sleep(1.5)
+        tiled = [w for w in dump()["windows"] if w["id"] == wid and w["tiled"]]
+        record("The window sent to desktop 2 tiles there", bool(tiled))
+        press("ctrl,opt,shift", NUMBER[0], 0.5)
+        where("⌃⌥⇧1 sends it back to desktop 1", 1)
+    go_to_desktop(1, "home after sending")
+    check_layout("Desktop 1: Columns with all 7 windows again", "columns", 7)
+
 
 # ---------- front windows: only a few laid out, the rest waiting ----------
 
@@ -971,6 +1001,43 @@ def screen_windows(V):
             if w["id"] in ids and inside([round(v) for v in w["frame"]], V, tol=40)}
 
 
+def focus_moves():
+    """Windows in three columns: ⌃⇧⌘ + arrows move the focus to the window that way."""
+    def overlap_1d(a0, a1, b0, b1):
+        return min(a1, b1) - max(a0, b0) > 8
+    activate("com.apple.TextEdit")
+    start, win = front()
+    if not win:
+        record("Focus moves: a window to start from", False)
+        return
+    cur = start
+    # Right as far as it goes, then back left: each step lands on a window that way, in line.
+    for arrow, name in [("right", "→"), ("right", "→"), ("left", "←"), ("left", "←")]:
+        press("ctrl,shift,cmd", K[arrow], 0.9)
+        got, _ = front()
+        if got is None or cur is None:
+            record(f"⌃⇧⌘{name} focuses the window that way", False, f"from {cur} got {got}")
+            continue
+        moved = got[0] > cur[0] + 10 if arrow == "right" else got[0] < cur[0] - 10
+        edge = cur[0] + cur[2] >= VISIBLE[0] + VISIBLE[2] - 2 if arrow == "right" else cur[0] <= VISIBLE[0] + 2
+        if edge:
+            record(f"⌃⇧⌘{name} at the screen edge: focus stays", close(got, cur, 2), f"from {cur} got {got}")
+        else:
+            record(f"⌃⇧⌘{name} focuses the window that way", moved and overlap_1d(cur[1], cur[1] + cur[3], got[1], got[1] + got[3]),
+                   f"from {cur} got {got}")
+        cur = got
+    # Down and up inside a column that has more than one window.
+    press("ctrl,shift,cmd", K["down"], 0.9)
+    got, _ = front()
+    if got and cur and got[1] > cur[1] + 10:
+        record("⌃⇧⌘↓ focuses the window below", overlap_1d(cur[0], cur[0] + cur[2], got[0], got[0] + got[2]), f"from {cur} got {got}")
+        press("ctrl,shift,cmd", K["up"], 0.9)
+        back, _ = front()
+        record("⌃⇧⌘↑ goes back up", close(back, cur, 2), f"got {back}, want {cur}")
+    else:
+        record("⌃⇧⌘↓ in a column", got is not None, f"from {cur} got {got} (no window below)", warn=True)
+
+
 def rectangle_parity(F, V):
     activate("com.apple.TextEdit")
     start, _ = front()
@@ -1041,6 +1108,7 @@ def rectangle_parity(F, V):
     lefts = {rnd(V[0] + V[2] * c / 3) for c in range(3)}
     record("Tile in Columns: three columns", all(any(abs(f[0] - x) <= 2 for x in lefts) for f in after.values())
            and len({f[0] for f in after.values()}) == min(n, 3), f"{after}")
+    focus_moves()
     before = screen_windows(V)
     post("run:arrange.reverseAll", 2.0)
     after = screen_windows(V)

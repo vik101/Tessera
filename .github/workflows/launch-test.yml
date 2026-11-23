@@ -19,6 +19,8 @@ defaults:
 
 jobs:
   launch:
+    # Only after a build that finished (a cancelled one published nothing new).
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     strategy:
       fail-fast: false
       matrix:
