@@ -429,6 +429,7 @@ final class AutoTiler {
         order[display.stableID, default: []].append(window.id)
         wanted[window.id] = Date()   // You sent it there to use it.
         sentAt[window.id] = Date()
+        touch(window.id)
         retile()
     }
 
@@ -444,6 +445,7 @@ final class AutoTiler {
         }
         let source = home[id]
         sentAt[id] = Date()
+        touch(id)
         // Only a window in the target's current layout can be swapped with.
         let other = (plans[target.stableID]?.ids ?? []).first { $0 != id && planned[$0]?.contains(point) == true }
         if let other, let source {

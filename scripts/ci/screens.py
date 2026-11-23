@@ -136,14 +136,14 @@ def main():
         return
     c.post("set:autoTile=1", 1.0)
     c.post("set:frontLimit=auto", 0.3)
-    # More windows: 5 new TextEdit windows, 12 in all.
+    # More windows: 7 new TextEdit windows, 14 in all.
     before = len([w for w in c.dump()["windows"] if w["standard"]])
-    for _ in range(5):
+    for _ in range(7):
         c.activate("com.apple.TextEdit")
         c.keys("press", "cmd", c.K["n"])
         time.sleep(0.8)
     count = len([w for w in c.settled_dump()["windows"] if w["standard"]])
-    c.record("12 windows to spread across the screens", count >= 12, f"{before} before, {count} now")
+    c.record("14 windows to spread across the screens", count >= 14, f"{before} before, {count} now")
 
     # At home: the 49-inch above the main screen, centred; a squarish Dell to the left.
     d = c.dump()
@@ -162,9 +162,12 @@ def main():
     c.post("set:layout=auto", 0.5)
     limits = {wide["id"]: 6, dell["id"]: 3, main["id"]: 3}
 
-    # Send 8 windows to the 49-inch and 4 to the Dell; the rest stay on the main screen.
+    # Send 8 windows to the 49-inch and 4 to the Dell; two TextEdit windows stay on the main screen.
     time.sleep(3)   # Let Tessera finish following the new screens (it does for 5 seconds).
-    ids = [w["id"] for w in c.dump()["windows"] if w["standard"]]
+    d = c.dump()
+    textedit = [w["id"] for w in d["windows"] if w["standard"] and w["app"] == "com.apple.TextEdit"]
+    stay = textedit[:2]
+    ids = [w["id"] for w in d["windows"] if w["standard"] and w["id"] not in stay]
     for i in ids[:8]:
         c.post(f"send:{i}={wide['id']}", 0.4)
     for i in ids[8:12]:
@@ -212,11 +215,17 @@ def main():
     time.sleep(6)
     check_screens("49-inch moved to the right")
 
-    # Unplug the Dell: its windows go to the other screens, and the most recently used get the front.
+    # Unplug the Dell: its windows go to the other screens; where they land, the windows used
+    # most lately get the front.
+    before = c.dump()
+    had = {s["id"]: {w["id"] for w in before["windows"] if w.get("screen") == s["id"]} for s in before["displays"]}
     unplug("dell")
     d = check_screens("Dell unplugged")
     c.record("Two screens left", len(d["displays"]) == 2)
-    for s in d["displays"]:
+    gained = [s for s in d["displays"]
+              if {w["id"] for w in d["windows"] if w.get("screen") == s["id"]} - had.get(s["id"], set())]
+    c.record("The Dell's windows went to another screen", bool(gained), f"{[s['id'] for s in gained]}")
+    for s in gained:
         most_recent_in_front(f"Dell unplugged, {round(s['frame'][2])}-wide screen", d, s["id"])
 
     # Plug it back in.
