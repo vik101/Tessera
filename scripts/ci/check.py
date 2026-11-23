@@ -212,11 +212,14 @@ def check_tiling(label, strict=True, ignore=()):
            f"tiled {len(tiled)} of {len(standard)}: " + ", ".join(w["app"] for w in standard if not w["tiled"]))
     cg = {w["id"]: [round(v) for v in w["frame"]] for w in windows()["windows"]}
     frames = {w["id"]: cg.get(w["id"], w["frame"]) for w in tiled}
-    outside = [w["app"] for w in tiled if not inside(frames[w["id"]], vis)]
+    # Terminal sizes itself in whole lines, so it may land a few points past its tile's edge.
+    def fits(w):
+        return inside(frames[w["id"]], vis, tol=4 if w["app"] == "com.apple.Terminal" else 1)
+    outside = [w["app"] for w in tiled if not fits(w)]
     crowded = bool(dump().get("autoTile", {}).get("crowded"))
     # When apps' minimum sizes can't all fit, a window held at its minimum may poke past the edge: flag it.
     record(f"{label}: all inside the screen", not outside,
-           ", ".join(f"{w['app']} {frames[w['id']]}" for w in tiled if not inside(frames[w["id"]], vis)) + f" on {vis}"
+           ", ".join(f"{w['app']} {frames[w['id']]}" for w in tiled if not fits(w)) + f" on {vis}"
            + (" — apps' minimum sizes can't all fit" if crowded else ""), warn=crowded)
     pairs = []
     ids = list(frames)
@@ -367,6 +370,13 @@ def check_layout(label, style, count=None):
             elif diff < -16:
                 sizes_ok = False     # smaller than asked: wrong
         spot_ok = held or (near(actual[0], f[0], 2) and near(actual[1], f[1], 2))
+        # A window a little bigger than its tile (the app's minimum, in a crowded layout) that Tessera slid
+        # back so it stays on screen: its far edge sits on the screen's edge.
+        area = [round(v) for v in plan["area"]]
+        bigger = actual[2] > f[2] + 1 or actual[3] > f[3] + 1
+        on_edge = near(actual[0] + actual[2], area[0] + area[2], 2) or near(actual[1] + actual[3], area[1] + area[3], 2)
+        if not spot_ok and bigger and on_edge and inside(actual, area, tol=2):
+            spot_ok = held = True
         if held:
             at_minimum += 1
         if not (sizes_ok and spot_ok):
@@ -1140,8 +1150,16 @@ def rectangle_parity(F, V):
         # Every window now on that spot is in the stack (another TextEdit window may already sit there).
         spot = frame_of(second["id"])
         ids = {w["id"] for w in dump()["windows"] if w["standard"]}
+        # Rectangle's rule, as Tessera has it: same corner, or the same size and mostly covered, or cascaded.
+        def stacked(a, b, tol=24, step=40):
+            same_size = abs(a[2] - b[2]) <= tol and abs(a[3] - b[3]) <= tol
+            dx, dy = abs(a[0] - b[0]), abs(a[1] - b[1])
+            mostly = overlap(a, b) >= 0.8 * min(a[2] * a[3], b[2] * b[3])
+            cascaded = same_size and dx <= step * 8 and dy <= step * 8 and abs(dx - dy) <= tol
+            return (dx <= tol and dy <= tol) or (cascaded and mostly) or (same_size and mostly)
         stack = sorted(w["id"] for w in windows()["windows"]
-                       if w["id"] in ids and close([round(v) for v in w["frame"]], spot, 24))
+                       if w["id"] in ids and inside([round(v) for v in w["frame"]], VISIBLE, tol=40)
+                       and (w["id"] == second["id"] or stacked([round(v) for v in w["frame"]], spot)))
         want = stack[(stack.index(second["id"]) + 1) % len(stack)] if second["id"] in stack else first["id"]
         post("run:arrange.nextInStack", 1.2)
         _, now = front()
