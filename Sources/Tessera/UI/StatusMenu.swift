@@ -53,6 +53,26 @@ final class StatusMenu: NSObject, NSMenuDelegate {
         }
         if warnings { menu.addItem(.separator()) }
 
+        // First, the windows on this desktop: in front, then waiting. Click one to bring it forward.
+        let screen = tiler.currentLayoutScreen
+        if tiler.isOn, let screen {
+            let (front, waiting) = tiler.windows(on: screen)
+            let limit = tiler.frontLimit(on: screen)
+            if !front.isEmpty || !waiting.isEmpty {
+                menu.addItem(.sectionHeader(title: limit.map { "In Front (\(front.count) of \($0))" } ?? "In Front"))
+                for window in front { menu.addItem(windowItem(window, kept: tiler.isKept(window.id))) }
+                if !waiting.isEmpty {
+                    menu.addItem(.sectionHeader(title: "Waiting · Click to Bring Forward"))
+                    for window in waiting { menu.addItem(windowItem(window, kept: false)) }
+                }
+                menu.addItem(commandItem(.tile(.showWindows), shortcuts: shortcuts, icon: nil))
+                let keep = commandItem(.tile(.keepInFront), shortcuts: shortcuts, icon: nil)
+                keep.state = WindowRegistry.shared.focusedWindow().map { tiler.isKept($0.id) } == true ? .on : .off
+                menu.addItem(keep)
+                menu.addItem(.separator())
+            }
+        }
+
         // Snap actions.
         for group in SnapGroup.allCases where group.submenuTitle == nil {
             for action in SnapAction.allCases where action.group == group {
@@ -78,7 +98,6 @@ final class StatusMenu: NSObject, NSMenuDelegate {
         auto.state = settings.autoTile ? .on : .off
         menu.addItem(auto)
 
-        let screen = tiler.currentLayoutScreen
         let current = screen.map { tiler.layout(for: $0) } ?? .auto
         if let screen, Screens.all().count > 1 {
             let header = NSMenuItem(title: "Layout for \(screen.name)", action: nil, keyEquivalent: "")
@@ -99,19 +118,6 @@ final class StatusMenu: NSObject, NSMenuDelegate {
         menu.addItem(commandItem(.tile(.previousLayout), shortcuts: shortcuts, icon: nil))
         menu.addItem(.separator())
 
-        // The windows on this desktop: in front, then waiting. Click one to bring it forward.
-        if tiler.isOn, let screen {
-            let (front, waiting) = tiler.windows(on: screen)
-            let limit = tiler.frontLimit(on: screen)
-            if !front.isEmpty || !waiting.isEmpty {
-                menu.addItem(.sectionHeader(title: limit.map { "In Front (\(front.count) of \($0))" } ?? "In Front"))
-                for window in front { menu.addItem(windowItem(window, kept: tiler.isKept(window.id))) }
-                if !waiting.isEmpty {
-                    menu.addItem(.sectionHeader(title: "Waiting · Click to Bring Forward"))
-                    for window in waiting { menu.addItem(windowItem(window, kept: false)) }
-                }
-            }
-        }
         let limits = NSMenu()
         limits.autoenablesItems = false
         let autoCount = screen.map { FrontLimit.autoCount(for: $0.visibleFrame.size) }
@@ -125,13 +131,6 @@ final class StatusMenu: NSObject, NSMenuDelegate {
         let limitParent = NSMenuItem(title: "Windows in Front", action: nil, keyEquivalent: "")
         limitParent.submenu = limits
         menu.addItem(limitParent)
-        let picker = commandItem(.tile(.showWindows), shortcuts: shortcuts, icon: nil)
-        picker.isEnabled = tiler.isOn
-        menu.addItem(picker)
-        let keep = commandItem(.tile(.keepInFront), shortcuts: shortcuts, icon: nil)
-        keep.isEnabled = tiler.isOn
-        keep.state = WindowRegistry.shared.focusedWindow().map { tiler.isKept($0.id) } == true ? .on : .off
-        menu.addItem(keep)
         menu.addItem(.separator())
 
         let swap = commandItem(.tile(.swapWithMain), shortcuts: shortcuts, icon: nil)

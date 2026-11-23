@@ -53,7 +53,8 @@ final class WindowPicker {
         previousApp = NSWorkspace.shared.frontmostApplication
         let panel = self.panel ?? makePanel()
         self.panel = panel
-        let size = NSSize(width: 520, height: min(120 + CGFloat(model.entries.count) * 52, 720))
+        // Header and footer, 50 points a row, and room for the line between front and waiting.
+        let size = NSSize(width: 520, height: min(96 + CGFloat(model.entries.count) * 50 + (waiting.isEmpty ? 0 : 10), 720))
         let area = NSScreen.screens.first { Screens.toAX($0.frame) == screen.frame }?.visibleFrame
             ?? NSScreen.main?.visibleFrame ?? .zero
         panel.setFrame(NSRect(x: (area.midX - size.width / 2).rounded(), y: (area.midY - size.height / 2 + 60).rounded(),
