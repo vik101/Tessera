@@ -26,6 +26,19 @@ plist = {
     "LSUIElement": True,
     "NSHighResolutionCapable": True,
     "NSHumanReadableCopyright": env("COPYRIGHT"),
+    # Open tessera:// links (the URL scheme for scripts).
+    "CFBundleURLTypes": [{"CFBundleURLName": env("BUNDLE_ID", "com.example.Tessera"), "CFBundleURLSchemes": ["tessera"]}],
 }
+
+# Updates (Sparkle): only when both the feed and the public key are known.
+if env("SPARKLE_FEED_URL") and env("SPARKLE_PUBLIC_KEY"):
+    plist.update({
+        "SUFeedURL": env("SPARKLE_FEED_URL"),
+        "SUPublicEDKey": env("SPARKLE_PUBLIC_KEY"),
+        "SUEnableAutomaticChecks": True,
+        "SUScheduledCheckInterval": 86400,
+        # Check once a day without asking first; Settings has a switch to turn it off.
+        "SUEnableSystemProfiling": False,
+    })
 
 plistlib.dump(plist, sys.stdout.buffer)

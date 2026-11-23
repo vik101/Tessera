@@ -159,6 +159,9 @@ final class StatusMenu: NSObject, NSMenuDelegate {
         settingsItem.keyEquivalent = ","
         menu.addItem(settingsItem)
         menu.addItem(item("About Tessera", #selector(showAbout)))
+        if Updater.shared.isConfigured {
+            menu.addItem(item("Check for Updates…", #selector(checkForUpdates)))
+        }
         let quit = item("Quit Tessera", #selector(quit))
         quit.keyEquivalent = "q"
         menu.addItem(quit)
@@ -241,6 +244,8 @@ final class StatusMenu: NSObject, NSMenuDelegate {
         NSApp.activate()
         NSApp.orderFrontStandardAboutPanel(nil)
     }
+
+    @objc private func checkForUpdates() { Updater.shared.checkNow() }
 
     @objc private func quit() { NSApp.terminate(nil) }
 }

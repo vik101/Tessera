@@ -41,6 +41,12 @@ struct SettingsView: View {
                     get: { settings.openAtLogin },
                     set: { settings.openAtLogin = $0 }
                 ))
+                if Updater.shared.isConfigured {
+                    Toggle("Check for updates automatically", isOn: Binding(
+                        get: { Updater.shared.checksAutomatically },
+                        set: { Updater.shared.checksAutomatically = $0 }
+                    ))
+                }
                 LabeledContent("Gap between windows") {
                     HStack {
                         Slider(value: Binding(

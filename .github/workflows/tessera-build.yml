@@ -7,6 +7,8 @@ on:
     branches: [main]
     paths-ignore:
       - README.md
+      - CHANGELOG.md
+      - Casks/**
       - .github/workflows/launch-test.yml
       - scripts/ci/launch-test.sh
       - scripts/ci/vdisplay.m
@@ -27,9 +29,22 @@ concurrency:
 jobs:
   build:
     runs-on: macos-15
-    timeout-minutes: 75
+    timeout-minutes: 85
+    env:
+      # Set once by scripts/setup-release-keys.sh. Without them, builds are ad-hoc signed and don't auto-update.
+      SPARKLE_PUBLIC_KEY: ${{ vars.SPARKLE_PUBLIC_KEY }}
+      HAS_CERTIFICATE: ${{ secrets.SIGNING_P12 != '' || secrets.DEVELOPER_ID_P12 != '' }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Signing certificate
+        if: env.HAS_CERTIFICATE == 'true'
+        env:
+          SIGNING_P12: ${{ secrets.SIGNING_P12 }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+          DEVELOPER_ID_P12: ${{ secrets.DEVELOPER_ID_P12 }}
+          DEVELOPER_ID_PASSWORD: ${{ secrets.DEVELOPER_ID_PASSWORD }}
+        run: ./scripts/ci/import-certificates.sh >> "$GITHUB_ENV"
 
       - name: Toolchain
         run: |
@@ -86,6 +101,19 @@ jobs:
           codesign -dv --verbose=2 build/release/Tessera.app > ci-results/codesign.txt 2>&1
           pgrep -x Tessera && echo "running" | tee ci-results/first-launch.txt
 
+      - name: GitHub release (once per version, only when every check passed)
+        id: publish_release
+        if: github.ref == 'refs/heads/main' && steps.smoke.outcome == 'success' && steps.release.outcome == 'success'
+        continue-on-error: true
+        timeout-minutes: 30
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+          NOTARY_KEY: ${{ secrets.NOTARY_KEY }}
+          NOTARY_KEY_ID: ${{ secrets.NOTARY_KEY_ID }}
+          NOTARY_ISSUER: ${{ secrets.NOTARY_ISSUER }}
+        run: ./scripts/ci/publish-release.sh ci-results
+
       - name: Publish results
         # Not when cancelled: a half-finished run must not replace the download.
         if: ${{ !cancelled() }}
@@ -101,6 +129,7 @@ jobs:
             echo "checks: $(head -1 ci-results/results.txt 2>/dev/null || echo none)"
             echo "release: ${{ steps.release.outcome }}"
             echo "firstlaunch: ${{ steps.firstlaunch.outcome }}"
+            echo "github-release: ${{ steps.publish_release.outcome }}"
           } > ci-results/summary.txt
           grep -E "(error|warning):" ci-results/build.log | sort -u > ci-results/diagnostics.txt || true
           rm -rf ci-results/.git
@@ -111,6 +140,49 @@ jobs:
           git add -A
           git commit -qm "CI results for ${GITHUB_SHA}"
           git push -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" tessera-ci
+
+  signing:
+    # Proves the update pipeline with throwaway keys: same-certificate updates keep Accessibility,
+    # Sparkle signs the download, the appcast checks out. Results go to tessera-ci-signing.
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build with a throwaway update key
+        id: build
+        continue-on-error: true
+        run: |
+          mkdir -p signing-results
+          python3 -m pip install --quiet --break-system-packages cryptography || python3 -m pip install --quiet cryptography
+          export ED_KEY_DIR="$RUNNER_TEMP/ed" && mkdir -p "$ED_KEY_DIR"
+          export SPARKLE_PUBLIC_KEY=$(python3 scripts/ci/make-ed-key.py "$ED_KEY_DIR")
+          echo "ED_KEY_DIR=$ED_KEY_DIR" >> "$GITHUB_ENV"
+          ./scripts/build-app.sh debug 2>&1 | tee signing-results/app.log
+      - name: Signing and update test
+        id: signing
+        if: steps.build.outcome == 'success'
+        continue-on-error: true
+        timeout-minutes: 15
+        run: ./scripts/ci/signing-test.sh build/debug/Tessera.app signing-results
+      - name: Publish results
+        if: ${{ !cancelled() }}
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p signing-results
+          {
+            echo "commit: ${GITHUB_SHA}"
+            echo "build: ${{ steps.build.outcome }}"
+            echo "signing: ${{ steps.signing.outcome }}"
+            echo "checks: $(head -1 signing-results/results.txt 2>/dev/null || echo none)"
+          } > signing-results/summary.txt
+          cd signing-results
+          git init -q -b tessera-ci-signing
+          git config user.name "Tessera CI"
+          git config user.email "ci@users.noreply.github.com"
+          git add -A
+          git commit -qm "Signing test for ${GITHUB_SHA}"
+          git push -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" tessera-ci-signing
 
   latest-xcode:
     # The newest macOS (Tahoe) and Swift: build, unit tests, and the full real-window test.

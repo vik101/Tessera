@@ -2,7 +2,7 @@
 
 Tessera snaps windows like Rectangle, and can also tile them for you. Auto-tile picks the best layout for the number of windows and the shape of each screen. You can switch layout styles with one key.
 
-It is a menu bar app for macOS 15 or later. It is written in Swift 6 with no outside libraries.
+It is a menu bar app for macOS 15 or later, written in Swift 6. Its one outside library is Sparkle, which installs updates.
 
 ## What it does
 
@@ -17,9 +17,22 @@ flowchart LR
 
 You can use snapping alone, exactly like Rectangle. Auto-tile is off until you turn it on.
 
+## Install
+
+With Homebrew:
+
+```bash
+brew tap vik101/tessera https://github.com/vik101/Tessera
+brew install --cask vik101/tessera/tessera
+```
+
+Or download `Tessera.zip` from the [latest release](https://github.com/vik101/Tessera/releases/latest), unzip it and drag **Tessera** into **Applications**.
+
+**Updates.** Tessera checks for a new version once a day and asks before installing it. **Check for Updates…** in the menu checks now. Turn daily checks off in **Settings › General**. Every update is checked against Tessera's signing key before it installs.
+
 ## First run
 
-1. Unzip `Tessera.zip` and drag **Tessera** into **Applications**.
+1. Install Tessera (above).
 2. Open it. macOS may say it can't check the app, because it isn't notarized (checked by Apple). Open **System Settings › Privacy & Security**, scroll down, and click **Open Anyway**.
 3. Tessera asks for **Accessibility** access. This is how any window manager moves windows. Click **Open System Settings** and turn Tessera on. The window closes by itself when it works.
 4. If Rectangle is running, Tessera offers to quit it. Both apps use the same keys, so only one can answer.
@@ -246,7 +259,31 @@ swift test                       # unit tests
 ./scripts/release.sh             # DMG, notarized if NOTARY_PROFILE is set
 ```
 
-Version, bundle ID and signing live in `scripts/config.env`. With an Apple Developer certificate on your Mac, the build script signs with it. Then macOS keeps the Accessibility permission across updates.
+Version, bundle ID and signing live in `scripts/config.env`. `CHANGELOG.md` holds each version's release notes.
+
+### Releasing
+
+```mermaid
+flowchart LR
+    A["Bump VERSION and BUILD<br/>in config.env;<br/>add a CHANGELOG section"] --> B["Commit titled<br/>'Tessera 2.5.0: …'<br/>and push to main"]
+    B --> C["CI: build, unit tests,<br/>600+ real-window checks"]
+    C -- "all pass" --> D["GitHub release v2.5.0<br/>Tessera.zip + appcast.xml"]
+    D --> E["Installed copies<br/>update themselves"]
+```
+
+Only a commit whose title starts with `Tessera <VERSION>` publishes, and only when every check passes. Each version is released once.
+
+**One-time setup** (on your Mac, with `gh auth login` done): `./scripts/setup-release-keys.sh`. It makes two keys and stores them as GitHub secrets:
+
+| Key | What it does | Without it |
+| --- | --- | --- |
+| Tessera Signing certificate | Releases keep the Accessibility permission when they update | Ad-hoc signing: macOS asks for Accessibility again after every update |
+| Sparkle update key | Releases carry a signed `appcast.xml`, so installed copies update themselves | No auto-update; people download new versions by hand |
+| Apple Developer ID (optional, paid) | Releases are notarized, so macOS opens the first download without a warning | macOS warns on the first open; Homebrew removes the warning for you |
+
+For a Developer ID, add the secrets listed at the top of `setup-release-keys.sh`. The release job notarizes when they exist.
+
+`signing` in `tessera-build.yml` proves this pipeline on every push with throwaway keys. It checks that an update signed with the same certificate keeps Accessibility, an ad-hoc update loses it, and the appcast's signature matches the download. Results go to the `tessera-ci-signing` branch.
 
 ### Common changes
 
@@ -286,6 +323,7 @@ The test talks to Tessera through a hidden switch that is off by default:
 | --- | --- |
 | Shortcuts do nothing | Quit Rectangle, Magnet or Spectacle. Then check the menu: a ⚠︎ line means permission is missing or a key is taken. |
 | Dragging to an edge snaps with a margin, or twice | That is macOS's own tiling. Menu › **Turn Off macOS Edge Tiling**. |
+| macOS won't open a downloaded copy | It isn't notarized yet. **System Settings › Privacy & Security › Open Anyway**, or install with Homebrew. |
 | Nothing moves after an update | Open the menu › **Allow Accessibility Access…** › **Clear the Old Entry**, then turn Tessera on again. |
 | A window won't shrink into its tile | Some apps have a minimum size. Tessera learns it and picks a layout it fits. If none fits, it stays as small as the app allows. |
 | Auto-tile grabs a window you want free | Float it (⌃⌥W) or ignore its app from the menu. |

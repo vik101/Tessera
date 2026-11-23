@@ -25,6 +25,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         StatusMenu.shared.install()
         Shortcuts.shared.start()
         TestHooks.shared.start()
+        Updater.shared.start()
 
         // Window work needs Accessibility. Start as soon as it's allowed.
         PermissionWindow.shared.onGranted = { [weak self] in self?.startEngine() }

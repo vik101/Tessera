@@ -98,6 +98,7 @@ final class TestHooks: NSObject {
             "layouts": Settings.shared.layouts.mapValues(\.rawValue),
             "autoTileSetting": Settings.shared.autoTile,
             "failedShortcuts": Shortcuts.shared.failed.map(\.id),
+            "updates": Updater.shared.debugState,
             "log": Array(Log.recent.suffix(60)),
         ]
         do {
