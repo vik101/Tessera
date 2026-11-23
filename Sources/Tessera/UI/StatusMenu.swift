@@ -210,7 +210,7 @@ final class StatusMenu: NSObject, NSMenuDelegate {
 
     /// "Rules for Safari ▸": always float, always keep in front, open on a screen.
     private func rulesItem(for id: String, name: String) -> NSMenuItem {
-        let rule = settings.rule(for: id) ?? AppRule(bundleID: id)
+        let rule = Settings.shared.rule(for: id) ?? AppRule(bundleID: id)
         let submenu = NSMenu()
         submenu.autoenablesItems = false
         let float = item("Always Float", #selector(toggleRuleFloat(_:)))
@@ -240,17 +240,17 @@ final class StatusMenu: NSObject, NSMenuDelegate {
 
     @objc private func toggleRuleFloat(_ sender: NSMenuItem) {
         guard let id = sender.representedObject as? String else { return }
-        settings.updateRule(for: id) { $0.float.toggle() }
+        Settings.shared.updateRule(for: id) { $0.float.toggle() }
     }
 
     @objc private func toggleRuleKeep(_ sender: NSMenuItem) {
         guard let id = sender.representedObject as? String else { return }
-        settings.updateRule(for: id) { $0.keepInFront.toggle() }
+        Settings.shared.updateRule(for: id) { $0.keepInFront.toggle() }
     }
 
     @objc private func setRuleScreen(_ sender: NSMenuItem) {
         guard let pair = sender.representedObject as? [String], pair.count == 2 else { return }
-        settings.updateRule(for: pair[0]) { $0.screen = pair[1].isEmpty ? nil : pair[1] }
+        Settings.shared.updateRule(for: pair[0]) { $0.screen = pair[1].isEmpty ? nil : pair[1] }
     }
 
     // MARK: Building items

@@ -57,7 +57,7 @@ The snap shortcuts are Rectangle's defaults. Change any of them in **Settings**.
 | ⌃⌥⌘→ | Next Display | ⌃⌥C | Centre |
 | ⌃⌥⌘← | Previous Display | ⌃⌥⌫ | Restore |
 
-More actions are in the menu with no shortcut yet: Centre Half, Centre Two Thirds, Almost Maximise, Move to Edge, Quarters and Sixths.
+More actions are in the menu with no shortcut yet: Centre Half, Centre Two Thirds, Almost Maximise, Centre Prominently (centred, a little high), Specified Size (1680 × 1050 points unless you change it in Settings), Move to Edge, Quarters, Sixths, Corner Thirds (two thirds wide, half high), Eighths and Ninths. That is every one of Rectangle's single-window actions. Give any of them a key in Settings, or run it from a script (see [Scripts and links](#scripts-and-links)).
 
 **Auto-tile shortcuts** use keys Rectangle doesn't, so the two never clash:
 
@@ -71,6 +71,66 @@ More actions are in the menu with no shortcut yet: Centre Half, Centre Two Third
 | ⌃⌥W | Float this window (Tessera leaves it alone), or tile it again |
 | ⌃⌥Space | Bring a window forward: pick from every window on this desktop |
 | ⌃⌥P | Keep this window in front, or let it step back again |
+
+**Moving around** (also keys Rectangle doesn't use):
+
+| Shortcut | Action |
+| --- | --- |
+| ⌃⇧⌘ ← → ↑ ↓ | Focus the window to the left, right, above or below, on any screen |
+| ⌃⌥⇧1 … ⌃⌥⇧9 | Send this window to desktop 1 … 9 on its screen |
+| ⌃⌥⌘1 … ⌃⌥⌘9 | Open saved setup 1 … 9 |
+
+## All windows at once
+
+The menu's **All Windows** list has Rectangle's actions that move every window on the screen you're working on:
+
+| Action | What it does | With auto-tile on |
+| --- | --- | --- |
+| Tile All | A near-square grid; the last row has fewer, wider windows | Picks Grid |
+| Tile in Rows / Columns | Up to 3 rows (or columns); more windows share them | Picks Rows / Columns |
+| Cascade All / This App | Each window 30 points down and right of the one behind | Not available (it would undo the tiles) |
+| Reverse All | Mirrors every window left to right | Reverses the order of the tiles |
+| Next / Previous Stacked Window | Brings forward the next window sitting on the same spot | Works on windows you snapped to one spot |
+
+## Focus and desktops
+
+**⌃⇧⌘ + arrow** moves the focus to the next window that way. It prefers a window in line with yours, then the nearest. Windows waiting off screen are skipped.
+
+**⌃⌥⇧ + number** sends the window you're in to that desktop on its screen, and macOS shows that desktop. macOS has no way for one app to move another app's window to a desktop. So Tessera does what you would do by hand: it holds the window by its title bar and presses **Move right a space** (⌃→) or **Move left a space** (⌃←), then puts the pointer back. Those two macOS shortcuts must be on (System Settings › Keyboard › Keyboard Shortcuts › Mission Control). They are on unless you turned them off.
+
+## App rules
+
+A rule tells Tessera what to do with one app's windows, every time. Set rules from the menu (**Rules for Safari ▸**, for the app in front) or in **Settings › App Rules**.
+
+| Rule | What it does |
+| --- | --- |
+| Always Float | Auto-tile leaves the app's windows where you put them. Snapping still works. |
+| Always Keep in Front | The app's windows never step back to wait, while at least one front spot stays free. |
+| New Windows Open On | The app's new windows move to that screen as they open. |
+
+## Setups
+
+A setup remembers which apps are on your screens and where their windows are. **Setups ▸ Save Current Setup…** in the menu saves one. Open it from the same menu, or with ⌃⌥⌘1–9 (by its place in the list).
+
+Opening a setup starts any of its apps that aren't running, hides the apps that aren't in it (they keep running; switch this off per setup in Settings), and puts each window back on its screen and in its place. Places are saved as shares of the screen, so a setup also works on a screen of another size. With auto-tile on, each screen also gets the layout it had.
+
+## Scripts and links
+
+Anything Tessera does can run from a script, a launcher or the Shortcuts app, with a link. Links in Rectangle's form work too, so Rectangle scripts carry over.
+
+```bash
+open -g "tessera://execute-action?name=left-half"        # any action: Rectangle's names or Tessera's
+open -g "tessera://execute-action?name=tile-all"
+open -g "tessera://execute-action?name=send-to-desktop-2"
+open -g "tessera://execute-layout?name=columns"          # auto, columns, rows, grid, main-and-side
+open -g "tessera://execute-task?name=ignore-app&app-bundle-id=com.apple.Safari"
+open -g "tessera://save-setup?name=Work"
+open -g "tessera://open-setup?name=Work"
+open -g "tessera://export-settings?path=$HOME/tessera.json"
+open -g "tessera://import-settings?path=$HOME/tessera.json"
+```
+
+**Settings files** are plain JSON: shortcuts, layouts, app rules, setups and every switch. **Settings › More** has Export and Import buttons. A file only needs the settings you want to change, for example `{"gap": 8}`. To set up a new Mac, put the file at `~/Library/Application Support/com.vikram.Tessera/TesseraConfig.json` before Tessera's first launch. Tessera reads it once, then renames it with the date.
 
 ## Snapping with the mouse
 
@@ -169,7 +229,9 @@ Open **Settings…** from the menu (⌘,). It is one page:
 - Open at login, and the gap between windows (0–30 points).
 - Drag-to-snap, restore size on drag, and size cycling on/off.
 - Auto-tile on/off, the layout for each screen, how many windows sit in front, and the main window's share in Main + Side.
-- Apps Tessera leaves alone.
+- Apps Tessera leaves alone, app rules, and saved setups.
+- Specified Size, and Export / Import of a settings file.
+- Updates: a switch for the daily check.
 - Every keyboard shortcut. Click one and press new keys. Esc cancels; Delete removes it. If a key is taken, it moves to the new action and Tessera tells you.
 
 ## For maintainers
@@ -294,12 +356,18 @@ For a Developer ID, add the secrets listed at the top of `setup-release-keys.sh`
 | How Auto picks a layout | `score` and `idealAspect` in `TilePlanner.swift` |
 | Add a layout style | Add a case to `LayoutStyle`, and its shape in `TilePlanner.frames` |
 | Apps ignored by default | `ignoredApps` default in `Settings.swift` |
+| An action's link name | `rectangleName` in `SnapAction.swift`, `urlName` in `Arrange.swift`, `Navigation.swift`, `Commands.swift` |
+| What a link can do | `URLCommand.swift` (parsing) and `Automation.swift` (running it) |
+| What a settings file holds | `SettingsFile.swift`, then `file` and `apply` in `Settings.swift` |
+| How Tile All, Cascade and stacks work | `Arrange.swift` (maths) and `Arranger.swift` (windows) |
+| Focus by direction, desktop moves | `Navigation.swift` (maths) and `KeyboardMoves.swift` (windows) |
+| App rules, setups | `AppRule.swift`, `Setup.swift` (core); `AutoTiler.swift`, `Setups.swift` (app) |
 
 Add a test in `Tests/TesseraCoreTests` with each change. The `everyWindowGetsItsOwnSpace` test checks every style, 1 to 12 windows, on four screen shapes. `everyStyleKeepsItsShapeWithRealAppSizes` checks each style still has its shape when apps won't shrink.
 
 ### Testing on a real Mac
 
-`.github/workflows/tessera-build.yml` runs on GitHub's Macs for every push, on macOS 15 and macOS 26 (Tahoe). It builds, runs the unit tests, then `scripts/smoke-test.sh` opens TextEdit, Finder, Safari, Chrome and Terminal on a 1920×1080 screen and presses the real shortcuts. `scripts/ci/check.py` makes about 600 checks:
+`.github/workflows/tessera-build.yml` runs on GitHub's Macs for every push, on macOS 15 and macOS 26 (Tahoe). It builds, runs the unit tests, then `scripts/smoke-test.sh` opens TextEdit, Finder, Safari, Chrome and Terminal on a 1920×1080 screen and presses the real shortcuts. `scripts/ci/check.py` makes about 700 checks:
 
 - Every snap: each window's exact position against what it should be, and drags to every edge.
 - Every layout: picked with ⌃⌥1–5, two full rounds of ⌃⌥L, back again with ⌃⌥⇧L, and clicked in the menu (through Accessibility, as a person would). Each time it checks the layout really has that shape (Columns are side by side and full height, and so on), the windows are where planned, nothing overlaps when it fits, and the second round matches the first.
@@ -308,6 +376,12 @@ Add a test in `Tests/TesseraCoreTests` with each change. The `everyWindowGetsIts
 - Desktops: it adds a second desktop, gives it its own layout, then swipes back and forth. It watches every window ten times a second, and fails if any moves.
 - Several screens (`scripts/ci/screens.py`): it adds a pretend 49-inch and a squarish Dell beside the main screen, spreads 12 windows across them, drags one, rearranges the screens, unplugs and replugs the Dell. After each step it checks every screen keeps its own limit, nothing overlaps, no waiting window shows on any screen, no window is lost, and nothing moves once settled.
 - Tile sizes: three columns, ⌃⌥= three times on the middle one: it must grow, the left and right columns must shrink evenly, and they must still reach the screen's edges with no holes. Then ⌃⌥− back to even, ⌃⌥⌫, Rows, Main + Side, and dragging the edge between two columns with the mouse.
+- Rectangle's other actions, through `tessera://` links: ninths, eighths, corner thirds, Centre Prominently, Specified, and an unknown name that must move nothing. Ignore and unignore an app by link. Export settings, change the file, import it.
+- All windows at once: Tile All, Tile in Columns, Reverse All and Cascade All, each checked window by window. Two windows on one spot for Next and Previous Stacked Window.
+- Focus by direction (⌃⇧⌘ + arrows) across three columns, and at the screen's edge.
+- Send to desktop: ⌃⌥⇧2 sends a window to desktop 2 and it tiles there; ⌃⌥⇧1 brings it back.
+- App rules from a settings file: Terminal always floats; Safari always in front never waits; on several screens, TextEdit's new windows open on the Dell.
+- Setups: save by link, maximise the windows, open the setup: each window must be back in its place, and the window that was in front is in front.
 - Windows in front: with a limit of 3, the other windows wait off screen. It then brings windows forward from their app, the menu and the ⌃⌥Space picker, and checks each one takes the right spot and nothing else moves. It also covers new and closed windows, minimising, ⌃⌥P, Auto, turning auto-tile off and No Limit.
 
 Results and screenshots go to the `tessera-ci` branch (`tessera-ci-latest` for Tahoe).
