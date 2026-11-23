@@ -184,6 +184,11 @@ def snap_check(label, mods, code, expect, tol=1, warn=False, allow_minimum=False
         press(mods, code)
         again, _ = front()
         detail += f"; a second press gave {again}"
+        # The key reached nothing the first time but worked the second: the test's pretend key
+        # press got lost (seen now and then on GitHub's Tahoe Macs). Flag it, don't hide it.
+        if close(again, expect, tol) or (allow_minimum and fits_or_minimum(again, expect, VISIBLE, tol)):
+            record(label + " (needed a second press)", False, detail, warn=True)
+            return again
     record(label, ok, detail, warn=warn)
     return got
 

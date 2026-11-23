@@ -63,7 +63,7 @@ clang -fobjc-arc -framework Foundation -framework CoreGraphics scripts/ci/vdispl
 limit 900 python3 scripts/ci/screens.py "$OUT" 2>&1 | tee "$OUT/screens.log"
 [[ ${PIPESTATUS[0]} -ne 0 ]] && status=1
 
-limit 90 log show --last 10m --info --style compact --predicate "subsystem == \"$BUNDLE_ID\"" > "$OUT/tessera.log" 2>&1
+limit 120 log show --last 45m --info --style compact --predicate "subsystem == \"$BUNDLE_ID\"" > "$OUT/tessera.log" 2>&1
 pgrep -x "$APP_NAME" >/dev/null && echo "Tessera still running" >> "$OUT/check.log" || echo "TESSERA CRASHED OR QUIT" >> "$OUT/check.log"
 ls ~/Library/Logs/DiagnosticReports/ 2>/dev/null | grep -i tessera > "$OUT/crashes.txt" && cp ~/Library/Logs/DiagnosticReports/*essera* "$OUT/" 2>/dev/null
 pkill -x "$APP_NAME"

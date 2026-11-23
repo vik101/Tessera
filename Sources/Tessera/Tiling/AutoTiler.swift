@@ -93,6 +93,9 @@ final class AutoTiler {
     /// Until then, windows belong to the screen they're on now: a screen was just plugged in,
     /// unplugged or moved, and macOS is moving windows between screens.
     private var followScreensUntil = Date.distantPast
+    /// When you last sent each window to a screen yourself (Next Display, or a drag). That
+    /// choice wins over following macOS.
+    private var sentAt: [CGWindowID: Date] = [:]
     private let debouncer = Debouncer(delay: 0.12)
     private let watchdog = RepeatingTimer()
 
@@ -425,6 +428,7 @@ final class AutoTiler {
         home[window.id] = display.stableID
         order[display.stableID, default: []].append(window.id)
         wanted[window.id] = Date()   // You sent it there to use it.
+        sentAt[window.id] = Date()
         retile()
     }
 
@@ -439,6 +443,7 @@ final class AutoTiler {
             return
         }
         let source = home[id]
+        sentAt[id] = Date()
         // Only a window in the target's current layout can be swapped with.
         let other = (plans[target.stableID]?.ids ?? []).first { $0 != id && planned[$0]?.contains(point) == true }
         if let other, let source {
@@ -633,7 +638,8 @@ final class AutoTiler {
             var screen = home[id].flatMap { s in displays.first { $0.stableID == s } }
             // Just after screens change, a window belongs to the screen macOS put it on. (A waiting
             // window stays with its screen while that screen is still there.)
-            if screen == nil || following && !FrontWindows.isWaiting(frame, screens: screenFrames) {
+            let youChose = sentAt[id].map { Date().timeIntervalSince($0) < 6 } ?? false
+            if screen == nil || following && !youChose && !FrontWindows.isWaiting(frame, screens: screenFrames) {
                 screen = Screens.display(for: frame, in: displays)
             }
             guard let screen else { continue }
@@ -923,6 +929,7 @@ final class AutoTiler {
         wanted[id] = nil
         kept.remove(id)
         lastFrontFrame[id] = nil
+        sentAt[id] = nil
         floating.remove(id)
         pinned[id] = nil
         appMoveTicket[id] = nil

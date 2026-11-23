@@ -137,9 +137,13 @@ def main():
     c.post("set:autoTile=1", 1.0)
     c.post("set:frontLimit=auto", 0.3)
     # More windows: 5 new TextEdit windows, 12 in all.
+    before = len([w for w in c.dump()["windows"] if w["standard"]])
     for _ in range(5):
-        c.keys("app-menu", "com.apple.TextEdit", "File", "New")
-        time.sleep(0.6)
+        c.activate("com.apple.TextEdit")
+        c.keys("press", "cmd", c.K["n"])
+        time.sleep(0.8)
+    count = len([w for w in c.settled_dump()["windows"] if w["standard"]])
+    c.record("12 windows to spread across the screens", count >= 12, f"{before} before, {count} now")
 
     # At home: the 49-inch above the main screen, centred; a squarish Dell to the left.
     d = c.dump()
@@ -159,7 +163,8 @@ def main():
     limits = {wide["id"]: 6, dell["id"]: 3, main["id"]: 3}
 
     # Send 8 windows to the 49-inch and 4 to the Dell; the rest stay on the main screen.
-    ids = [w["id"] for w in d["windows"] if w["standard"]]
+    time.sleep(3)   # Let Tessera finish following the new screens (it does for 5 seconds).
+    ids = [w["id"] for w in c.dump()["windows"] if w["standard"]]
     for i in ids[:8]:
         c.post(f"send:{i}={wide['id']}", 0.4)
     for i in ids[8:12]:
