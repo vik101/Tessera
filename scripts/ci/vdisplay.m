@@ -2,7 +2,9 @@
 // Uses CoreGraphics' virtual display classes (the same ones apps like DeskPad use).
 //
 //   clang -fobjc-arc -framework Foundation -framework CoreGraphics scripts/ci/vdisplay.m -o /tmp/vdisplay
-//   /tmp/vdisplay 1920 1080 &      # keeps the screen alive until killed
+//   /tmp/vdisplay 1920 1080 &                  # keeps the screen alive until killed
+//   /tmp/vdisplay 5120 1440 7 -1600 -1440 &    # serial 7 (each screen needs its own), placed at x y
+//                                              # (points, from the main screen's top-left; y goes down)
 #import <Foundation/Foundation.h>
 #import <CoreGraphics/CoreGraphics.h>
 
@@ -46,7 +48,7 @@ int main(int argc, const char *argv[]) {
         descriptor.sizeInMillimeters = CGSizeMake(width * 0.28, height * 0.28);
         descriptor.vendorID = 0x7E55;
         descriptor.productID = 0x0002;
-        descriptor.serialNum = 0x0042;
+        descriptor.serialNum = argc > 3 ? (unsigned int)atoi(argv[3]) : 0x0042;
         descriptor.terminationHandler = ^(id a, id b) { NSLog(@"virtual display ended"); };
 
         CGVirtualDisplay *display = [[CGVirtualDisplay alloc] initWithDescriptor:descriptor];
@@ -59,6 +61,17 @@ int main(int argc, const char *argv[]) {
 
         printf("virtual display %u: %ux%u\n", display.displayID, width, height);
         fflush(stdout);
+        if (argc > 5) {
+            // Let macOS set the screen up, then put it where we want it.
+            [[NSRunLoop mainRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:2]];
+            CGDisplayConfigRef config;
+            CGBeginDisplayConfiguration(&config);
+            CGConfigureDisplayOrigin(config, display.displayID, atoi(argv[4]), atoi(argv[5]));
+            CGError error = CGCompleteDisplayConfiguration(config, kCGConfigureForSession);
+            CGRect bounds = CGDisplayBounds(display.displayID);
+            printf("placed at %d %d: error %d, now %.0f %.0f\n", atoi(argv[4]), atoi(argv[5]), error, bounds.origin.x, bounds.origin.y);
+            fflush(stdout);
+        }
         [[NSRunLoop mainRunLoop] run];   // The screen lasts as long as this process.
     }
     return 0;

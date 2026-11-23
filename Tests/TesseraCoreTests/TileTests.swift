@@ -6,6 +6,9 @@ private let standard = CGRect(x: 0, y: 25, width: 1920, height: 1055)
 private let ultrawide = CGRect(x: 0, y: 25, width: 3440, height: 1415)
 private let portrait = CGRect(x: 0, y: 0, width: 1080, height: 1895)
 private let laptop = CGRect(x: 0, y: 25, width: 1440, height: 875)
+private let superUltrawide = CGRect(x: 0, y: 25, width: 5120, height: 1415)   // 49-inch
+private let squarish = CGRect(x: 0, y: 25, width: 1280, height: 999)          // 19-inch 5:4
+private let macBook16 = CGRect(x: 0, y: 38, width: 1728, height: 1079)        // menu bar under the notch
 
 private func plan(_ n: Int, _ area: CGRect = standard, _ style: LayoutStyle = .auto, gap: CGFloat = 0, minimums: [CGSize?] = []) -> [CGRect] {
     TilePlanner.frames(count: n, in: area, style: style, gap: gap, minimumSizes: minimums)
@@ -16,7 +19,7 @@ struct TileTests {
     /// The promise to the user: every window gets its own space, inside the screen, with nothing hidden.
     @Test(arguments: LayoutStyle.allCases)
     func everyWindowGetsItsOwnSpace(style: LayoutStyle) {
-        for area in [standard, ultrawide, portrait, laptop] {
+        for area in [standard, ultrawide, portrait, laptop, superUltrawide, squarish, macBook16] {
             for n in 1...12 {
                 let frames = plan(n, area, style, gap: 8)
                 #expect(frames.count == n)

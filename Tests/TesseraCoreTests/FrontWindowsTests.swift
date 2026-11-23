@@ -7,6 +7,87 @@ struct FrontWindowsTests {
     // Recency: bigger means used more lately.
     private let recency = [1: 50, 2: 40, 3: 10, 4: 30, 5: 20, 6: 60]
 
+    // Screens in points ("looks like" sizes), as macOS gives them, with room for the menu bar.
+    private static let screens: [(name: String, area: CGRect, front: Int)] = [
+        ("49-inch super ultrawide", CGRect(x: 0, y: 25, width: 5120, height: 1415), 6),
+        ("49-inch, scaled", CGRect(x: 0, y: 25, width: 3840, height: 1055), 6),
+        ("34-inch ultrawide", CGRect(x: 0, y: 25, width: 3440, height: 1415), 6),
+        ("27-inch", CGRect(x: 0, y: 25, width: 2560, height: 1415), 4),
+        ("16-inch MacBook Pro", CGRect(x: 0, y: 38, width: 1728, height: 1079), 3),
+        ("14-inch MacBook Pro", CGRect(x: 0, y: 38, width: 1512, height: 944), 3),
+        ("13-inch MacBook Air", CGRect(x: 0, y: 38, width: 1470, height: 918), 2),
+        ("20-inch 4:3 Dell", CGRect(x: 0, y: 25, width: 1600, height: 1175), 3),
+        ("19-inch 5:4 Dell", CGRect(x: 0, y: 25, width: 1280, height: 999), 2),
+        ("1920×1080", CGRect(x: 0, y: 25, width: 1920, height: 1055), 3),
+        ("Portrait 1080×1920", CGRect(x: 0, y: 25, width: 1080, height: 1895), 3),
+    ]
+
+    /// The promise: on every kind of screen, Auto's number of front windows, laid out by Auto,
+    /// gives each window at least 500 × 400 points. Nothing gets stuffy.
+    @Test func autoNeverGetsStuffy() {
+        for screen in Self.screens {
+            let count = FrontLimit.autoCount(for: screen.area.size)
+            #expect(count == screen.front, "\(screen.name): \(count) in front")
+            let frames = TilePlanner.frames(count: count, in: screen.area, style: .auto, gap: 8)
+            for frame in frames {
+                #expect(frame.width >= 500 && frame.height >= 400, "\(screen.name): a window is only \(frame.size)")
+                #expect(screen.area.contains(frame))
+            }
+        }
+    }
+
+    /// The promise: a waiting window never shows on another screen, however the screens are
+    /// arranged (at most a one-point sliver where two screens meet at a corner).
+    @Test func waitingWindowsNeverShowOnAnotherScreen() {
+        let book = CGRect(x: 0, y: 0, width: 1728, height: 1117)       // 16-inch MacBook Pro
+        let wide = CGSize(width: 5120, height: 1440)                    // 49-inch
+        let dell = CGSize(width: 1600, height: 1200)                    // 20-inch 4:3
+        let setups: [(String, [CGRect])] = [
+            ("49 above, MacBook centred below, Dell left", [
+                book, CGRect(origin: CGPoint(x: -1696, y: -1440), size: wide), CGRect(origin: CGPoint(x: -1600, y: 0), size: dell)]),
+            ("MacBook below the 49, right-aligned", [
+                book, CGRect(origin: CGPoint(x: 1728 - 5120, y: -1440), size: wide)]),
+            ("MacBook below the 49, left-aligned", [
+                book, CGRect(origin: CGPoint(x: 0, y: -1440), size: wide)]),
+            ("MacBook right of the 49, bottoms lined up", [
+                book, CGRect(origin: CGPoint(x: -5120, y: 1117 - 1440), size: wide)]),
+            ("MacBook left of the 49, Dell right of it", [
+                book, CGRect(origin: CGPoint(x: 1728, y: -323), size: wide), CGRect(origin: CGPoint(x: 1728 + 5120, y: -323), size: dell)]),
+            ("MacBook with screens left, right and below", [
+                book, CGRect(x: -1600, y: 0, width: 1600, height: 1200), CGRect(x: 1728, y: 0, width: 1920, height: 1080),
+                CGRect(x: 0, y: 1117, width: 1728, height: 1117)]),
+        ]
+        for (name, screens) in setups {
+            for (index, screen) in screens.enumerated() {
+                let others = screens.enumerated().filter { $0.offset != index }.map(\.element)
+                for size in [CGSize(width: 800, height: 600), CGSize(width: 1900, height: 1300), CGSize(width: 400, height: 300)] {
+                    let frame = FrontWindows.waitingFrame(size: size, screen: screen, otherScreens: others)
+                    // One point on its own screen…
+                    let own = screen.intersection(frame)
+                    #expect(!own.isNull && (own.width <= 1 || own.height <= 1), "\(name): shows \(own.size) on its own screen")
+                    #expect(FrontWindows.isWaiting(frame, screens: screens), "\(name): not hidden")
+                    // …and at most a one-point sliver on any other.
+                    for other in others {
+                        let shared = other.intersection(frame)
+                        #expect(shared.isNull || shared.width <= 1 || shared.height <= 1, "\(name): \(size) shows \(shared.size) on another screen")
+                    }
+                }
+            }
+        }
+    }
+
+    /// After a screen is unplugged, the windows you used most lately get the front spots, and
+    /// front windows that stay keep their spots.
+    @Test func afterScreensChangeTheMostRecentlyUsedAreInFront() {
+        // 6 (most recent) arrives from an unplugged screen; 3 (least recent) was in front.
+        #expect(FrontWindows.refill([1, 2, 3, 4, 5, 6], limit: 3, kept: [], recency: recency) == [1, 2, 6, 4, 5, 3])
+        // A kept window stays in front even if used long ago.
+        let kept = FrontWindows.refill([1, 2, 3, 4, 5, 6], limit: 3, kept: [3], recency: recency)
+        #expect(Set(kept.prefix(3)) == [6, 1, 3])
+        // Room for all: nothing changes.
+        #expect(FrontWindows.refill([3, 1, 2], limit: 3, kept: [], recency: recency) == [3, 1, 2])
+    }
+
     @Test func autoFitsTheScreen() {
         #expect(FrontLimit.autoCount(for: CGSize(width: 1470, height: 920)) == 2)   // 13-inch MacBook Air
         #expect(FrontLimit.autoCount(for: CGSize(width: 1512, height: 945)) == 3)   // 14-inch MacBook Pro

@@ -39,6 +39,10 @@ final class TestHooks: NSObject {
         default:
             if command.hasPrefix("run:"), let target = Command(id: String(command.dropFirst(4))) {
                 Shortcuts.run(target)
+            } else if command.hasPrefix("send:") {
+                // send:<window id>=<screen stable id>
+                let parts = command.dropFirst(5).split(separator: "=", maxSplits: 1).map(String.init)
+                if parts.count == 2, let id = UInt32(parts[0]) { AutoTiler.shared.send(CGWindowID(id), to: parts[1]) }
             } else if command.hasPrefix("set:") {
                 let parts = command.dropFirst(4).split(separator: "=", maxSplits: 1).map(String.init)
                 guard parts.count == 2 else { return }
@@ -69,6 +73,7 @@ final class TestHooks: NSObject {
                 "frame": rect(frame),
                 "tiled": AutoTiler.shared.isTiled(window),
                 "waiting": AutoTiler.shared.isWaiting(info.id),
+                "screen": AutoTiler.shared.screenID(of: info.id) ?? "",
                 "standard": window.isStandard,
                 "fullScreen": window.element.isFullScreen,
                 "spaces": Spaces.spaces(of: info.id).sorted().map { NSNumber(value: $0) },
@@ -80,7 +85,9 @@ final class TestHooks: NSObject {
             "version": AppInfo.version,
             "path": Bundle.main.bundlePath,
             "macEdgeTiling": MacTiling.edgeDragIsOn,
-            "displays": Screens.all().map { ["id": $0.stableID, "name": $0.name, "frame": rect($0.frame), "visible": rect($0.visibleFrame)] },
+            "displays": Screens.all().map {
+                ["id": $0.stableID, "number": Int($0.displayID), "name": $0.name, "frame": rect($0.frame), "visible": rect($0.visibleFrame)]
+            },
             "focused": focused.map { Int($0.id) } ?? 0,
             "windows": windows,
             "autoTile": AutoTiler.shared.debugState(),

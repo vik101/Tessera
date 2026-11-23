@@ -110,7 +110,18 @@ flowchart LR
 
 Only a few windows sit in front, laid out. The rest wait just off the edge of the screen. So a busy desktop stays tidy, even on a laptop.
 
-**How many:** Auto, the default, shows as many as fit at a comfortable size. That's 3 on a 14- or 16-inch MacBook Pro or a 1920×1080 screen, 2 on a 13-inch MacBook Air, 4 on a 27-inch screen and 6 on an ultrawide. Change it under **Windows in Front** in the menu, or in Settings: 2 to 6, or No Limit.
+**How many:** Auto, the default, shows as many as fit at a comfortable size, worked out for each screen on its own. Every window gets at least 500 × 400 points.
+
+| Screen | Windows in front (Auto) |
+| --- | --- |
+| 49-inch super ultrawide, 34-inch ultrawide | 6 |
+| 27-inch | 4 |
+| 16- or 14-inch MacBook Pro, 1920×1080, 20-inch 4:3 | 3 |
+| 13-inch MacBook Air, 19-inch 5:4 | 2 |
+
+Change it under **Windows in Front** in the menu, or in Settings: 2 to 6, or No Limit.
+
+**Several screens.** Each screen has its own front windows, limit and layout. Waiting windows hang off a free edge of their own screen, never over another screen, however the screens are arranged. When you plug in, unplug or move a screen, Tessera follows where macOS puts each window, and on each screen the windows you used most lately get the front spots.
 
 **Use a waiting window and it comes forward.** Click it in the Dock, ⌘Tab to its app, use ⌘` or Mission Control. It takes the spot of the front window you used least lately, and that one waits instead. The other front windows don't move.
 
@@ -205,7 +216,8 @@ All the rules are small functions in `FrontWindows.swift`, with tests in `FrontW
 | A waiting window is used | `bringForward`: it swaps places with the front window used least lately (never a kept one) |
 | Windows ask for the front | `arrange`: kept windows first, then new or used ones, oldest wish first; the rest line up most lately used first |
 | A front window leaves | `fillSpots`: the window you're in (if waiting), or else the waiting one used most lately, takes its exact spot |
-| Any time | `waitingFrame`: waiting windows sit just past a bottom corner, one point on screen, never over another screen |
+| Any time | `waitingFrame`: waiting windows hang off a free edge (bottom corners first), one point on screen, never over another screen |
+| Screens change | `refill`: windows that moved screens; the most lately used get the front spots there |
 
 `AutoTiler` keeps a "last used" number for each window. It goes up whenever you focus a window.
 
@@ -243,11 +255,12 @@ Add a test in `Tests/TesseraCoreTests` with each change. The `everyWindowGetsIts
 - With 7, 3 and 1 windows, and while windows open, close, hide and minimise.
 - The latest command wins: maximise (Tessera's, and macOS Fill and full screen), then a layout. Every window must join it.
 - Desktops: it adds a second desktop, gives it its own layout, then swipes back and forth. It watches every window ten times a second, and fails if any moves.
+- Several screens (`scripts/ci/screens.py`): it adds a pretend 49-inch and a squarish Dell beside the main screen, spreads 12 windows across them, drags one, rearranges the screens, unplugs and replugs the Dell. After each step it checks every screen keeps its own limit, nothing overlaps, no waiting window shows on any screen, no window is lost, and nothing moves once settled.
 - Windows in front: with a limit of 3, the other windows wait off screen. It then brings windows forward from their app, the menu and the ⌃⌥Space picker, and checks each one takes the right spot and nothing else moves. It also covers new and closed windows, minimising, ⌃⌥P, Auto, turning auto-tile off and No Limit.
 
 Results and screenshots go to the `tessera-ci` branch (`tessera-ci-latest` for Tahoe).
 
-Two screens: `launch-test.yml` adds a virtual second screen and checks Tessera starts, its menu opens and its keys work. The full layout checks run on one screen.
+`launch-test.yml` also opens the downloadable app with a second screen attached and checks it starts, its menu opens and its keys work.
 
 The test talks to Tessera through a hidden switch that is off by default:
 `defaults write com.vikram.Tessera TesseraTestHooks -bool YES`.

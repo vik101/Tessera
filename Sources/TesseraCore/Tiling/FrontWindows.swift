@@ -138,16 +138,47 @@ public enum FrontWindows {
         return order.map { members.contains($0) ? (next.next() ?? $0) : $0 }
     }
 
-    /// Where a waiting window waits: just past the bottom corner of its screen, with one point
-    /// still on the screen (macOS keeps windows at least partly on screen). Bottom right, or
-    /// bottom left if that would reach onto another screen.
+    /// Where a waiting window waits: hanging off the edge of its screen with one point still on it
+    /// (macOS keeps windows at least partly on screen), and never over another screen.
+    ///
+    /// The bottom-right corner if it's clear, then the bottom-left corner, then anywhere along the
+    /// bottom, right or left edge: whichever reaches least onto other screens. Never past the top
+    /// edge, because macOS keeps title bars on screen.
     public static func waitingFrame(size: CGSize, screen: CGRect, otherScreens: [CGRect]) -> CGRect {
-        let right = CGRect(x: screen.maxX - 1, y: screen.maxY - 1, width: size.width, height: size.height)
-        let left = CGRect(x: screen.minX - size.width + 1, y: screen.maxY - 1, width: size.width, height: size.height)
+        let width = size.width, height = size.height
+        func spot(_ x: CGFloat, _ y: CGFloat) -> CGRect { CGRect(x: x, y: y, width: width, height: height) }
+        let right = screen.maxX - 1, left = screen.minX - width + 1, below = screen.maxY - 1
+        var spots = [spot(right, below), spot(left, below)]
+        for step in 1..<8 {
+            let share = CGFloat(step) / 8
+            spots.append(spot(left + (right - left) * share, below))                      // hanging down
+            spots.append(spot(right, screen.minY + (screen.height - 1) * share))          // hanging right
+            spots.append(spot(left, screen.minY + (screen.height - 1) * share))           // hanging left
+        }
+        spots += [spot(right, screen.minY), spot(left, screen.minY)]
         func overlap(_ rect: CGRect) -> CGFloat {
             otherScreens.reduce(0) { $0 + $1.intersectionArea(rect) }
         }
-        return overlap(left) < overlap(right) ? left : right
+        return spots.min { overlap($0) < overlap($1) } ?? spots[0]
+    }
+
+    /// After screens change (one plugged in, unplugged or moved), windows may have moved from
+    /// one screen to another. The windows you used most lately get the front spots (kept ones
+    /// always do). Front windows that stay in front keep their spots; the others fill the free
+    /// spots, most lately used first. The rest wait, most lately used first.
+    public static func refill<ID: Hashable>(_ tiled: [ID], limit: Int?, kept: Set<ID>, recency: [ID: Int]) -> [ID] {
+        guard let limit, tiled.count > max(limit, 1) else { return tiled }
+        let count = max(limit, 1)
+        let byUse = tiled.enumerated().sorted { a, b in
+            let ra = recency[a.element] ?? Int.min, rb = recency[b.element] ?? Int.min
+            return ra != rb ? ra > rb : a.offset < b.offset
+        }.map(\.element)
+        var chosen = Set(byUse.filter(kept.contains).prefix(count))
+        for id in byUse where chosen.count < count { chosen.insert(id) }
+        let front = Array(tiled.prefix(count))
+        var newcomers = byUse.filter { chosen.contains($0) && !front.contains($0) }.makeIterator()
+        let spots = front.map { chosen.contains($0) ? $0 : (newcomers.next() ?? $0) }
+        return spots + byUse.filter { !spots.contains($0) }
     }
 
     /// True if a window at `frame` is waiting off screen: no more than a sliver of it shows.

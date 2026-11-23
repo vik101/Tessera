@@ -58,6 +58,11 @@ screencapture -x "$OUT/0-start.png"
 limit 1600 python3 scripts/ci/check.py "$OUT" 2>&1 | tee "$OUT/check.log"
 status=${PIPESTATUS[0]}
 
+# Several screens of different sizes (pretend ones): a 49-inch, a squarish Dell and the main screen.
+clang -fobjc-arc -framework Foundation -framework CoreGraphics scripts/ci/vdisplay.m -o /tmp/vdisplay > "$OUT/vdisplay-build.txt" 2>&1
+limit 900 python3 scripts/ci/screens.py "$OUT" 2>&1 | tee "$OUT/screens.log"
+[[ ${PIPESTATUS[0]} -ne 0 ]] && status=1
+
 limit 90 log show --last 10m --info --style compact --predicate "subsystem == \"$BUNDLE_ID\"" > "$OUT/tessera.log" 2>&1
 pgrep -x "$APP_NAME" >/dev/null && echo "Tessera still running" >> "$OUT/check.log" || echo "TESSERA CRASHED OR QUIT" >> "$OUT/check.log"
 ls ~/Library/Logs/DiagnosticReports/ 2>/dev/null | grep -i tessera > "$OUT/crashes.txt" && cp ~/Library/Logs/DiagnosticReports/*essera* "$OUT/" 2>/dev/null

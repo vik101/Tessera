@@ -90,6 +90,9 @@ final class AutoTiler {
     /// Front windows that just closed. They stay in the order until the next arrangement has
     /// filled their spot (by then the app has chosen which window you're in next).
     private var closing: Set<CGWindowID> = []
+    /// Until then, windows belong to the screen they're on now: a screen was just plugged in,
+    /// unplugged or moved, and macOS is moving windows between screens.
+    private var followScreensUntil = Date.distantPast
     private let debouncer = Debouncer(delay: 0.12)
     private let watchdog = RepeatingTimer()
 
@@ -104,12 +107,22 @@ final class AutoTiler {
         }
         NotificationCenter.default.addObserver(
             forName: NSApplication.didChangeScreenParametersNotification, object: nil, queue: .main
-        ) { _ in MainActor.assumeIsolated { AutoTiler.shared.scheduleRetile(delay: 0.6) } }
+        ) { _ in MainActor.assumeIsolated { AutoTiler.shared.screensChanged() } }
         NSWorkspace.shared.notificationCenter.addObserver(
             forName: NSWorkspace.activeSpaceDidChangeNotification, object: nil, queue: .main
         ) { _ in MainActor.assumeIsolated { AutoTiler.shared.spaceChanged() } }
         Log.info(Spaces.isAvailable ? "Desktops (Spaces) supported" : "Desktops (Spaces) unknown: waiting for the screen to settle instead")
         settingsChanged()
+    }
+
+    /// A screen was plugged in, unplugged, moved or changed size. macOS moves windows between
+    /// screens over the next second or two: wait, then follow where it put them rather than
+    /// pulling them back to their old screen.
+    private func screensChanged() {
+        quietUntil = Date().addingTimeInterval(1.5)
+        followScreensUntil = Date().addingTimeInterval(5)
+        candidate = nil
+        scheduleRetile(delay: 1.6)
     }
 
     /// You switched desktop. Let the animation finish, then arrange the new desktop once.
@@ -243,6 +256,15 @@ final class AutoTiler {
     func isWaiting(_ id: CGWindowID) -> Bool { plans.values.contains { $0.waiting.contains(id) } }
 
     func isKept(_ id: CGWindowID) -> Bool { kept.contains(id) }
+
+    /// The screen a window belongs to (its stable id), for the tests.
+    func screenID(of id: CGWindowID) -> String? { home[id] }
+
+    /// Sends a window to a screen's tiles, as Next Display does (for the tests).
+    func send(_ id: CGWindowID, to screenID: String) {
+        guard let window = registry.window(id), let display = Screens.all().first(where: { $0.stableID == screenID }) else { return }
+        move(window, to: display)
+    }
 
     /// Brings a window to the front (from the menu or the window picker) and switches to it.
     func bringForward(_ id: CGWindowID) {
@@ -595,14 +617,30 @@ final class AutoTiler {
             registry.rescan()
         }
 
+        // Screens that are gone take their plans with them.
+        let screenIDs = Set(displays.map(\.stableID))
+        plans = plans.filter { screenIDs.contains($0.key) }
+        order = order.filter { screenIDs.contains($0.key) }
+
         // Group the windows on each screen's current desktop by screen, front window first.
         var present: [String: [CGWindowID]] = [:]
         var windows: [CGWindowID: TrackedWindow] = [:]
+        var arrived: Set<String> = []
+        let following = Date() < followScreensUntil
+        let screenFrames = displays.map(\.frame)
         for id in visibleIDs {
             guard let window = registry.window(id), canTile(window), let frame = window.frame else { continue }
-            let screen = home[id].flatMap { s in displays.first { $0.stableID == s } }
-                ?? Screens.display(for: frame, in: displays)
+            var screen = home[id].flatMap { s in displays.first { $0.stableID == s } }
+            // Just after screens change, a window belongs to the screen macOS put it on. (A waiting
+            // window stays with its screen while that screen is still there.)
+            if screen == nil || following && !FrontWindows.isWaiting(frame, screens: screenFrames) {
+                screen = Screens.display(for: frame, in: displays)
+            }
             guard let screen else { continue }
+            if let old = home[id], old != screen.stableID {
+                removeFromOrder(id)   // It joins its new screen's list at the end.
+                arrived.insert(screen.stableID)
+            }
             home[id] = screen.stableID
             present[screen.stableID, default: []].append(id)
             windows[id] = window
@@ -639,6 +677,11 @@ final class AutoTiler {
                 order[screen] = list
                 plans[screen] = nil
                 continue
+            }
+            // Windows arrived from another screen (one was unplugged or moved): the windows you
+            // used most lately get the front spots here.
+            if arrived.contains(screen) {
+                tiled = FrontWindows.refill(tiled, limit: limit, kept: kept, recency: lastUsed)
             }
             // Kept windows, windows just opened or put back, and the one you're using come to the front.
             var wish = wanted.filter { taking.contains($0.key) }.sorted { $0.value < $1.value }.map(\.key)

@@ -18,6 +18,7 @@
 //   keys space-tree                    Mission Control's Accessibility tree, for debugging
 //   keys app-menu com.apple.TextEdit Window "Fill|Zoom"   click an app's menu item (first title found)
 //   keys close-untitled com.apple.TextEdit                close an app's new "Untitled" windows
+//   keys display-origin 5 -1600 -1440                     move screen 5 in the arrangement
 import AppKit
 import CoreGraphics
 import Foundation
@@ -338,6 +339,15 @@ case "close-untitled" where args.count >= 2:
         }
     }
     print("closed \(closed)")
+
+case "display-origin" where args.count >= 4:
+    // Moves a screen in the arrangement (points from the main screen's top-left; y goes down).
+    let id = CGDirectDisplayID(UInt32(args[1]) ?? 0)
+    var config: CGDisplayConfigRef?
+    CGBeginDisplayConfiguration(&config)
+    CGConfigureDisplayOrigin(config, id, Int32(args[2]) ?? 0, Int32(args[3]) ?? 0)
+    let result = CGCompleteDisplayConfiguration(config, .forSession)
+    print("display \(id) to \(args[2]) \(args[3]): \(result.rawValue), now \(CGDisplayBounds(id))")
 
 case "resolution":
     // Make the test screen bigger if the virtual display allows it.
