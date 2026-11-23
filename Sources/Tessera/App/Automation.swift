@@ -22,6 +22,10 @@ enum Automation {
             do { try settings.export(to: URL(fileURLWithPath: path)) } catch { Log.error("Export: \(error.localizedDescription)") }
         case .importSettings(let path):
             do { try settings.importFile(at: URL(fileURLWithPath: path)) } catch { Log.error("Import: \(error.localizedDescription)") }
+        case .saveSetup(let name):
+            Setups.save(name: name)
+        case .openSetup(let name):
+            Setups.open(name: name)
         }
     }
 }

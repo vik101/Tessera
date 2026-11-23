@@ -8,11 +8,15 @@ import Foundation
 ///     tessera://execute-task?name=unignore-app       (no id: the app in front)
 ///     tessera://export-settings?path=/Users/me/tessera.json
 ///     tessera://import-settings?path=/Users/me/tessera.json
+///     tessera://save-setup?name=Work                 save the windows on screen now as a setup
+///     tessera://open-setup?name=Work
 public enum URLCommand: Equatable, Sendable {
     case run(Command)
     case ignore(app: String?, ignored: Bool)
     case exportSettings(path: String)
     case importSettings(path: String)
+    case saveSetup(name: String)
+    case openSetup(name: String)
 
     public init?(url: URL) {
         guard let scheme = url.scheme?.lowercased(), scheme == "tessera" || scheme == "rectangle",
@@ -43,6 +47,12 @@ public enum URLCommand: Equatable, Sendable {
         case "import-settings":
             guard let path = value("path") else { return nil }
             self = .importSettings(path: (path as NSString).expandingTildeInPath)
+        case "save-setup":
+            guard let name = value("name") else { return nil }
+            self = .saveSetup(name: name)
+        case "open-setup":
+            guard let name = value("name") else { return nil }
+            self = .openSetup(name: name)
         default:
             return nil
         }

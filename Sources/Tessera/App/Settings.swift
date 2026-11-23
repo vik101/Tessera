@@ -38,6 +38,20 @@ final class Settings: ObservableObject {
     /// Apps Tessera leaves alone (bundle identifiers).
     @Published var ignoredApps: [String] { didSet { save("ignoredApps", ignoredApps, .tiling) } }
 
+    /// Per-app rules: float, keep in front, open on a screen.
+    @Published var appRules: [AppRule] {
+        didSet {
+            if let data = try? JSONEncoder().encode(appRules) { save("appRules", data, .tiling) }
+        }
+    }
+
+    /// Saved setups, in the order Open Setup 1…9 uses.
+    @Published var setups: [Setup] {
+        didSet {
+            if let data = try? JSONEncoder().encode(setups) { save("setups", data, .other) }
+        }
+    }
+
     @Published var shortcuts: ShortcutSet {
         didSet {
             if let data = try? JSONEncoder().encode(shortcuts) { save("shortcuts", data, .shortcuts) }
@@ -76,6 +90,16 @@ final class Settings: ObservableObject {
         specifiedHeight = store.double(forKey: "specifiedHeight")
         let saved = store.dictionary(forKey: "layouts") as? [String: String] ?? [:]
         layouts = saved.compactMapValues(LayoutStyle.init(rawValue:))
+        if let data = store.data(forKey: "appRules"), let rules = try? JSONDecoder().decode([AppRule].self, from: data) {
+            appRules = rules
+        } else {
+            appRules = []
+        }
+        if let data = store.data(forKey: "setups"), let list = try? JSONDecoder().decode([Setup].self, from: data) {
+            setups = list
+        } else {
+            setups = []
+        }
         if let data = store.data(forKey: "shortcuts"), let set = try? JSONDecoder().decode(ShortcutSet.self, from: data) {
             shortcuts = set
         } else {
@@ -96,6 +120,19 @@ final class Settings: ObservableObject {
     func layout(for screenID: String) -> LayoutStyle { layouts[screenID] ?? .auto }
 
     func isIgnored(_ bundleID: String) -> Bool { ignoredApps.contains(bundleID) }
+
+    func rule(for bundleID: String) -> AppRule? { appRules.first { $0.bundleID == bundleID } }
+
+    var rulesByApp: [String: AppRule] { Dictionary(appRules.map { ($0.bundleID, $0) }, uniquingKeysWith: { a, _ in a }) }
+
+    /// Changes one app's rule; a rule that ends up changing nothing is removed.
+    func updateRule(for bundleID: String, _ change: (inout AppRule) -> Void) {
+        var rule = rule(for: bundleID) ?? AppRule(bundleID: bundleID)
+        change(&rule)
+        var rules = appRules.filter { $0.bundleID != bundleID }
+        if !rule.isEmpty { rules.append(rule) }
+        appRules = rules.sorted { $0.bundleID < $1.bundleID }
+    }
 
     func toggleIgnored(_ bundleID: String) {
         if let index = ignoredApps.firstIndex(of: bundleID) {
@@ -122,6 +159,8 @@ final class Settings: ObservableObject {
         file.specifiedWidth = specifiedWidth
         file.specifiedHeight = specifiedHeight
         file.shortcuts = shortcuts
+        file.appRules = appRules
+        file.setups = setups
         return file
     }
 
@@ -139,6 +178,8 @@ final class Settings: ObservableObject {
         if let v = file.specifiedWidth { specifiedWidth = v }
         if let v = file.specifiedHeight { specifiedHeight = v }
         if let v = file.shortcuts { shortcuts = v }
+        if let v = file.appRules { appRules = v }
+        if let v = file.setups { setups = v }
         if let v = file.autoTile { autoTile = v }   // Last, so tiling starts with the new layouts.
     }
 

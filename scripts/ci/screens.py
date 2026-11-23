@@ -210,6 +210,24 @@ def main():
                  w["id"] in per_screen(d)[dell["id"]][0], f"Dell front {per_screen(d)[dell['id']][0]}")
         check_screens("After dragging onto the Dell")
 
+    # An app rule: TextEdit's new windows open on the Dell.
+    rules = "/tmp/tessera-rules.json"
+    with open(rules, "w") as f:
+        json.dump({"appRules": [{"bundleID": "com.apple.TextEdit", "screen": dell["id"]}]}, f)
+    c.link(f"tessera://import-settings?path={rules}", 1.0)
+    c.activate("com.apple.TextEdit")
+    before = {w["id"] for w in c.dump()["windows"]}
+    c.keys("press", "cmd", c.K["n"])
+    time.sleep(2.5)
+    d = c.settled_dump()
+    new = [w for w in d["windows"] if w["id"] not in before and w["standard"]]
+    c.record("App rule: a new TextEdit window opens on the Dell", bool(new) and new[0]["screen"] == dell["id"],
+             f"new {[(w['id'], w['screen']) for w in new]}, Dell {dell['id']}")
+    with open(rules, "w") as f:
+        json.dump({"appRules": []}, f)
+    c.link(f"tessera://import-settings?path={rules}", 1.0)
+    check_screens("After the app rule")
+
     # At the office: the 49-inch moves to the right of the main screen, bottoms lined up.
     print(c.keys("display-origin", str(wide["number"]), str(mw), str(mh - WIDE[1])).strip(), flush=True)
     time.sleep(6)

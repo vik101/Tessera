@@ -66,6 +66,8 @@ final class Shortcuts {
             Arranger.shared.perform(action)
         case .move(let action):
             KeyboardMoves.perform(action)
+        case .setup(let n):
+            Setups.open(number: n)
         }
     }
 }

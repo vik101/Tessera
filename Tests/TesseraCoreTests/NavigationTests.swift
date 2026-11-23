@@ -1,4 +1,5 @@
 import CoreGraphics
+import Foundation
 import Testing
 @testable import TesseraCore
 
@@ -63,5 +64,72 @@ struct NavigationTests {
         // No default key is used twice anywhere.
         let combos = Command.allCases.compactMap(\.defaultShortcut)
         #expect(Set(combos).count == combos.count)
+    }
+}
+
+@Suite("App rules")
+struct AppRuleTests {
+    let rules = ["chat": AppRule(bundleID: "chat", keepInFront: true), "mail": AppRule(bundleID: "mail", keepInFront: true),
+                 "notes": AppRule(bundleID: "notes", float: true)]
+    let apps: [Int: String] = [1: "chat", 2: "mail", 3: "notes", 4: "web", 5: "chat"]
+
+    @Test func keepsTheMostRecentlyUsedUpToTheRoom() {
+        let recency = [1: 10, 2: 30, 5: 20]
+        let kept = AppRules.kept([1, 2, 3, 4, 5], app: { apps[$0] }, rules: rules, room: 2, recency: recency)
+        #expect(kept == [2, 5])
+        #expect(AppRules.kept([1, 2, 3, 4, 5], app: { apps[$0] }, rules: rules, room: 0, recency: recency).isEmpty)
+        #expect(AppRules.kept([3, 4], app: { apps[$0] }, rules: rules, room: 3, recency: recency).isEmpty)
+    }
+
+    @Test func emptyRulesAreDroppedFromFiles() throws {
+        var file = SettingsFile()
+        file.appRules = [AppRule(bundleID: "a", float: true), AppRule(bundleID: "b"), AppRule(bundleID: "", float: true)]
+        let back = try SettingsFile.decode(file.encoded())
+        #expect(back.appRules == [AppRule(bundleID: "a", float: true)])
+        let json = try SettingsFile.decode(Data(#"{"appRules": [{"bundleID": "com.apple.Terminal", "float": true}]}"#.utf8))
+        #expect(json.appRules?.first?.float == true && json.appRules?.first?.screen == nil)
+    }
+}
+
+@Suite("Saved setups")
+struct SetupTests {
+    let screen = CGRect(x: 0, y: 25, width: 1920, height: 1055)
+
+    @Test func eachAppsWindowsTakeItsEntriesInOrder() {
+        let left = UnitRect(x: 0, y: 0, width: 0.5, height: 1), right = UnitRect(x: 0.5, y: 0, width: 0.5, height: 1)
+        let setup = Setup(name: "Work", entries: [
+            .init(bundleID: "edit", screen: "a", place: left),
+            .init(bundleID: "web", screen: "a", place: right),
+            .init(bundleID: "edit", screen: "b", place: .full),
+            .init(bundleID: "mail", screen: "b", place: .full),     // Mail has no window open: skipped.
+        ])
+        let windows: [(id: Int, bundleID: String)] = [(id: 1, bundleID: "web"), (id: 2, bundleID: "edit"),
+                                                     (id: 3, bundleID: "edit"), (id: 4, bundleID: "edit")]
+        let assigned = setup.assign(windows)
+        #expect(assigned.map { $0.id } == [2, 1, 3])                   // Window 4 is left alone.
+        #expect(assigned.map { $0.entry.screen } == ["a", "a", "b"])
+        #expect(setup.apps == ["edit", "web", "mail"])
+    }
+
+    @Test func placesAreSharesOfTheScreen() {
+        let half = CGRect(x: 0, y: 25, width: 960, height: 1055)
+        let unit = Setup.unit(of: half, in: screen)
+        #expect(unit == UnitRect(x: 0, y: 0, width: 0.5, height: 1))
+        #expect(screen.part(unit) == half)
+        // On a bigger screen the same share fills the same part.
+        let big = CGRect(x: 0, y: 0, width: 5120, height: 1440)
+        #expect(big.part(unit) == CGRect(x: 0, y: 0, width: 2560, height: 1440))
+        // A window hanging off the screen counts only the part on it.
+        #expect(Setup.unit(of: CGRect(x: -100, y: 25, width: 1060, height: 1055), in: screen).width == 0.5)
+    }
+
+    @Test func setupsSurviveASettingsFile() throws {
+        var file = SettingsFile()
+        file.setups = [Setup(name: "Calls", entries: [.init(bundleID: "zoom", screen: "a", place: .full)], hideOthers: false)]
+        #expect(try SettingsFile.decode(file.encoded()).setups == file.setups)
+        let link = URLCommand(url: URL(string: "tessera://open-setup?name=Calls")!)
+        #expect(link == .openSetup(name: "Calls"))
+        #expect(Command(urlName: "open-setup-3") == .setup(3))
+        #expect(Command(id: "setup.3") == .setup(3))
     }
 }

@@ -171,8 +171,28 @@ final class StatusMenu: NSObject, NSMenuDelegate {
             ignore.representedObject = id
             ignore.state = settings.isIgnored(id) ? .on : .off
             menu.addItem(ignore)
+            menu.addItem(rulesItem(for: id, name: app.displayName))
             menu.addItem(.separator())
         }
+
+        // Saved setups.
+        let setupsMenu = NSMenu()
+        setupsMenu.autoenablesItems = false
+        for (index, setup) in settings.setups.enumerated() {
+            let entry = item(setup.name, #selector(openSetup(_:)))
+            entry.representedObject = setup.name
+            if index < 9, let combo = shortcuts.combo(for: .setup(index + 1)), let key = combo.menuKeyEquivalent {
+                entry.keyEquivalent = key
+                entry.keyEquivalentModifierMask = combo.modifiers.eventFlags
+            }
+            setupsMenu.addItem(entry)
+        }
+        if !settings.setups.isEmpty { setupsMenu.addItem(.separator()) }
+        setupsMenu.addItem(item("Save Current Setup…", #selector(saveSetup)))
+        let setupsParent = NSMenuItem(title: "Setups", action: nil, keyEquivalent: "")
+        setupsParent.submenu = setupsMenu
+        menu.addItem(setupsParent)
+        menu.addItem(.separator())
 
         let settingsItem = item("Settings…", #selector(showSettings))
         settingsItem.keyEquivalent = ","
@@ -184,6 +204,53 @@ final class StatusMenu: NSObject, NSMenuDelegate {
         let quit = item("Quit Tessera", #selector(quit))
         quit.keyEquivalent = "q"
         menu.addItem(quit)
+    }
+
+    // MARK: App rules
+
+    /// "Rules for Safari ▸": always float, always keep in front, open on a screen.
+    private func rulesItem(for id: String, name: String) -> NSMenuItem {
+        let rule = settings.rule(for: id) ?? AppRule(bundleID: id)
+        let submenu = NSMenu()
+        submenu.autoenablesItems = false
+        let float = item("Always Float", #selector(toggleRuleFloat(_:)))
+        float.representedObject = id
+        float.state = rule.float ? .on : .off
+        submenu.addItem(float)
+        let keep = item("Always Keep in Front", #selector(toggleRuleKeep(_:)))
+        keep.representedObject = id
+        keep.state = rule.keepInFront ? .on : .off
+        submenu.addItem(keep)
+        submenu.addItem(.separator())
+        submenu.addItem(.sectionHeader(title: "New Windows Open On"))
+        let anywhere = item("Any Screen", #selector(setRuleScreen(_:)))
+        anywhere.representedObject = [id, ""]
+        anywhere.state = rule.screen == nil ? .on : .off
+        submenu.addItem(anywhere)
+        for display in Screens.all() {
+            let entry = item(display.name, #selector(setRuleScreen(_:)))
+            entry.representedObject = [id, display.stableID]
+            entry.state = rule.screen == display.stableID ? .on : .off
+            submenu.addItem(entry)
+        }
+        let parent = NSMenuItem(title: "Rules for \(name)", action: nil, keyEquivalent: "")
+        parent.submenu = submenu
+        return parent
+    }
+
+    @objc private func toggleRuleFloat(_ sender: NSMenuItem) {
+        guard let id = sender.representedObject as? String else { return }
+        settings.updateRule(for: id) { $0.float.toggle() }
+    }
+
+    @objc private func toggleRuleKeep(_ sender: NSMenuItem) {
+        guard let id = sender.representedObject as? String else { return }
+        settings.updateRule(for: id) { $0.keepInFront.toggle() }
+    }
+
+    @objc private func setRuleScreen(_ sender: NSMenuItem) {
+        guard let pair = sender.representedObject as? [String], pair.count == 2 else { return }
+        settings.updateRule(for: pair[0]) { $0.screen = pair[1].isEmpty ? nil : pair[1] }
     }
 
     // MARK: Building items
@@ -265,6 +332,13 @@ final class StatusMenu: NSObject, NSMenuDelegate {
     }
 
     @objc private func checkForUpdates() { Updater.shared.checkNow() }
+
+    @objc private func openSetup(_ sender: NSMenuItem) {
+        guard let name = sender.representedObject as? String else { return }
+        Setups.open(name: name)
+    }
+
+    @objc private func saveSetup() { Setups.saveWithPrompt() }
 
     @objc private func quit() { NSApp.terminate(nil) }
 }

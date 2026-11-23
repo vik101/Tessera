@@ -456,6 +456,24 @@ final class AutoTiler {
         retile()
     }
 
+    /// An app rule may say which screen the app's new windows open on.
+    private func applyScreenRule(_ id: CGWindowID) {
+        guard let window = registry.window(id), let screenID = settings.rule(for: window.bundleID)?.screen,
+              let target = Screens.all().first(where: { $0.stableID == screenID }) else { return }
+        // Give the app a moment to finish placing its new window.
+        after(0.4) { [weak self] in
+            guard let self, let frame = window.frame, let current = Screens.display(for: frame, in: Screens.all()),
+                  current != target else { return }
+            Log.info("App rule: window \(id) opens on \(target.name)")
+            if self.isOn, self.canTile(window) {
+                self.move(window, to: target)
+            } else {
+                let moved = SnapCalculator.moveProportionally(frame, from: current.visibleFrame, to: target.visibleFrame)
+                self.mover.move(window, to: moved, within: target.visibleFrame)
+            }
+        }
+    }
+
     /// You dragged a window and let go at `point`: swap it with the window there, or move it to that screen.
     func userDropped(_ window: TrackedWindow, at point: CGPoint) {
         pendingAfterMouse = false
@@ -601,6 +619,7 @@ final class AutoTiler {
             ids.forEach(forget)
             scheduleRetile()
         case .created(let id), .deminimized(let id):
+            if case .created = event { applyScreenRule(id) }
             // You just opened it (or brought it back from the Dock): it comes to the front.
             touch(id)
             wanted[id] = Date()
@@ -776,7 +795,13 @@ final class AutoTiler {
             var wish = wanted.filter { taking.contains($0.key) }.sorted { $0.value < $1.value }.map(\.key)
             if let focusedID, taking.contains(focusedID), !wish.contains(focusedID) { wish.append(focusedID) }
             // The window you're in never steps back to make room, even if you last clicked it long ago.
-            let staying = kept.union(focusedID.map { [$0] } ?? [])
+            // Nor do windows of apps whose rule keeps them in front, while a spot stays free.
+            var staying = kept.union(focusedID.map { [$0] } ?? [])
+            if let limit {
+                let room = max(limit - 1, 1) - staying.count
+                staying.formUnion(AppRules.kept(tiled, app: { self.registry.window($0)?.bundleID }, rules: settings.rulesByApp,
+                                                room: room, recency: lastUsed))
+            }
             tiled = FrontWindows.arrange(tiled, limit: limit, kept: staying, wanted: wish, recency: lastUsed)
             for id in wish { wanted[id] = nil }
             list = FrontWindows.merge(tiled, into: list)
@@ -900,7 +925,7 @@ final class AutoTiler {
 
     /// Whether auto-tile can manage this window at all (ignoring float and pin choices).
     private func canTile(_ window: TrackedWindow) -> Bool {
-        guard !settings.isIgnored(window.bundleID) else { return false }
+        guard !settings.isIgnored(window.bundleID), settings.rule(for: window.bundleID)?.float != true else { return false }
         if NSRunningApplication(processIdentifier: window.pid)?.isHidden == true { return false }
         if window.element.isFullScreen { return false }
         if kind[window.id] == true { return true }

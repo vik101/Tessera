@@ -1141,6 +1141,84 @@ def rectangle_parity(F, V):
     else:
         record("Two TextEdit windows to stack", False, f"{first} {second}")
     press(CO, K["delete"])
+    setups(F)
+
+
+def setups(F):
+    """Save the windows as a setup, move them, open the setup: everything goes back."""
+    activate("com.apple.TextEdit")
+    press(CO, K["left"])
+    _, edit = front()
+    activate("com.apple.Safari")
+    press(CO, K["right"])
+    _, web = front()
+    if not (edit and web):
+        record("Two windows for the setup", False, f"{edit} {web}")
+        return
+    link("tessera://save-setup?name=CI%20Test", 1.0)
+    path = "/tmp/tessera-setups.json"
+    link(f"tessera://export-settings?path={path}", 1.0)
+    try:
+        saved = [x for x in json.load(open(path)).get("setups", []) if x["name"] == "CI Test"]
+    except (OSError, json.JSONDecodeError):
+        saved = []
+    record("Save Current Setup by link", bool(saved) and len(saved[0]["entries"]) >= 2,
+           f"{len(saved[0]['entries']) if saved else 0} windows saved")
+    press(CO, K["ret"])                       # Safari: maximise
+    activate("com.apple.TextEdit")
+    press(CO, K["ret"])                       # TextEdit: maximise
+    link("tessera://open-setup?name=CI%20Test", 3.0)
+    got_edit, got_web = frame_of(edit["id"]), frame_of(web["id"])
+    record("Open the setup: TextEdit back on the left half", close(got_edit, F(0, 0, .5, 1), 2), f"got {got_edit}")
+    record("Open the setup: Safari back on the right half", close(got_web, F(.5, 0, .5, 1), 2), f"got {got_web}")
+    _, now = front()
+    record("Open the setup: the window in front when saved is in front again", now and now["id"] == web["id"],
+           f"front {now and now['id']}, want {web['id']}")
+    shot("setup-opened")
+    for bundle in ["com.apple.Safari", "com.apple.TextEdit"]:
+        activate(bundle)
+        press(CO, K["delete"])
+
+def app_rules():
+    """Rules for one app, set through a settings file: always float, always keep in front."""
+    path = "/tmp/tessera-rules.json"
+    def rules(value):
+        with open(path, "w") as f:
+            json.dump({"appRules": value}, f)
+        link(f"tessera://import-settings?path={path}", 1.5)
+    post("set:frontLimit=none", 0.5)
+    choose("columns", "Rules: Columns with every window", 7)
+    rules([{"bundleID": "com.apple.Terminal", "float": True}])
+    d = settled_dump()
+    terminal = [w for w in d["windows"] if w["app"] == "com.apple.Terminal" and w["standard"]]
+    record("Rule “Terminal always floats”: Terminal leaves the tiles", bool(terminal) and not any(w["tiled"] for w in terminal),
+           f"{[(w['id'], w['tiled']) for w in terminal]}")
+    check_layout("The other 6 windows tile in Columns", "columns", 6)
+    rules([])
+    check_layout("Rule removed: Terminal tiles again", "columns", 7)
+
+    # Keep Safari in front: using four other windows never sends it to wait.
+    post("set:frontLimit=3", 1.0)
+    rules([{"bundleID": "com.apple.Safari", "keepInFront": True}])
+    for bundle in ["com.apple.TextEdit", "com.apple.finder", "com.google.Chrome", "com.apple.Terminal"]:
+        activate(bundle)
+        time.sleep(1.2)
+    d = settled_dump()
+    safari = [w for w in d["windows"] if w["app"] == "com.apple.Safari" and w["standard"]]
+    record("Rule “Safari always in front”: Safari never waits while other windows are used",
+           bool(safari) and not any(w["waiting"] for w in safari), f"{[(w['id'], w['waiting']) for w in safari]}")
+    rules([])
+    activate("com.apple.TextEdit")
+    time.sleep(1.0)
+    for bundle in ["com.apple.finder", "com.google.Chrome", "com.apple.Terminal"]:
+        activate(bundle)
+        time.sleep(1.2)
+    d = settled_dump()
+    safari = [w for w in d["windows"] if w["app"] == "com.apple.Safari" and w["standard"]]
+    record("Rule removed: Safari can step back again", bool(safari) and any(w["waiting"] for w in safari),
+           f"{[(w['id'], w['waiting']) for w in safari]}")
+    post("set:frontLimit=none", 1.0)
+
 
 def main():
     os.makedirs(OUT, exist_ok=True)
@@ -1393,6 +1471,7 @@ def main():
     latest_command_wins(F)
     desktops_never_jump()
     front_windows()
+    app_rules()
 
     # Switching off, then back on: the layout is remembered.
     choose("mainAndSide", "Main + Side before switching off", 7)

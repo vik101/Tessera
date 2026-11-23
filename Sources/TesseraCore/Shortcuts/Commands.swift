@@ -55,11 +55,13 @@ public enum Command: Hashable, Sendable {
     case arrange(ArrangeAction)
     /// Focus by direction, send to a desktop.
     case move(MoveAction)
+    /// Open saved setup number 1…9 (in the order Settings lists them).
+    case setup(Int)
 
     public static var allCases: [Command] {
         SnapAction.allCases.map(Command.snap) + TileCommand.allCases.map(Command.tile)
             + LayoutStyle.allCases.map(Command.layout) + ArrangeAction.allCases.map(Command.arrange)
-            + MoveAction.allCases.map(Command.move)
+            + MoveAction.allCases.map(Command.move) + (1...9).map(Command.setup)
     }
 
     /// Finds a command by its URL name: Rectangle's names (`left-half`, `tile-all`), Tessera's ids
@@ -74,6 +76,8 @@ public enum Command: Hashable, Sendable {
             self = .arrange(action)
         } else if let action = MoveAction(rawValue: name) ?? MoveAction.allCases.first(where: { $0.urlName == name.lowercased() }) {
             self = .move(action)
+        } else if name.lowercased().hasPrefix("open-setup-"), let n = Int(name.dropFirst(11)), (1...9).contains(n) {
+            self = .setup(n)
         } else if let command = TileCommand(rawValue: name) ?? TileCommand.allCases.first(where: { $0.urlName == name.lowercased() }) {
             self = .tile(command)
         } else if let style = LayoutStyle(rawValue: name) ?? LayoutStyle.allCases.first(where: { $0.urlName == name.lowercased() }) {
@@ -91,6 +95,7 @@ public enum Command: Hashable, Sendable {
         case .layout(let style): style.urlName
         case .arrange(let action): action.urlName
         case .move(let action): action.urlName
+        case .setup(let n): "open-setup-\(n)"
         }
     }
 
@@ -102,6 +107,7 @@ public enum Command: Hashable, Sendable {
         case .layout(let style): "layout." + style.rawValue
         case .arrange(let action): "arrange." + action.rawValue
         case .move(let action): "move." + action.rawValue
+        case .setup(let n): "setup.\(n)"
         }
     }
 
@@ -116,6 +122,8 @@ public enum Command: Hashable, Sendable {
             self = .arrange(action)
         } else if id.hasPrefix("move."), let action = MoveAction(rawValue: String(id.dropFirst(5))) {
             self = .move(action)
+        } else if id.hasPrefix("setup."), let n = Int(id.dropFirst(6)), (1...9).contains(n) {
+            self = .setup(n)
         } else {
             return nil
         }
@@ -128,6 +136,7 @@ public enum Command: Hashable, Sendable {
         case .layout(let style): style.title
         case .arrange(let action): action.title
         case .move(let action): action.title
+        case .setup(let n): "Open Setup \(n)"
         }
     }
 
@@ -138,6 +147,7 @@ public enum Command: Hashable, Sendable {
         case .layout(let style): style.defaultShortcut
         case .arrange: nil
         case .move(let action): action.defaultShortcut
+        case .setup(let n): n - 1 < KeyCode.digits.count ? KeyCombo(KeyCode.digits[n - 1], [.control, .option, .command]) : nil
         }
     }
 }

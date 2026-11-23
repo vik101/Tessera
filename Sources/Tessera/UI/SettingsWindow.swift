@@ -108,6 +108,49 @@ struct SettingsView: View {
             }
 
             Section {
+                if settings.setups.isEmpty {
+                    Text("None yet. Arrange your windows, then choose Save Current Setup… in the menu.")
+                        .foregroundStyle(.secondary)
+                }
+                ForEach(Array(settings.setups.enumerated()), id: \.element.id) { index, setup in
+                    HStack {
+                        Text(setup.name)
+                        Text("\(setup.entries.count) windows · \(setup.apps.count) apps").foregroundStyle(.secondary)
+                        Spacer()
+                        if index < 9, let combo = settings.shortcuts.combo(for: .setup(index + 1)) {
+                            Text(combo.description).foregroundStyle(.secondary).monospaced()
+                        }
+                        Toggle("Hide other apps", isOn: Binding(
+                            get: { setup.hideOthers },
+                            set: { on in
+                                if let i = settings.setups.firstIndex(where: { $0.name == setup.name }) { settings.setups[i].hideOthers = on }
+                            }
+                        )).toggleStyle(.checkbox)
+                        Button("Open") { Setups.open(setup) }.buttonStyle(.borderless)
+                        Button("Delete") { settings.setups.removeAll { $0.name == setup.name } }.buttonStyle(.borderless)
+                    }
+                }
+                Button("Save Current Setup…") { Setups.saveWithPrompt() }
+            } header: {
+                Text("Setups")
+            } footer: {
+                Text("A setup remembers the apps on your screens and where their windows go. Open one from the menu or with its shortcut.")
+                    .font(.callout).foregroundStyle(.secondary)
+            }
+
+            Section {
+                ForEach(settings.appRules) { rule in
+                    AppRuleRow(rule: rule, displays: displays)
+                }
+                Button("Add App…", action: addRuleApp)
+            } header: {
+                Text("App Rules")
+            } footer: {
+                Text("Float: auto-tile leaves the app's windows alone. Keep in front: they never step back to wait. Screen: where its new windows open.")
+                    .font(.callout).foregroundStyle(.secondary)
+            }
+
+            Section {
                 ForEach(Self.shortcutGroups, id: \.title) { group in
                     Text(group.title).font(.headline).padding(.top, 4)
                     ForEach(group.commands, id: \.id) { command in
@@ -183,6 +226,14 @@ struct SettingsView: View {
         do { try settings.importFile(at: url) } catch { NSAlert(error: error).runModal() }
     }
 
+    private func addRuleApp() {
+        let panel = NSOpenPanel()
+        panel.allowedContentTypes = [.application]
+        panel.directoryURL = URL(fileURLWithPath: "/Applications")
+        guard panel.runModal() == .OK, let url = panel.url, let id = Bundle(url: url)?.bundleIdentifier else { return }
+        settings.updateRule(for: id) { $0.float = true }
+    }
+
     private func addIgnoredApp() {
         let panel = NSOpenPanel()
         panel.allowedContentTypes = [.application]
@@ -212,6 +263,7 @@ struct SettingsView: View {
         groups.append(ShortcutGroup(title: "Layouts", commands: LayoutStyle.allCases.map(Command.layout)))
         groups.append(ShortcutGroup(title: "All Windows", commands: ArrangeAction.allCases.map(Command.arrange)))
         groups.append(ShortcutGroup(title: "Focus and Desktops", commands: MoveAction.allCases.map(Command.move)))
+        groups.append(ShortcutGroup(title: "Setups", commands: (1...9).map(Command.setup)))
         return groups
     }()
 }
@@ -327,5 +379,42 @@ enum AppInfo {
             return NSWorkspace.shared.icon(forFile: url.path)
         }
         return NSImage(systemSymbolName: "app", accessibilityDescription: nil) ?? NSImage()
+    }
+}
+
+/// One app's rule in Settings: two switches, a screen menu and a Remove button.
+private struct AppRuleRow: View {
+    let rule: AppRule
+    let displays: [DisplayInfo]
+    @ObservedObject private var settings = Settings.shared
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Image(nsImage: AppInfo.icon(rule.bundleID)).resizable().frame(width: 18, height: 18)
+                Text(AppInfo.name(rule.bundleID))
+                Spacer()
+                Button("Remove") { settings.appRules.removeAll { $0.bundleID == rule.bundleID } }
+                    .buttonStyle(.borderless)
+            }
+            HStack {
+                Toggle("Float", isOn: Binding(get: { rule.float },
+                                             set: { on in settings.updateRule(for: rule.bundleID) { $0.float = on } }))
+                Toggle("Keep in front", isOn: Binding(get: { rule.keepInFront },
+                                                     set: { on in settings.updateRule(for: rule.bundleID) { $0.keepInFront = on } }))
+                Picker("Opens on", selection: Binding(
+                    get: { rule.screen ?? "" },
+                    set: { id in settings.updateRule(for: rule.bundleID) { $0.screen = id.isEmpty ? nil : id } }
+                )) {
+                    Text("Any screen").tag("")
+                    ForEach(displays, id: \.stableID) { Text($0.name).tag($0.stableID) }
+                    if let screen = rule.screen, !displays.contains(where: { $0.stableID == screen }) {
+                        Text("A screen not plugged in").tag(screen)
+                    }
+                }
+                .frame(maxWidth: 260)
+            }
+            .toggleStyle(.checkbox)
+        }
     }
 }

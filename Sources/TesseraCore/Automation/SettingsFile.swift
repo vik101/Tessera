@@ -19,6 +19,10 @@ public struct SettingsFile: Codable, Equatable, Sendable {
     public var specifiedWidth: Double?
     public var specifiedHeight: Double?
     public var shortcuts: ShortcutSet?
+    /// Per-app rules: float, keep in front, open on a screen.
+    public var appRules: [AppRule]?
+    /// Saved setups: apps and where their windows go.
+    public var setups: [Setup]?
 
     public init() {}
 
@@ -31,6 +35,7 @@ public struct SettingsFile: Codable, Equatable, Sendable {
         copy.layouts = layouts?.filter { LayoutStyle(rawValue: $0.value) != nil }
         copy.specifiedWidth = specifiedWidth.map { max($0, 0.1) }
         copy.specifiedHeight = specifiedHeight.map { max($0, 0.1) }
+        copy.appRules = appRules?.filter { !$0.bundleID.isEmpty && !$0.isEmpty }
         return copy
     }
 

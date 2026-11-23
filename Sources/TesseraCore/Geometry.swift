@@ -22,7 +22,7 @@ public enum ScreenShape: Sendable, Equatable {
 }
 
 /// A part of a screen, as fractions (0…1) of its width and height.
-public struct UnitRect: Equatable, Sendable {
+public struct UnitRect: Equatable, Sendable, Codable {
     public var x: CGFloat
     public var y: CGFloat
     public var width: CGFloat
