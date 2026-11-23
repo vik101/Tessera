@@ -12,7 +12,7 @@ cask "tessera" do
   homepage "https://github.com/vik101/Tessera"
 
   auto_updates true
-  depends_on macos: ">= :sequoia"
+  depends_on macos: :sequoia
 
   app "Tessera.app"
 

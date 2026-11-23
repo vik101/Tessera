@@ -213,8 +213,11 @@ def check_tiling(label, strict=True, ignore=()):
     cg = {w["id"]: [round(v) for v in w["frame"]] for w in windows()["windows"]}
     frames = {w["id"]: cg.get(w["id"], w["frame"]) for w in tiled}
     outside = [w["app"] for w in tiled if not inside(frames[w["id"]], vis)]
+    crowded = bool(dump().get("autoTile", {}).get("crowded"))
+    # When apps' minimum sizes can't all fit, a window held at its minimum may poke past the edge: flag it.
     record(f"{label}: all inside the screen", not outside,
-           ", ".join(f"{w['app']} {frames[w['id']]}" for w in tiled if not inside(frames[w["id"]], vis)) + f" on {vis}")
+           ", ".join(f"{w['app']} {frames[w['id']]}" for w in tiled if not inside(frames[w["id"]], vis)) + f" on {vis}"
+           + (" — apps' minimum sizes can't all fit" if crowded else ""), warn=crowded)
     pairs = []
     ids = list(frames)
     for i, a in enumerate(ids):
@@ -1133,11 +1136,18 @@ def rectangle_parity(F, V):
     _, second = front()
     press(CO, K["left"])
     if first and second and first["id"] != second["id"]:
-        post("run:arrange.nextInStack", 1.0)
+        time.sleep(1.0)   # Let Tessera see which window you're in now.
+        # Every window now on that spot is in the stack (another TextEdit window may already sit there).
+        spot = frame_of(second["id"])
+        ids = {w["id"] for w in dump()["windows"] if w["standard"]}
+        stack = sorted(w["id"] for w in windows()["windows"]
+                       if w["id"] in ids and close([round(v) for v in w["frame"]], spot, 24))
+        want = stack[(stack.index(second["id"]) + 1) % len(stack)] if second["id"] in stack else first["id"]
+        post("run:arrange.nextInStack", 1.2)
         _, now = front()
-        record("Next Stacked Window brings the other window on that spot forward", now and now["id"] == first["id"],
-               f"front {now and now['id']}, want {first['id']}")
-        post("run:arrange.previousInStack", 1.0)
+        record("Next Stacked Window brings the next window on that spot forward", now and now["id"] == want,
+               f"front {now and now['id']}, want {want}, stack {stack}")
+        post("run:arrange.previousInStack", 1.2)
         _, now = front()
         record("Previous Stacked Window goes back", now and now["id"] == second["id"], f"front {now and now['id']}")
     else:

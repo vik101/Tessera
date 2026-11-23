@@ -877,17 +877,7 @@ final class AutoTiler {
         var learned = false
         var suspects: [CGWindowID] = []
         for id in ids {
-            guard let window = registry.window(id), let target = planned[id], var actual = window.frame else { continue }
-            // An app that grew a moment after the move (Terminal rounds to whole lines) may now poke off
-            // the screen's edge. Slide it back inside; its neighbours are handled below.
-            if let visible = Screens.display(for: target, in: Screens.all())?.visibleFrame,
-               !visible.insetBy(dx: -1, dy: -1).contains(actual) {
-                let inside = actual.clamped(to: visible)
-                if inside.origin != actual.origin {
-                    window.element.setPosition(inside.origin)
-                    actual = window.frame ?? inside
-                }
-            }
+            guard let window = registry.window(id), let target = planned[id], let actual = window.frame else { continue }
             mover.noteSettled(id, at: actual)
             if var known = minimums[id] {
                 if actual.width < known.width - 4 { known.width = actual.width }
