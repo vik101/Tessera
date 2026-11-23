@@ -67,6 +67,11 @@ struct SettingsView: View {
                         }
                     }
                 }
+                Picker("Windows in front", selection: $settings.frontLimit) {
+                    ForEach(FrontLimit.choices, id: \.self) { limit in
+                        Text(limitTitle(limit)).tag(limit)
+                    }
+                }
                 LabeledContent("Main window size (Main + Side)") {
                     HStack {
                         Slider(value: $settings.mainRatio, in: 0.3...0.7)
@@ -76,7 +81,7 @@ struct SettingsView: View {
             } header: {
                 Text("Auto-Tile")
             } footer: {
-                Text("Auto-tile arranges every normal window on a screen so none overlap. Auto picks the best arrangement for the number of windows and the shape of the screen. Snap a window by hand to keep it in place; the others fill the rest. Restore (⌃⌥⌫) puts it back.")
+                Text("Auto-tile arranges every normal window on a screen so none overlap. Auto picks the best arrangement for the number of windows and the shape of the screen. Snap a window by hand to keep it in place; the others fill the rest. Restore (⌃⌥⌫) puts it back.\n\nOnly a few windows sit in front; the rest wait just off the screen's edge. Use a waiting window (click it in the Dock, ⌘Tab, or pick it with ⌃⌥Space) and it takes the place of the front window you used least lately. ⌃⌥P keeps a window in front.")
                     .font(.callout).foregroundStyle(.secondary)
             }
 
@@ -121,6 +126,13 @@ struct SettingsView: View {
             displays = Screens.all()
         }
         .onDisappear { recorder.stop() }
+    }
+
+    /// "Auto (3 here)" names what Auto means on this Mac's screens.
+    private func limitTitle(_ limit: FrontLimit) -> String {
+        guard limit == .auto else { return limit.title }
+        let counts = Set(displays.map { FrontLimit.autoCount(for: $0.visibleFrame.size) }).sorted().map(String.init)
+        return counts.isEmpty ? "Auto" : "Auto (\(counts.joined(separator: " or ")) here)"
     }
 
     private func layoutBinding(_ display: DisplayInfo) -> Binding<LayoutStyle> {

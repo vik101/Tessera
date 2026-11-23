@@ -58,6 +58,10 @@ final class Shortcuts {
             AutoTiler.shared.toggleFloat()
         case .tile(.retile):
             AutoTiler.shared.retileCommand()
+        case .tile(.showWindows):
+            WindowPicker.shared.toggle()
+        case .tile(.keepInFront):
+            AutoTiler.shared.toggleKeep()
         }
     }
 }

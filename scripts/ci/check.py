@@ -19,7 +19,9 @@ results = []
 # Key codes (US layout positions).
 K = dict(left="0x7B", right="0x7C", down="0x7D", up="0x7E", ret="0x24", delete="0x33", esc="0x35",
          a="0x00", c="0x08", d="0x02", e="0x0E", f="0x03", g="0x05", i="0x22", j="0x26", k="0x28",
-         l="0x25", m="0x2E", n="0x2D", t="0x11", u="0x20", w="0x0D", equal="0x18", minus="0x1B")
+         l="0x25", m="0x2E", n="0x2D", t="0x11", u="0x20", w="0x0D", equal="0x18", minus="0x1B",
+         p="0x23", space="0x31")
+NUMBER = ["0x12", "0x13", "0x14", "0x15", "0x17", "0x16", "0x1A", "0x1C", "0x19"]   # keys 1 to 9
 CO = "ctrl,opt"
 
 
@@ -608,6 +610,221 @@ def desktops_never_jump():
     check_layout("Home again: Columns with 7 windows", "columns", 7)
 
 
+# ---------- front windows: only a few laid out, the rest waiting ----------
+
+def front_state(d):
+    """(front ids in spot order, waiting ids, last-used numbers) for the first screen."""
+    plan = screen_plan(d) or {}
+    waiting = next(iter((d.get("autoTile", {}).get("waiting") or {}).values()), [])
+    used = {int(k): v for k, v in (d.get("autoTile", {}).get("lastUsed") or {}).items()}
+    return plan.get("ids", []), waiting, used
+
+
+def showing(frame, screen):
+    """How many points of a window are on the screen (width, height)."""
+    w = min(frame[0] + frame[2], screen[0] + screen[2]) - max(frame[0], screen[0])
+    h = min(frame[1] + frame[3], screen[1] + screen[3]) - max(frame[1], screen[1])
+    return max(w, 0), max(h, 0)
+
+
+def check_waiting(label, d, count):
+    """The right number wait, and every waiting window is off screen (a sliver at most)."""
+    _, waiting, _ = front_state(d)
+    screen = d["displays"][0]["frame"]
+    cg = {w["id"]: [round(v) for v in w["frame"]] for w in windows()["windows"]}
+    on = [f"{i} at {cg.get(i)}" for i in waiting if i in cg and min(showing(cg[i], screen)) > 4]
+    record(f"{label}: {count} windows wait", len(waiting) == count, f"waiting {waiting}")
+    record(f"{label}: waiting windows are off screen", not on, "; ".join(on[:3]))
+    return waiting
+
+
+def single_window_apps(d, ids):
+    """Waiting windows whose app has no other window: bringing the app forward means that window."""
+    apps = [w["app"] for w in d["windows"]]
+    return [i for i in ids for w in d["windows"] if w["id"] == i and apps.count(w["app"]) == 1]
+
+
+def app_of(d, window_id):
+    return next((w["app"] for w in d["windows"] if w["id"] == window_id), None)
+
+
+def check_brought_forward(label, target, before_front, before_frames, used):
+    """`target` is now in front, in the spot of the front window used least lately; nothing else moved."""
+    d = settled_dump()
+    front, waiting, _ = front_state(d)
+    lru = min((i for i in before_front), key=lambda i: used.get(i, -1))
+    record(f"{label}: it comes to the front", target in front, f"front {front}, wanted {target}")
+    record(f"{label}: it takes the spot of the window used least lately",
+           lru in before_front and len(front) == len(before_front) and front[before_front.index(lru)] == target,
+           f"front was {before_front}, now {front}; least lately used {lru}")
+    moved = [f"{i}: {before_frames[i]} → {frame_of(i)}" for i in before_front
+             if i != lru and i in front and not close(frame_of(i), before_frames[i], 2)]
+    record(f"{label}: the other front windows don't move", not moved, "; ".join(moved[:3]))
+    record(f"{label}: the window it replaced waits", lru in waiting, f"waiting {waiting}")
+    return d
+
+
+def front_windows():
+    choose("columns", "Before a limit: Columns with 7", 7)
+    post("set:frontLimit=3", 0.3)
+    d, _ = check_layout("Limit 3: Columns with 3 in front", "columns", 3)
+    shot("front-3")
+    check_waiting("Limit 3", d, 4)
+    moves = d["autoTile"]["moves"]
+    time.sleep(2.5)
+    record("Limit 3: nothing moves while you wait", dump()["autoTile"]["moves"] == moves)
+
+    # Using a waiting window (here: bringing its app forward) brings it to the front.
+    d = settled_dump()
+    front, waiting, used = front_state(d)
+    candidates = single_window_apps(d, waiting)
+    if candidates:
+        target = candidates[0]
+        before = {i: frame_of(i) for i in front}
+        activate(app_of(d, target))
+        d = check_brought_forward("Bring the app of a waiting window forward", target, front, before, used)
+        check_layout("After bringing a window forward: still Columns with 3", "columns", 3)
+    else:
+        record("A waiting window's app has only that window", False, f"waiting {waiting}", warn=True)
+
+    # The menu lists the windows; clicking a waiting one brings it forward.
+    if keys("trusted").strip() == "yes":
+        d = settled_dump()
+        front, waiting, used = front_state(d)
+        post("menu", 1.5)
+        shot("menu-front-windows")
+        items = json.loads(keys("menu-list") or "[]")
+        titles = [i["title"] for i in items]
+        header = next((t for t in titles if t.startswith("In Front")), None)
+        record("Menu shows the front windows", header == f"In Front ({len(front)} of 3)", f"header {header}")
+        start = next((n for n, t in enumerate(titles) if t.startswith("Waiting")), None)
+        listed = titles[start + 1:start + 1 + len(waiting)] if start is not None else []
+        record("Menu lists every waiting window", len(listed) == len(waiting), f"{listed}")
+        if listed:
+            before = {i: frame_of(i) for i in front}
+            print(keys("menu-press", listed[0]).strip(), flush=True)
+            check_brought_forward("Menu › a waiting window", waiting[0], front, before, used)
+        else:
+            press("", K["esc"], 0.5)
+
+    # ⌃⌥Space: the picker. Number keys bring a window forward.
+    d = settled_dump()
+    front, waiting, used = front_state(d)
+    press(CO, K["space"], 1.0)
+    d = dump()
+    picker = d.get("picker", {})
+    shot("picker")
+    entries = picker.get("entries", [])
+    record("⌃⌥Space opens the window picker", picker.get("showing") is True, f"{picker}")
+    record("Picker lists front windows first, then waiting ones",
+           [e["id"] for e in entries] == front + waiting and all(e["inFront"] for e in entries[:len(front)]),
+           f"{[e['id'] for e in entries]} vs {front + waiting}")
+    press("", K["esc"], 0.8)
+    record("Esc closes the picker", dump().get("picker", {}).get("showing") is False)
+    if len(waiting) >= 2:
+        target = waiting[1]
+        number = len(front) + 2
+        before = {i: frame_of(i) for i in front}
+        press(CO, K["space"], 1.0)
+        press("", NUMBER[number - 1], 0.5)
+        record(f"Pressing {number} closes the picker", dump().get("picker", {}).get("showing") is False)
+        check_brought_forward(f"Picker › {number}", target, front, before, used)
+        record("Picker: the window you picked is the one in use", dump().get("focused") == target)
+
+    # A new window comes to the front; when it closes, the window used most lately fills its spot.
+    d = settled_dump()
+    front, waiting, used = front_state(d)
+    activate("com.apple.TextEdit")
+    keys("press", "cmd", K["n"])
+    d = settled_dump()
+    front2, waiting2, _ = front_state(d)
+    new = [i for i in front2 if i not in front + waiting]
+    record("A new window comes to the front", len(new) == 1, f"front {front} → {front2}")
+    check_waiting("With a new window", d, len(waiting) + 1)
+    if new:
+        before = {i: frame_of(i) for i in front2}
+        _, waiting3, used3 = front_state(dump())
+        activate("com.apple.TextEdit")
+        keys("press", "cmd", K["w"])
+        d = settled_dump()
+        front4, _, _ = front_state(d)
+        # TextEdit picks another of its windows to be in; if that one was waiting, it takes the
+        # spot. Otherwise the waiting window used most lately does.
+        heir = d.get("focused") if d.get("focused") in waiting3 else max(waiting3, key=lambda i: used3.get(i, -1))
+        spot = front2.index(new[0])
+        record("Closing it: the next window takes its exact spot",
+               len(front4) == len(front2) and front4[spot] == heir, f"{front2} → {front4}, expected {heir}")
+        moved = [i for i in front2 if i != new[0] and i in front4 and not close(frame_of(i), before[i], 2)]
+        record("Closing it: the other front windows don't move", not moved, f"{moved}")
+
+    # ⌃⌥P keeps a window in front, however many others come forward.
+    d = settled_dump()
+    front, waiting, _ = front_state(d)
+    keeper = (single_window_apps(d, front) or front)[0]
+    activate(app_of(d, keeper))
+    if dump().get("focused") == keeper:
+        press(CO, K["p"], 1.0)
+        record("⌃⌥P keeps the window in front", keeper in dump()["autoTile"]["kept"], f"kept {dump()['autoTile']['kept']}")
+        for round_ in range(3):
+            _, waiting, _ = front_state(settled_dump())
+            if not waiting:
+                break
+            press(CO, K["space"], 1.0)
+            press("", NUMBER[min(len(front), 8)], 0.5)   # the first waiting window
+        front, waiting, _ = front_state(settled_dump())
+        record("A kept window stays in front while 3 others come forward", keeper in front, f"front {front}")
+        activate(app_of(dump(), keeper))
+        press(CO, K["p"], 1.0)
+        record("⌃⌥P again lets it step back", keeper not in dump()["autoTile"]["kept"])
+    else:
+        record("Can focus the window to keep", False, f"focused {dump().get('focused')}, wanted {keeper}", warn=True)
+
+    # Minimising a front window: its spot is filled; bringing it back brings it to the front.
+    d = settled_dump()
+    front, waiting, used = front_state(d)
+    alone = single_window_apps(d, front)   # minimising its only window leaves the app with none in use
+    if alone and waiting:
+        gone = alone[0]
+        app = app_of(d, gone)
+        heir = max(waiting, key=lambda i: used.get(i, -1))
+        before = {i: frame_of(i) for i in front}
+        activate(app)
+        if dump().get("focused") == gone:
+            keys("press", "cmd", K["m"])
+            d = settled_dump()
+            front2, _, _ = front_state(d)
+            record("Minimising a front window: the waiting window used most lately takes its spot",
+                   gone not in front2 and len(front2) == len(front) and front2[front.index(gone)] == heir,
+                   f"{front} → {front2}, expected {heir}")
+            moved = [i for i in front if i != gone and i in front2 and not close(frame_of(i), before[i], 2)]
+            record("Minimising: the other front windows don't move", not moved, f"{moved}")
+            keys("unminimize", app)
+            d = settled_dump()
+            front3, _, _ = front_state(d)
+            record("Bringing it back from the Dock brings it to the front", gone in front3, f"front {front3}")
+        else:
+            record("Can focus the window to minimise", False, f"focused {dump().get('focused')}, wanted {gone}", warn=True)
+
+    # Auto: 3 on this 1920×1080 screen.
+    post("set:frontLimit=auto", 0.3)
+    d, _ = check_layout("Limit Auto: 3 in front on 1920×1080", "columns", 3)
+    record("Auto means 3 here", list(d["autoTile"]["limits"].values()) == [3], f"{d['autoTile']['limits']}")
+
+    # Auto-tile off: every waiting window comes back on screen.
+    press(CO, K["a"], 1.5)
+    d = dump()
+    screen = d["displays"][0]["frame"]
+    off = [w["id"] for w in windows()["windows"] if w["owner"] in ("TextEdit", "Finder", "Safari", "Google Chrome", "Terminal")
+           and min(showing([round(v) for v in w["frame"]], screen)) <= 4]
+    record("Auto-tile off: every waiting window comes back on screen", not off, f"still off screen: {off}")
+    press(CO, K["a"], 0.5)
+
+    # No limit: every window in front again.
+    post("set:frontLimit=none", 0.3)
+    d, _ = check_layout("No limit: all 7 in front again", "columns", 7)
+    check_waiting("No limit", d, 0)
+
+
 # ---------- the tests ----------
 
 def main():
@@ -618,6 +835,8 @@ def main():
         return
     with open(f"{OUT}/dump-start.json", "w") as f:
         json.dump(d, f, indent=1)
+    # Most checks need every window in front; the front-window limit has its own checks near the end.
+    post("set:frontLimit=none", 0.3)
     record("Accessibility allowed", d.get("trusted") is True)
     record("All shortcuts registered", not d.get("failedShortcuts"), ", ".join(d.get("failedShortcuts", [])))
     V = d["displays"][0]["visible"]
@@ -854,6 +1073,7 @@ def main():
 
     latest_command_wins(F)
     desktops_never_jump()
+    front_windows()
 
     # Switching off, then back on: the layout is remembered.
     choose("mainAndSide", "Main + Side before switching off", 7)

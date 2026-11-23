@@ -9,6 +9,9 @@ import TesseraCore
 /// - The latest command wins. A window you snap or maximise by hand is "pinned" and keeps that spot;
 ///   picking a layout afterwards puts it back into the layout, in its old place.
 /// - A "floating" window (⌃⌥W) is left alone until you tile it again, even when you change layout.
+/// - Only a few windows sit in front (Auto: as many as fit at a comfortable size). The rest wait
+///   just off the screen's edge. Using a waiting window brings it forward: it takes the spot of
+///   the front window used least lately, and no other window moves. See `FrontWindows`.
 @MainActor
 final class AutoTiler {
     static let shared = AutoTiler()
@@ -41,10 +44,17 @@ final class AutoTiler {
     /// What the last arrangement of each screen was, for the on-screen picture and the tests.
     private struct ScreenPlan {
         var style: LayoutStyle
+        /// The front windows, in spot order.
         var ids: [CGWindowID]
         var frames: [CGRect]
         var area: CGRect
         var fits: Bool
+        /// The desktop this was for (see `layoutKey`).
+        var key: String
+        /// Windows waiting off screen, the one used most lately first.
+        var waiting: [CGWindowID]
+        /// How many windows may sit in front (nil: no limit).
+        var limit: Int?
     }
     private var plans: [String: ScreenPlan] = [:]
     /// How many points a window may come up short of its tile (Terminal sizes itself in whole characters).
@@ -65,6 +75,21 @@ final class AutoTiler {
     private var switchingSince: Date?
     /// The latest move or resize by something else, per window: only the last one counts.
     private var appMoveTicket: [CGWindowID: Int] = [:]
+
+    // Front windows.
+    /// When each window was last used: a bigger number is more recent.
+    private var lastUsed: [CGWindowID: Int] = [:]
+    private var clock = 0
+    /// Windows to bring to the front at the next arrangement (just opened, or put back into the
+    /// tiles), with when they asked.
+    private var wanted: [CGWindowID: Date] = [:]
+    /// Windows kept in front (⌃⌥P): they never step back to make room.
+    private var kept: Set<CGWindowID> = []
+    /// Where each window last sat in front, to put waiting windows back on screen when Tessera stops.
+    private var lastFrontFrame: [CGWindowID: CGRect] = [:]
+    /// Front windows that just closed. They stay in the order until the next arrangement has
+    /// filled their spot (by then the app has chosen which window you're in next).
+    private var closing: Set<CGWindowID> = []
     private let debouncer = Debouncer(delay: 0.12)
     private let watchdog = RepeatingTimer()
 
@@ -104,6 +129,7 @@ final class AutoTiler {
             running = false
             watchdog.stop()
             debouncer.cancel()
+            releaseWaiting()
             order.removeAll()
             home.removeAll()
             pinned.removeAll()
@@ -112,6 +138,8 @@ final class AutoTiler {
             plans.removeAll()
             crowded.removeAll()
             candidate = nil
+            wanted.removeAll()
+            closing.removeAll()
         } else {
             scheduleRetile()
         }
@@ -195,8 +223,119 @@ final class AutoTiler {
         Notice.shared.show(text, picture: picture)
     }
 
-    /// How many windows are tiled on a screen now.
+    /// How many windows are tiled on a screen now (the front ones).
     func tiledCount(on screen: DisplayInfo) -> Int { plans[screen.stableID]?.ids.count ?? 0 }
+
+    // MARK: Front windows
+
+    /// How many windows may sit in front on a screen (nil: no limit).
+    func frontLimit(on screen: DisplayInfo) -> Int? { settings.frontLimit.count(for: screen.visibleFrame.size) }
+
+    /// The windows on a screen's current desktop: in front (spot order) and waiting (used most lately first).
+    func windows(on screen: DisplayInfo) -> (front: [TrackedWindow], waiting: [TrackedWindow]) {
+        guard let plan = plans[screen.stableID] else { return ([], []) }
+        return (plan.ids.compactMap(registry.window), plan.waiting.compactMap(registry.window))
+    }
+
+    /// The screen you're working on.
+    var workingScreen: DisplayInfo? { currentScreen() }
+
+    func isWaiting(_ id: CGWindowID) -> Bool { plans.values.contains { $0.waiting.contains(id) } }
+
+    func isKept(_ id: CGWindowID) -> Bool { kept.contains(id) }
+
+    /// Brings a window to the front (from the menu or the window picker) and switches to it.
+    func bringForward(_ id: CGWindowID) {
+        guard let window = registry.window(id) else { return }
+        touch(id)
+        if isWaiting(id) {
+            wanted[id] = Date()
+            retile()
+        }
+        focus(window)
+    }
+
+    /// ⌃⌥P: keep the focused window in front, or let it step back again.
+    func toggleKeep() {
+        guard isOn, let window = registry.focusedWindow(), canTile(window) else {
+            NSSound.beep()
+            return
+        }
+        let id = window.id
+        if kept.remove(id) != nil {
+            Notice.shared.show("Can step back again")
+            return
+        }
+        // At least one front spot must stay free for the windows you use.
+        if let screen = home[id], let display = Screens.all().first(where: { $0.stableID == screen }),
+           let limit = frontLimit(on: display) {
+            let keptHere = kept.filter { home[$0] == screen && registry.window($0) != nil }.count
+            if keptHere >= max(limit - 1, 1) {
+                NSSound.beep()
+                Notice.shared.show("You can keep \(max(limit - 1, 1)) of \(limit) windows in front here")
+                return
+            }
+        }
+        kept.insert(id)
+        rejoin(id)
+        Notice.shared.show("Kept in front")
+        retile()
+    }
+
+    /// When each window was last used, for the tests.
+    private func touch(_ id: CGWindowID) {
+        clock += 1
+        lastUsed[id] = clock
+    }
+
+    /// A window comes back into the tiles (from floating or a hand snap): it asks for a front spot.
+    private func rejoin(_ id: CGWindowID) {
+        pinned[id] = nil
+        floating.remove(id)
+        wanted[id] = Date()
+    }
+
+    /// Switches to a window: raises it and makes its app the active one.
+    private func focus(_ window: TrackedWindow) {
+        window.element.set(kAXMainAttribute, bool: true)
+        window.element.perform(kAXRaiseAction)
+        AXElement.application(window.pid).set(kAXFrontmostAttribute, bool: true)
+        NSRunningApplication(processIdentifier: window.pid)?.activate()
+    }
+
+    /// Puts every waiting window back on screen where it last sat in front (auto-tile off, or quitting).
+    func releaseWaiting() {
+        let displays = Screens.all()
+        let screens = displays.map(\.frame)
+        for plan in plans.values {
+            for id in plan.waiting {
+                guard let window = registry.window(id), let frame = window.frame,
+                      FrontWindows.isWaiting(frame, screens: screens) else { continue }
+                let area = home[id].flatMap { s in displays.first { $0.stableID == s } }?.visibleFrame
+                    ?? displays.first?.visibleFrame ?? .zero
+                mover.move(window, to: lastFrontFrame[id] ?? Self.centred(frame.size, in: area), within: area)
+            }
+        }
+    }
+
+    /// Windows left off screen by a Tessera that stopped without tidying up (a crash, or a force
+    /// quit) come back to the middle of their screen.
+    func rescueStranded() {
+        let displays = Screens.all()
+        let screens = displays.map(\.frame)
+        for id in WindowServer.onScreenIDs() {
+            guard let window = registry.window(id), let frame = window.frame,
+                  FrontWindows.isWaiting(frame, screens: screens),
+                  let display = Screens.display(for: frame, in: displays) else { continue }
+            Log.info("Bringing window \(id) back on screen")
+            mover.move(window, to: Self.centred(frame.size, in: display.visibleFrame), within: display.visibleFrame)
+        }
+    }
+
+    private static func centred(_ size: CGSize, in area: CGRect) -> CGRect {
+        let width = min(size.width, area.width), height = min(size.height, area.height)
+        return CGRect(x: (area.midX - width / 2).rounded(), y: (area.midY - height / 2).rounded(), width: width, height: height)
+    }
 
     /// Makes the focused window the main one (or swaps the main window with the next).
     func swapWithMain() {
@@ -204,8 +343,7 @@ final class AutoTiler {
             NSSound.beep()
             return
         }
-        pinned[window.id] = nil
-        floating.remove(window.id)
+        rejoin(window.id)
         let active = Set(plans[screen]?.ids ?? []).union([window.id])
         order[screen] = TileOrder.promote(window.id, in: list, among: active)
         retile()
@@ -219,8 +357,7 @@ final class AutoTiler {
         }
         let id = window.id
         if floating.contains(id) || pinned[id] != nil {
-            floating.remove(id)
-            pinned[id] = nil
+            rejoin(id)
             if let frame = window.frame { rehome(id, frame: frame) }   // You may have moved it to another screen.
             Notice.shared.show("Tiled")
         } else if canTile(window) {
@@ -254,7 +391,8 @@ final class AutoTiler {
 
     /// Puts a pinned window back into the tiles. Returns false if it wasn't pinned.
     func unpin(_ window: TrackedWindow) -> Bool {
-        guard pinned.removeValue(forKey: window.id) != nil else { return false }
+        guard pinned[window.id] != nil else { return false }
+        rejoin(window.id)
         retile()
         return true
     }
@@ -264,6 +402,7 @@ final class AutoTiler {
         removeFromOrder(window.id)
         home[window.id] = display.stableID
         order[display.stableID, default: []].append(window.id)
+        wanted[window.id] = Date()   // You sent it there to use it.
         retile()
     }
 
@@ -272,7 +411,7 @@ final class AutoTiler {
         pendingAfterMouse = false
         let id = window.id
         guard isOn, !floating.contains(id), canTile(window) else { return }
-        pinned[id] = nil
+        rejoin(id)
         guard let target = Screens.display(containing: point, in: Screens.all()) else {
             retile()
             return
@@ -352,9 +491,20 @@ final class AutoTiler {
         case .appTerminated(_, let ids):
             ids.forEach(forget)
             scheduleRetile()
-        case .created, .minimized, .deminimized, .appHidden, .appShown, .appLaunched:
+        case .created(let id), .deminimized(let id):
+            // You just opened it (or brought it back from the Dock): it comes to the front.
+            touch(id)
+            wanted[id] = Date()
             scheduleRetile()
-        case .focused, .titleChanged, .appActivated:
+        case .minimized, .appHidden, .appShown, .appLaunched:
+            scheduleRetile()
+        case .focused, .appActivated:
+            // You're using a window. If it was waiting, the next arrangement brings it forward
+            // (the debounce means ⌘` or app switching only counts the window you end on).
+            guard let window = registry.focusedWindow() else { return }
+            touch(window.id)
+            if isWaiting(window.id) { scheduleRetile() }
+        case .titleChanged:
             break
         }
     }
@@ -432,6 +582,11 @@ final class AutoTiler {
         }
         lastSeen = Set(visibleIDs)
         candidate = nil
+        // A window seen for the first time counts as used by its place in the stack: the one on top most lately.
+        for id in visibleIDs.reversed() where lastUsed[id] == nil { touch(id) }
+        wanted = wanted.filter { Date().timeIntervalSince($0.value) < 3 }
+        // The window you're using belongs in front.
+        let focusedID = registry.focusedWindow()?.id
 
         // Pick up windows Accessibility didn't tell us about.
         let unknown = Set(visibleIDs.filter { registry.window($0) == nil }).subtracting(rescannedFor)
@@ -460,16 +615,42 @@ final class AutoTiler {
             let here = present[screen] ?? []
             // Keep the saved order (with windows on other desktops, floating and pinned ones);
             // new windows join at the end.
-            var list = (order[screen] ?? []).filter { registry.window($0) != nil && home[$0] == screen }
+            var list = (order[screen] ?? []).filter { (registry.window($0) != nil || closing.contains($0)) && home[$0] == screen }
             for id in here where !list.contains(id) { list.append(id) }
-            order[screen] = list
-            let active = list.filter { here.contains($0) && pinned[$0] == nil && !floating.contains($0) }
-            guard !active.isEmpty else {
+            let taking = Set(here.filter { pinned[$0] == nil && !floating.contains($0) })
+            let key = layoutKey(display, spaces)
+            // Front windows: the first few take part in the layout; the rest wait off screen.
+            let limit = frontLimit(on: display)
+            if limit != nil, let previous = plans[screen], previous.key == key {
+                // A front window left (closed, minimised, hidden...). The window you're in now
+                // takes its exact spot if it was waiting (apps pick another of their windows when
+                // one closes); otherwise the waiting window used most lately does.
+                let gone = previous.ids.filter { !taking.contains($0) }
+                if !gone.isEmpty {
+                    var recency = lastUsed
+                    if let focusedID { recency[focusedID] = Int.max }
+                    let others = list.filter { taking.contains($0) && !previous.ids.contains($0) }
+                    list = FrontWindows.fillSpots(left: gone, in: list, waiting: others, recency: recency)
+                }
+            }
+            list.removeAll { closing.contains($0) }
+            var tiled = list.filter(taking.contains)
+            guard !tiled.isEmpty else {
+                order[screen] = list
                 plans[screen] = nil
                 continue
             }
+            // Kept windows, windows just opened or put back, and the one you're using come to the front.
+            var wish = wanted.filter { taking.contains($0.key) }.sorted { $0.value < $1.value }.map(\.key)
+            if let focusedID, taking.contains(focusedID), !wish.contains(focusedID) { wish.append(focusedID) }
+            // The window you're in never steps back to make room, even if you last clicked it long ago.
+            let staying = kept.union(focusedID.map { [$0] } ?? [])
+            tiled = FrontWindows.arrange(tiled, limit: limit, kept: staying, wanted: wish, recency: lastUsed)
+            for id in wish { wanted[id] = nil }
+            list = FrontWindows.merge(tiled, into: list)
+            order[screen] = list
+            let (active, waiting) = FrontWindows.split(tiled, limit: limit)
 
-            let key = layoutKey(display, spaces)
             if let pending = pendingLayout[screen] {
                 if here.contains(pending.window) {
                     spaceLayouts[key] = pending.style
@@ -489,15 +670,26 @@ final class AutoTiler {
                 minimumSizes: active.map { minimums[$0] }
             )
             if plan.fits { crowded.remove(screen) } else { crowded.insert(screen) }
-            plans[screen] = ScreenPlan(style: style, ids: active, frames: plan.frames, area: freeArea(on: display), fits: plan.fits)
+            plans[screen] = ScreenPlan(style: style, ids: active, frames: plan.frames, area: freeArea(on: display),
+                                       fits: plan.fits, key: key, waiting: waiting, limit: limit)
             for (id, frame) in zip(active, plan.frames) {
                 guard let window = windows[id] else { continue }
                 planned[id] = frame
+                lastFrontFrame[id] = frame
                 let before = mover.moveCount
                 mover.move(window, to: frame, within: display.visibleFrame, slack: Self.slack)
                 if mover.moveCount != before { moved.append(id) }   // Only check windows that really moved.
             }
+            // Waiting windows: just off the bottom corner, keeping their size.
+            let otherScreens = displays.filter { $0.stableID != screen }.map(\.frame)
+            for id in waiting {
+                guard let window = windows[id], let frame = window.frame else { continue }
+                planned[id] = nil
+                mover.move(window, to: FrontWindows.waitingFrame(size: frame.size, screen: display.frame, otherScreens: otherScreens))
+            }
         }
+        for id in closing { home[id] = nil }
+        closing.removeAll()
         if !moved.isEmpty {
             after(0.35) { [weak self] in self?.learnMinimums(moved) }
         }
@@ -635,7 +827,7 @@ final class AutoTiler {
     private func unpinVisible(on screen: DisplayInfo) {
         let visible = Set(currentMembers(Screens.all()).ids)
         for id in pinned.keys where visible.contains(id) && home[id] == screen.stableID {
-            pinned[id] = nil
+            rejoin(id)
         }
     }
 
@@ -678,7 +870,16 @@ final class AutoTiler {
     }
 
     private func forget(_ id: CGWindowID) {
-        removeFromOrder(id)
+        // A front window closed while others wait: keep its place until the next arrangement fills it.
+        if let screen = home[id], let plan = plans[screen], plan.ids.contains(id), !plan.waiting.isEmpty {
+            closing.insert(id)
+        } else {
+            removeFromOrder(id)
+        }
+        lastUsed[id] = nil
+        wanted[id] = nil
+        kept.remove(id)
+        lastFrontFrame[id] = nil
         floating.remove(id)
         pinned[id] = nil
         appMoveTicket[id] = nil
@@ -704,6 +905,11 @@ final class AutoTiler {
             "floating": floating.map(Int.init),
             "pinned": Dictionary(uniqueKeysWithValues: pinned.map { (String($0.key), NSStringFromRect($0.value)) }),
             "crowded": Array(crowded),
+            "frontLimit": settings.frontLimit.raw,
+            "limits": Dictionary(Screens.all().map { ($0.stableID, frontLimit(on: $0) ?? 0) }, uniquingKeysWith: { a, _ in a }),
+            "waiting": plans.mapValues { $0.waiting.map(Int.init) },
+            "kept": kept.map(Int.init),
+            "lastUsed": Dictionary(uniqueKeysWithValues: lastUsed.map { (String($0.key), $0.value) }),
             "plans": plans.mapValues { plan -> [String: Any] in
                 [
                     "style": plan.style.rawValue,

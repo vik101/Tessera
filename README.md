@@ -56,6 +56,8 @@ More actions are in the menu with no shortcut yet: Centre Half, Centre Two Third
 | ⌃⌥⇧L | Previous layout style |
 | ⌃⌥M | Swap this window with the main window |
 | ⌃⌥W | Float this window (Tessera leaves it alone), or tile it again |
+| ⌃⌥Space | Bring a window forward: pick from every window on this desktop |
+| ⌃⌥P | Keep this window in front, or let it step back again |
 
 ## Snapping with the mouse
 
@@ -104,6 +106,30 @@ flowchart LR
     B -- "⌃⌥3 Rows" --> C["All 4 in Rows<br/>the big one back in its old place"]
 ```
 
+### Windows in front
+
+Only a few windows sit in front, laid out. The rest wait just off the edge of the screen. So a busy desktop stays tidy, even on a laptop.
+
+**How many:** Auto, the default, shows as many as fit at a comfortable size. That's 3 on a 14- or 16-inch MacBook Pro or a 1920×1080 screen, 2 on a 13-inch MacBook Air, 4 on a 27-inch screen and 6 on an ultrawide. Change it under **Windows in Front** in the menu, or in Settings: 2 to 6, or No Limit.
+
+**Use a waiting window and it comes forward.** Click it in the Dock, ⌘Tab to its app, use ⌘` or Mission Control. It takes the spot of the front window you used least lately, and that one waits instead. The other front windows don't move.
+
+```mermaid
+flowchart LR
+    A["In front: Safari, Terminal, TextEdit<br/>waiting: Chrome, Mail"] -- "you click Chrome<br/>in the Dock" --> B["In front: Safari, Terminal, Chrome<br/>waiting: TextEdit, Mail"]
+```
+
+TextEdit was used least lately, so Chrome takes its spot. Safari and Terminal stay exactly where they were.
+
+- **New windows** come to the front, since you just opened them.
+- **A closed or minimised front window** leaves its spot to the window you're in next if it was waiting, or else to the waiting window used most lately.
+- **Pick by hand:** the menu lists the windows in front and the ones waiting. Click a waiting one to bring it forward. Or press **⌃⌥Space** for the window picker: every window on this desktop, with a number. Press the number (or ↑ ↓ and Return).
+- **⌃⌥P keeps a window in front.** It never steps back to make room. You can keep all but one of the front spots, so there's always room for the window you use next.
+- **Picking a layout** only rearranges the front windows. Waiting windows stay waiting.
+- **Turning auto-tile off, or quitting Tessera,** puts every waiting window back on screen where it last sat. If Tessera ever crashes, the next launch brings any window left off screen back to the middle.
+
+⌃⌥Space is also macOS's shortcut for switching keyboard language when you have more than one. If you use that, give the picker another key in Settings.
+
 **Desktops (Spaces).** Only windows on the desktop you can see take part. Swiping to another desktop never moves a window, so nothing jumps. Each desktop keeps its own layout. A desktop Tessera hasn't seen yet starts with the layout you picked last. A window set to show on every desktop is left alone.
 
 ## Settings
@@ -112,7 +138,7 @@ Open **Settings…** from the menu (⌘,). It is one page:
 
 - Open at login, and the gap between windows (0–30 points).
 - Drag-to-snap, restore size on drag, and size cycling on/off.
-- Auto-tile on/off, the layout for each screen, and the main window's share in Main + Side.
+- Auto-tile on/off, the layout for each screen, how many windows sit in front, and the main window's share in Main + Side.
 - Apps Tessera leaves alone.
 - Every keyboard shortcut. Click one and press new keys. Esc cancels; Delete removes it. If a key is taken, it moves to the new action and Tessera tells you.
 
@@ -136,10 +162,12 @@ flowchart TB
     subgraph Core["TesseraCore (pure maths, tested)"]
         CALC["SnapCalculator<br/>where a snap goes"]
         PLAN["TilePlanner<br/>where tiles go"]
+        FRONT["FrontWindows<br/>which windows sit in front"]
         KEYS["ShortcutSet<br/>who owns which key"]
     end
     SNAP --> CALC
     TILE --> PLAN
+    TILE --> FRONT
     CMD --> KEYS
     MOVE --> AX["macOS Accessibility"]
 ```
@@ -149,12 +177,12 @@ All the maths lives in **TesseraCore**, which has no AppKit. That is where almos
 | Folder | What's inside |
 | --- | --- |
 | `Sources/TesseraCore/Snapping` | `SnapAction` (every action, its title, default shortcut and screen region) and `SnapCalculator` |
-| `Sources/TesseraCore/Tiling` | `TilePlanner` (layout styles, Auto's scoring, space left by snapped windows) |
+| `Sources/TesseraCore/Tiling` | `TilePlanner` (layout styles, Auto's scoring, space left by snapped windows) and `FrontWindows` (the front-window limit: who sits in front, who waits, who steps back) |
 | `Sources/TesseraCore/Shortcuts` | Key combos, commands, and the user's shortcut set |
 | `Sources/Tessera/Snapping` | Keyboard and mouse snapping |
 | `Sources/Tessera/Tiling` | `AutoTiler`: decides which windows to tile and when |
 | `Sources/Tessera/Windows` | Window tracking, screens, desktops (`Spaces.swift`), moving windows |
-| `Sources/Tessera/UI` | Menu, Settings, permission window, overlays |
+| `Sources/Tessera/UI` | Menu, Settings, the window picker (`WindowPicker.swift`), permission window, overlays |
 | `Tests/TesseraCoreTests` | Unit tests for every snap and layout |
 | `scripts/` | Build, release, and the real-Mac test (`smoke-test.sh`, `ci/check.py`) |
 
@@ -167,6 +195,19 @@ A tiler that moves windows when nothing changed feels broken. Three rules in `Au
 3. **Never ask twice for the same thing.** If a window can't get as small as its tile, `WindowMover` remembers where it ended up. Asking again would only make it jump and come back, so it doesn't.
 
 macOS has no public way to read desktops. `Spaces.swift` uses the window server's own functions, like yabai and Amethyst do. If a future macOS removes them, Tessera still works, and rule 2 keeps it calm.
+
+### How the front-window limit works
+
+All the rules are small functions in `FrontWindows.swift`, with tests in `FrontWindowsTests.swift`. Each one only reorders the list of windows on a screen (the tile order). The first few in the list sit in front; the rest wait. Because the list is the same one swapping and dragging use, those keep working unchanged.
+
+| When | Rule |
+| --- | --- |
+| A waiting window is used | `bringForward`: it swaps places with the front window used least lately (never a kept one) |
+| Windows ask for the front | `arrange`: kept windows first, then new or used ones, oldest wish first; the rest line up most lately used first |
+| A front window leaves | `fillSpots`: the window you're in (if waiting), or else the waiting one used most lately, takes its exact spot |
+| Any time | `waitingFrame`: waiting windows sit just past a bottom corner, one point on screen, never over another screen |
+
+`AutoTiler` keeps a "last used" number for each window. It goes up whenever you focus a window.
 
 ### Build and test
 
@@ -195,13 +236,14 @@ Add a test in `Tests/TesseraCoreTests` with each change. The `everyWindowGetsIts
 
 ### Testing on a real Mac
 
-`.github/workflows/tessera-build.yml` runs on GitHub's Macs for every push, on macOS 15 and macOS 26 (Tahoe). It builds, runs the unit tests, then `scripts/smoke-test.sh` opens TextEdit, Finder, Safari, Chrome and Terminal on a 1920×1080 screen and presses the real shortcuts. `scripts/ci/check.py` makes about 470 checks:
+`.github/workflows/tessera-build.yml` runs on GitHub's Macs for every push, on macOS 15 and macOS 26 (Tahoe). It builds, runs the unit tests, then `scripts/smoke-test.sh` opens TextEdit, Finder, Safari, Chrome and Terminal on a 1920×1080 screen and presses the real shortcuts. `scripts/ci/check.py` makes about 520 checks:
 
 - Every snap: each window's exact position against what it should be, and drags to every edge.
 - Every layout: picked with ⌃⌥1–5, two full rounds of ⌃⌥L, back again with ⌃⌥⇧L, and clicked in the menu (through Accessibility, as a person would). Each time it checks the layout really has that shape (Columns are side by side and full height, and so on), the windows are where planned, nothing overlaps when it fits, and the second round matches the first.
 - With 7, 3 and 1 windows, and while windows open, close, hide and minimise.
 - The latest command wins: maximise (Tessera's, and macOS Fill and full screen), then a layout. Every window must join it.
 - Desktops: it adds a second desktop, gives it its own layout, then swipes back and forth. It watches every window ten times a second, and fails if any moves.
+- Windows in front: with a limit of 3, the other windows wait off screen. It then brings windows forward from their app, the menu and the ⌃⌥Space picker, and checks each one takes the right spot and nothing else moves. It also covers new and closed windows, minimising, ⌃⌥P, Auto, turning auto-tile off and No Limit.
 
 Results and screenshots go to the `tessera-ci` branch (`tessera-ci-latest` for Tahoe).
 
@@ -220,4 +262,5 @@ The test talks to Tessera through a hidden switch that is off by default:
 | A window won't shrink into its tile | Some apps have a minimum size. Tessera learns it and picks a layout it fits. If none fits, it stays as small as the app allows. |
 | Auto-tile grabs a window you want free | Float it (⌃⌥W) or ignore its app from the menu. |
 | One window stays put when you change layout | It is floating. Press ⌃⌥W on it to tile it again. |
+| A window seems to have vanished | It's probably waiting just off the screen's edge. Click it in the Dock, ⌘Tab to it, or press ⌃⌥Space. Set **Windows in Front › No Limit** to show every window. |
 | See what Tessera is doing | Console app, filter by `com.vikram.Tessera`. |

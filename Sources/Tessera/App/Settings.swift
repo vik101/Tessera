@@ -26,6 +26,8 @@ final class Settings: ObservableObject {
     @Published var layouts: [String: LayoutStyle] {
         didSet { save("layouts", layouts.mapValues(\.rawValue), .tiling) }
     }
+    /// How many windows sit in front on each screen; the rest wait off screen until you use them.
+    @Published var frontLimit: FrontLimit { didSet { save("frontLimit", frontLimit.raw, .tiling) } }
     /// Share of the screen the main window takes in Main + Side (0.3–0.7).
     @Published var mainRatio: Double { didSet { save("mainRatio", mainRatio, .tiling) } }
 
@@ -53,6 +55,7 @@ final class Settings: ObservableObject {
             "cycleSizes": true,
             "autoTile": false,
             "mainRatio": 0.5,
+            "frontLimit": 0,
             "ignoredApps": ["com.apple.calculator", "com.apple.systempreferences"],
         ])
         gap = store.integer(forKey: "gap")
@@ -61,6 +64,7 @@ final class Settings: ObservableObject {
         cycleSizes = store.bool(forKey: "cycleSizes")
         autoTile = store.bool(forKey: "autoTile")
         mainRatio = store.double(forKey: "mainRatio")
+        frontLimit = FrontLimit(raw: store.integer(forKey: "frontLimit"))
         ignoredApps = store.stringArray(forKey: "ignoredApps") ?? []
         let saved = store.dictionary(forKey: "layouts") as? [String: String] ?? [:]
         layouts = saved.compactMapValues(LayoutStyle.init(rawValue:))

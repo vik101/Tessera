@@ -130,6 +130,8 @@ struct ShortcutTests {
         #expect(set.combo(for: .layout(.auto))?.description == "⌃⌥1")
         #expect(set.combo(for: .layout(.mainAndSide))?.description == "⌃⌥5")
         #expect(set.combo(for: .tile(.previousLayout))?.description == "⌃⌥⇧L")
+        #expect(set.combo(for: .tile(.showWindows))?.description == "⌃⌥Space")
+        #expect(set.combo(for: .tile(.keepInFront))?.description == "⌃⌥P")
     }
 
     @Test func assigningATakenComboMovesIt() {

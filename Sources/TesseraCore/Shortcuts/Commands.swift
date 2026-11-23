@@ -3,6 +3,10 @@ import Foundation
 /// Auto-tile commands.
 public enum TileCommand: String, CaseIterable, Codable, Sendable {
     case toggleAutoTile, nextLayout, previousLayout, swapWithMain, toggleFloat, retile
+    /// The window picker: every window on this desktop; pick one to bring it to the front.
+    case showWindows
+    /// Keep the focused window in front: it never steps back to make room.
+    case keepInFront
 
     public var title: String {
         switch self {
@@ -12,6 +16,8 @@ public enum TileCommand: String, CaseIterable, Codable, Sendable {
         case .swapWithMain: "Swap with Main"
         case .toggleFloat: "Float or Tile Window"
         case .retile: "Retile"
+        case .showWindows: "Bring a Window Forward…"
+        case .keepInFront: "Keep Window in Front"
         }
     }
 
@@ -25,6 +31,8 @@ public enum TileCommand: String, CaseIterable, Codable, Sendable {
         case .swapWithMain: return KeyCombo(KeyCode.m, co)
         case .toggleFloat: return KeyCombo(KeyCode.w, co)
         case .retile: return nil
+        case .showWindows: return KeyCombo(KeyCode.space, co)
+        case .keepInFront: return KeyCombo(KeyCode.p, co)
         }
     }
 }

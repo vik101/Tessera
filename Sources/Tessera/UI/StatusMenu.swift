@@ -99,6 +99,41 @@ final class StatusMenu: NSObject, NSMenuDelegate {
         menu.addItem(commandItem(.tile(.previousLayout), shortcuts: shortcuts, icon: nil))
         menu.addItem(.separator())
 
+        // The windows on this desktop: in front, then waiting. Click one to bring it forward.
+        if tiler.isOn, let screen {
+            let (front, waiting) = tiler.windows(on: screen)
+            let limit = tiler.frontLimit(on: screen)
+            if !front.isEmpty || !waiting.isEmpty {
+                menu.addItem(.sectionHeader(title: limit.map { "In Front (\(front.count) of \($0))" } ?? "In Front"))
+                for window in front { menu.addItem(windowItem(window, kept: tiler.isKept(window.id))) }
+                if !waiting.isEmpty {
+                    menu.addItem(.sectionHeader(title: "Waiting · Click to Bring Forward"))
+                    for window in waiting { menu.addItem(windowItem(window, kept: false)) }
+                }
+            }
+        }
+        let limits = NSMenu()
+        limits.autoenablesItems = false
+        let autoCount = screen.map { FrontLimit.autoCount(for: $0.visibleFrame.size) }
+        for choice in FrontLimit.choices {
+            let title = choice == .auto ? (autoCount.map { "Auto (\($0) here)" } ?? "Auto") : choice.title
+            let limitItem = item(title, #selector(setFrontLimit(_:)))
+            limitItem.representedObject = choice.raw
+            limitItem.state = settings.frontLimit == choice ? .on : .off
+            limits.addItem(limitItem)
+        }
+        let limitParent = NSMenuItem(title: "Windows in Front", action: nil, keyEquivalent: "")
+        limitParent.submenu = limits
+        menu.addItem(limitParent)
+        let picker = commandItem(.tile(.showWindows), shortcuts: shortcuts, icon: nil)
+        picker.isEnabled = tiler.isOn
+        menu.addItem(picker)
+        let keep = commandItem(.tile(.keepInFront), shortcuts: shortcuts, icon: nil)
+        keep.isEnabled = tiler.isOn
+        keep.state = WindowRegistry.shared.focusedWindow().map { tiler.isKept($0.id) } == true ? .on : .off
+        menu.addItem(keep)
+        menu.addItem(.separator())
+
         let swap = commandItem(.tile(.swapWithMain), shortcuts: shortcuts, icon: nil)
         swap.isEnabled = tiler.isOn
         menu.addItem(swap)
@@ -149,7 +184,34 @@ final class StatusMenu: NSObject, NSMenuDelegate {
         return item
     }
 
+    /// A window in the "In Front" or "Waiting" list: app icon, app name and window title.
+    private func windowItem(_ window: TrackedWindow, kept: Bool) -> NSMenuItem {
+        var title = window.title.isEmpty || window.title == window.appName ? window.appName : "\(window.appName) — \(window.title)"
+        if title.count > 52 { title = String(title.prefix(51)) + "…" }
+        if kept { title += " (kept)" }
+        let item = item(title, #selector(bringWindowForward(_:)))
+        item.representedObject = Int(window.id)
+        item.indentationLevel = 1
+        if let icon = NSRunningApplication(processIdentifier: window.pid)?.icon?.copy() as? NSImage {
+            icon.size = NSSize(width: 16, height: 16)
+            item.image = icon
+        }
+        return item
+    }
+
     // MARK: Actions
+
+    @objc private func bringWindowForward(_ sender: NSMenuItem) {
+        guard let id = sender.representedObject as? Int else { return }
+        AutoTiler.shared.bringForward(CGWindowID(id))
+    }
+
+    @objc private func setFrontLimit(_ sender: NSMenuItem) {
+        guard let raw = sender.representedObject as? Int else { return }
+        Settings.shared.frontLimit = FrontLimit(raw: raw)
+        let limit = Settings.shared.frontLimit
+        Notice.shared.show(limit == .unlimited ? "Every window in front" : "Windows in front: \(limit.title)")
+    }
 
     @objc private func runCommand(_ sender: NSMenuItem) {
         guard let id = sender.representedObject as? String, let command = Command(id: id) else { return }

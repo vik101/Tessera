@@ -45,6 +45,8 @@ final class TestHooks: NSObject {
                 switch parts[0] {
                 case "autoTile": settings.autoTile = parts[1] == "1"
                 case "gap": settings.gap = Int(parts[1]) ?? 0
+                case "frontLimit":
+                    settings.frontLimit = parts[1] == "auto" ? .auto : parts[1] == "none" ? .unlimited : .fixed(Int(parts[1]) ?? 3)
                 case "layout":
                     if let style = LayoutStyle(rawValue: parts[1]) {
                         for display in Screens.all() { AutoTiler.shared.setLayout(style, for: display, notify: false) }
@@ -66,6 +68,7 @@ final class TestHooks: NSObject {
                 "app": window.bundleID,
                 "frame": rect(frame),
                 "tiled": AutoTiler.shared.isTiled(window),
+                "waiting": AutoTiler.shared.isWaiting(info.id),
                 "standard": window.isStandard,
                 "fullScreen": window.element.isFullScreen,
                 "spaces": Spaces.spaces(of: info.id).sorted().map { NSNumber(value: $0) },
@@ -81,6 +84,7 @@ final class TestHooks: NSObject {
             "focused": focused.map { Int($0.id) } ?? 0,
             "windows": windows,
             "autoTile": AutoTiler.shared.debugState(),
+            "picker": WindowPicker.shared.debugState(),
             "gap": Settings.shared.gap,
             "layouts": Settings.shared.layouts.mapValues(\.rawValue),
             "autoTileSetting": Settings.shared.autoTile,

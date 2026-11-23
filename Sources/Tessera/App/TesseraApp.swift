@@ -39,6 +39,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         Log.info("Tessera \(AppInfo.version) started")
     }
 
+    /// Waiting windows sit just off screen: put them back before Tessera goes.
+    func applicationWillTerminate(_ notification: Notification) {
+        AutoTiler.shared.releaseWaiting()
+    }
+
     /// Opening Tessera again (from Finder or Spotlight) shows Settings.
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         SettingsWindow.shared.show()
@@ -52,6 +57,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         DragSnapper.shared.start()
         AutoTiler.shared.start()
         Log.info("Window engine started")
+        // A Tessera that crashed or was force-quit may have left waiting windows off screen.
+        after(1.5) {
+            if !AutoTiler.shared.isOn { AutoTiler.shared.rescueStranded() }
+        }
         // Tessera has no window of its own, so say hello: otherwise opening it looks like nothing happened.
         if !TestHooks.shared.isOn {
             after(0.6) {
