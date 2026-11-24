@@ -2,6 +2,11 @@
 
 Newest first. Each version's lines become the release notes in the update window.
 
+## 2.5.1
+
+- With auto-tile on, ⌃⌥ + arrow walks a window one spot through the layout, trading places with the window that way. The layout keeps its shape. Past the screen's edge it goes to the next screen.
+- Unplugging a screen or closing the laptop lid no longer loses its layout: plug it back in and its windows go back to it, in order, with the same layout.
+
 ## 2.5.0
 
 - Rectangle's other window actions: ninths, eighths, corner thirds, Centre Prominently, Specified Size, Tile All, Tile in Rows and Columns, Cascade, Reverse All, and stepping through windows stacked on one spot.

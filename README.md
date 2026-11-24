@@ -57,6 +57,8 @@ The snap shortcuts are Rectangle's defaults. Change any of them in **Settings**.
 | ⌃⌥⌘→ | Next Display | ⌃⌥C | Centre |
 | ⌃⌥⌘← | Previous Display | ⌃⌥⌫ | Restore |
 
+With auto-tile on, the four arrow keys move a tiled window through the layout instead (see [Auto-tile](#auto-tile)).
+
 More actions are in the menu with no shortcut yet: Centre Half, Centre Two Thirds, Almost Maximise, Centre Prominently (centred, a little high), Specified Size (1680 × 1050 points unless you change it in Settings), Move to Edge, Quarters, Sixths, Corner Thirds (two thirds wide, half high), Eighths and Ninths. With these, Tessera has every single-window action in Rectangle's free version. Give any of them a key in Settings, or run it from a script (see [Scripts and links](#scripts-and-links)).
 
 **Auto-tile shortcuts** use keys Rectangle doesn't, so the two never clash:
@@ -165,6 +167,8 @@ How Auto chooses: it tries every grid, plus columns, rows and main + side. It sc
 
 **Working with tiles:**
 
+- **⌃⌥ + arrow walks a window through the layout.** It trades places with the window that way, and every spot keeps its size, so the layout keeps its shape. In Columns, ⌃⌥→ moves it one column right; in Main + Side, ⌃⌥→ on the main window swaps it with the top side window. Past the screen's edge it goes to the next screen that way. (Left Half and the other halves from the menu or a link still snap a window and keep it there.)
+
 - **New windows** join at the end. Closed windows leave a space that the rest fill.
 - **Drag** one tile onto another to swap them. Drag a tile to another screen to move it there.
 - **Make a tile larger or smaller** with **⌃⌥=** and **⌃⌥−**. It grows into the tiles around it, and they all shrink to make room, so the layout keeps its shape. Or drag the edge between two tiles: that edge stays where you let go, and only the tile on the other side gives way. **⌃⌥⌫** (Restore) evens a tile out again, and picking a layout evens them all out.
@@ -199,6 +203,8 @@ Only a few windows sit in front, laid out. The rest wait just off the edge of th
 | 13-inch MacBook Air, 19-inch 5:4 | 2 |
 
 Change it under **Windows in Front** in the menu, or in Settings: 2 to 6, or No Limit.
+
+**Unplugging a screen, or closing the laptop lid.** Tessera remembers what that screen held: its windows in order, which were in front, and its layout. Plug it back in and they go back to it as they were, unless you moved one yourself in the meantime.
 
 **Several screens.** Each screen has its own front windows, limit and layout. Waiting windows hang off a free edge of their own screen, never over another screen, however the screens are arranged. When you plug in, unplug or move a screen, Tessera follows where macOS puts each window, and on each screen the windows you used most lately get the front spots.
 

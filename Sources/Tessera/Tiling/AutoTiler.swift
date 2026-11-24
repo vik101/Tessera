@@ -101,6 +101,18 @@ final class AutoTiler {
     /// When you last sent each window to a screen yourself (Next Display, or a drag). That
     /// choice wins over following macOS.
     private var sentAt: [CGWindowID: Date] = [:]
+    /// A screen that was unplugged (or whose lid was closed): its windows in order, which were in front,
+    /// and its layout. When it comes back, they go back to it, so nothing is lost.
+    private struct ScreenMemory {
+        var order: [CGWindowID]
+        var front: [CGWindowID]
+        var layout: LayoutStyle?
+        var sizes: [CGWindowID: CGSize]
+        var at: Date
+    }
+    private var remembered: [String: ScreenMemory] = [:]
+    /// The screens seen at the last arrangement.
+    private var knownScreens: Set<String> = []
     private let debouncer = Debouncer(delay: 0.12)
     private let watchdog = RepeatingTimer()
 
@@ -452,10 +464,14 @@ final class AutoTiler {
     }
 
     /// Moves a tiled window to another screen's tiles.
-    func move(_ window: TrackedWindow, to display: DisplayInfo) {
+    func move(_ window: TrackedWindow, to display: DisplayInfo, first: Bool = false) {
         removeFromOrder(window.id)
         home[window.id] = display.stableID
-        order[display.stableID, default: []].append(window.id)
+        if first {
+            order[display.stableID, default: []].insert(window.id, at: 0)
+        } else {
+            order[display.stableID, default: []].append(window.id)
+        }
         wanted[window.id] = Date()   // You sent it there to use it.
         sentAt[window.id] = Date()
         sizes[window.id] = nil       // A fresh, even share on its new screen.
@@ -479,6 +495,35 @@ final class AutoTiler {
                 self.mover.move(window, to: moved, within: target.visibleFrame)
             }
         }
+    }
+
+    /// ⌃⌥ + arrow on a tiled window: it walks one spot that way through the layout, trading places with
+    /// the window there. Each spot keeps its size, so the layout keeps its shape. Past the screen's edge
+    /// it goes to the next screen that way. Returns false when the window isn't tiled (it snaps instead).
+    func walk(_ window: TrackedWindow, _ direction: Direction) -> Bool {
+        guard isOn, isTiled(window), let screen = home[window.id], let plan = plans[screen],
+              let index = plan.ids.firstIndex(of: window.id), plan.frames.indices.contains(index) else { return false }
+        touch(window.id)
+        let others = zip(plan.ids, plan.frames).filter { $0.0 != window.id }.map { (id: UInt32($0.0), frame: $0.1) }
+        if let next = Navigation.neighbour(of: plan.frames[index], direction: direction, among: others) {
+            let other = CGWindowID(next)
+            order[screen] = TileOrder.swap(window.id, other, in: order[screen] ?? [])
+            (sizes[window.id], sizes[other]) = (sizes[other], sizes[window.id])
+            retile()
+            return true
+        }
+        // Past the edge: the screen next to this one that way, if there is one.
+        let displays = Screens.all()
+        guard let here = displays.first(where: { $0.stableID == screen }) else { return true }
+        let neighbours = displays.filter { $0 != here }.map { (id: UInt32($0.displayID), frame: $0.frame) }
+        guard let next = Navigation.neighbour(of: here.frame, direction: direction, among: neighbours),
+              let target = displays.first(where: { $0.displayID == CGDirectDisplayID(next) }) else {
+            NSSound.beep()
+            return true
+        }
+        // It enters from the side it came from: moving right, it becomes the first (left-most) spot.
+        move(window, to: target, first: direction == .right || direction == .down)
+        return true
     }
 
     /// You dragged a window and let go at `point`: swap it with the window there, or move it to that screen.
@@ -730,8 +775,18 @@ final class AutoTiler {
             registry.rescan()
         }
 
-        // Screens that are gone take their plans with them.
+        // Screens that are gone: remember what they held. Screens that came back: put it back.
         let screenIDs = Set(displays.map(\.stableID))
+        for gone in Set(order.keys).union(plans.keys).subtracting(screenIDs) {
+            let list = order[gone] ?? []
+            remembered[gone] = ScreenMemory(order: list, front: plans[gone]?.ids ?? [], layout: plans[gone]?.style,
+                                            sizes: sizes.filter { list.contains($0.key) }, at: Date())
+            Log.info("Screen \(gone) gone: remembering \(list.count) windows")
+        }
+        for back in screenIDs.subtracting(knownScreens) {
+            if let memory = remembered.removeValue(forKey: back) { restore(memory, to: back, displays: displays, spaces: spaces) }
+        }
+        knownScreens = screenIDs
         plans = plans.filter { screenIDs.contains($0.key) }
         order = order.filter { screenIDs.contains($0.key) }
 
@@ -988,6 +1043,30 @@ final class AutoTiler {
         let since = switchingSince ?? Date()
         switchingSince = since
         return Date().timeIntervalSince(since) < 2
+    }
+
+    /// A screen came back: the windows it held go back to it in their old order (except ones you've
+    /// since moved yourself), the ones that were in front come to the front, and it gets its old layout.
+    /// They count as sent there, so Tessera doesn't follow wherever macOS happens to put them meanwhile.
+    private func restore(_ memory: ScreenMemory, to screen: String, displays: [DisplayInfo],
+                         spaces: [CGDirectDisplayID: Spaces.SpaceID]?) {
+        let alive = memory.order.filter { id in
+            registry.window(id) != nil && (sentAt[id].map { $0 < memory.at } ?? true)
+        }
+        if let style = memory.layout, let display = displays.first(where: { $0.stableID == screen }) {
+            spaceLayouts[layoutKey(display, spaces)] = style
+        }
+        guard !alive.isEmpty else { return }
+        let now = Date()
+        for id in alive {
+            removeFromOrder(id)
+            home[id] = screen
+            sentAt[id] = now
+            if let size = memory.sizes[id] { sizes[id] = size }
+        }
+        order[screen] = alive + (order[screen] ?? []).filter { !alive.contains($0) }
+        for id in memory.front where alive.contains(id) { wanted[id] = now }
+        Log.info("Screen \(screen) back: \(alive.count) windows return to it")
     }
 
     /// Which layout a screen uses now: per desktop when macOS says which desktop it shows.

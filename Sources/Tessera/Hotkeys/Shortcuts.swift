@@ -22,7 +22,7 @@ final class Shortcuts {
         tokens = []
         failed = []
         for (command, combo) in Settings.shared.shortcuts.bindings {
-            if let token = HotKeyCenter.shared.register(combo, handler: { Shortcuts.run(command) }) {
+            if let token = HotKeyCenter.shared.register(combo, handler: { Shortcuts.run(command, fromKey: true) }) {
                 tokens.append(token)
             } else {
                 failed.append(command)
@@ -39,11 +39,13 @@ final class Shortcuts {
         set { HotKeyCenter.shared.paused = newValue }
     }
 
-    static func run(_ command: Command) {
+    /// Runs a command. `fromKey` is true for a keyboard shortcut: then ⌃⌥ + arrow walks a tiled window
+    /// through the layout, while Left Half from the menu or a link still snaps it there.
+    static func run(_ command: Command, fromKey: Bool = false) {
         if TestHooks.shared.isOn { Log.info("Shortcut: \(command.id)") }
         switch command {
         case .snap(let action):
-            SnapController.shared.perform(action)
+            SnapController.shared.perform(action, walking: fromKey)
         case .tile(.toggleAutoTile):
             AutoTiler.shared.toggle()
         case .tile(.nextLayout):

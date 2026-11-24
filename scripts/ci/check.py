@@ -1250,6 +1250,73 @@ def app_rules():
     post("set:frontLimit=none", 1.0)
 
 
+def walk_checks():
+    """⌃⌥ + arrow on a tile: it trades places with the tile that way, and every spot keeps its size."""
+    def neighbour(frames, ids, me, way):
+        """The spot that way, by the same rule as Tessera: in line first, then nearest."""
+        sx, sy, sw, sh = frames[ids.index(me)]
+        best = None
+        for wid, (x, y, w, h) in zip(ids, frames):
+            if wid == me:
+                continue
+            if way in ("left", "right"):
+                along = (x + w / 2 - sx - sw / 2) * (1 if way == "right" else -1)
+                gap = (x - (sx + sw)) if way == "right" else (sx - (x + w))
+                inline = min(sy + sh, y + h) - max(sy, y) > 8
+                cross, order = abs(y + h / 2 - sy - sh / 2), y
+                size = sw
+            else:
+                along = (y + h / 2 - sy - sh / 2) * (1 if way == "down" else -1)
+                gap = (y - (sy + sh)) if way == "down" else (sy - (y + h))
+                inline = min(sx + sw, x + w) - max(sx, x) > 8
+                cross, order = abs(x + w / 2 - sx - sw / 2), x
+                size = sh
+            if along <= max(8, size / 4):
+                continue
+            key = (not inline, round(max(gap, 0)), round(cross), order)
+            if best is None or key < best[0]:
+                best = (key, wid)
+        return best and best[1]
+
+    def walk(label, style, count, way, pick=0):
+        choose(style, f"Walk: {label}", count)
+        d = settled_dump()
+        plan = screen_plan(d) or {}
+        ids, frames = plan.get("ids", []), [[round(v) for v in f] for f in plan.get("frames", [])]
+        if len(ids) < 2:
+            record(f"Walk: {label}", False, f"plan {ids}")
+            return
+        me = ids[pick]
+        post(f"focus:{me}", 1.0)
+        other = neighbour(frames, ids, me, way)
+        arrow = {"left": "←", "right": "→", "up": "↑", "down": "↓"}[way]
+        press(CO, K[way], 1.4)
+        d = settled_dump()
+        after = screen_plan(d) or {}
+        new_ids, new_frames = after.get("ids", []), [[round(v) for v in f] for f in after.get("frames", [])]
+        if other is None:
+            record(f"Walk: {label}: ⌃⌥{arrow} at the edge changes nothing", new_ids == ids and after.get("style") == style,
+                   f"before {ids}, after {new_ids}")
+            return
+        want = [other if i == me else me if i == other else i for i in ids]
+        record(f"Walk: {label}: ⌃⌥{arrow} trades places with the window that way", new_ids == want,
+               f"before {ids}, after {new_ids}, want {want}")
+        record(f"Walk: {label}: the layout keeps its shape and style", new_frames == frames and after.get("style") == style,
+               f"style {after.get('style')}, frames before {frames[:3]}, after {new_frames[:3]}")
+        press(CO, K[{"left": "right", "right": "left", "up": "down", "down": "up"}[way]], 1.4)
+        back = (screen_plan(settled_dump()) or {}).get("ids", [])
+        record(f"Walk: {label}: the opposite arrow walks it back", back == ids, f"after {back}, want {ids}")
+
+    walk("Columns, first window right", "columns", 3, "right", 0)
+    walk("Columns, last window right", "columns", 3, "right", -1)
+    walk("Rows, top window down", "rows", 3, "down", 0)
+    walk("Grid, first window down", "grid", 3, "down", 0)
+    walk("Grid, first window right", "grid", 3, "right", 0)
+    walk("Main + Side, main window right", "mainAndSide", 3, "right", 0)
+    walk("Main + Side, a side window down", "mainAndSide", 3, "down", 1)
+    walk("Auto, first window right", "auto", 3, "right", 0)
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     d = dump()
@@ -1440,6 +1507,7 @@ def main():
     check_layout("3 windows, Rows", "rows", 3)
     layout_suite("3 windows", 3)
     resize_tiles()
+    walk_checks()      # ⌃⌥ + arrow walks a tile through every layout.
     activate("com.apple.TextEdit")
     keys("press", "cmd", K["m"])
     time.sleep(0.8)
@@ -1459,9 +1527,13 @@ def main():
     order = (screen_plan(d) or {}).get("ids", [])
     record("⌃⌥M puts Safari in the main spot", bool(order) and order[0] == d["focused"], f"order {order}, focused {d['focused']}")
 
-    # Snap by hand while tiling: Chrome takes the left half, the rest share the right half.
+    # Snap by hand while tiling (Left Half from the menu or a link): Chrome takes the left half,
+    # the rest share the right half.
     activate("com.google.Chrome")
-    chrome = snap_check("Auto-tile: Chrome ⌃⌥← keeps the left half", CO, K["left"], F(0, 0, .5, 1), allow_minimum=True)
+    link("tessera://execute-action?name=left-half", 1.2)
+    chrome, _ = front()
+    record("Auto-tile: Chrome's Left Half (menu or link) keeps the left half",
+           close(chrome, F(0, 0, .5, 1)) or fits_or_minimum(chrome, F(0, 0, .5, 1), VISIBLE, 1), f"got {chrome}")
     _, cw = front()
     d, frames = check_tiling("Others fill the right half", ignore=(cw["id"],) if cw else ())
     right = [r for r in frames.values() if r[0] < V[0] + V[2] / 2 - 2]

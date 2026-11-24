@@ -25,11 +25,34 @@ DELL = (1600, 1200)   # 20-inch 4:3
 screens_on = {}       # name -> pretend screen process
 
 
-def plug(name, size, serial, x, y):
+def plug(name, size, serial, x, y, watch=False):
+    """Plugs in a pretend screen. With watch, returns every window's positions over the next 8 seconds."""
     log = open(f"{OUT}/vdisplay-{name}.txt", "w")
     screens_on[name] = subprocess.Popen([VDISPLAY, str(size[0]), str(size[1]), str(serial), str(x), str(y)],
                                         stdout=log, stderr=subprocess.STDOUT)
-    time.sleep(6)
+    if not watch:
+        time.sleep(6)
+        return {}
+    seen = {}
+    end = time.time() + 8
+    while time.time() < end:
+        for w in standard_windows():
+            spot = tuple(round(v) for v in w["frame"][:2])
+            trail = seen.setdefault(w["id"], [])
+            if not trail or trail[-1] != spot:
+                trail.append(spot)
+        time.sleep(0.15)
+    return seen
+
+
+def jumpers(trails):
+    """Windows that went back to a place they had left, or moved more than twice."""
+    out = []
+    for wid, trail in trails.items():
+        back = any(trail[i] in trail[:i - 1] for i in range(2, len(trail)))
+        if back or len(trail) > 3:
+            out.append(f"{wid}: {' → '.join(str(t) for t in trail[:6])}")
+    return out
 
 
 def unplug(name):
@@ -179,6 +202,20 @@ def main():
     c.record("Dell: 3 in front, 1 waiting", len(state[dell["id"]][0]) == 3 and len(state[dell["id"]][1]) == 1,
              f"{state[dell['id']][:2]}")
 
+    # ⌃⌥← on the main screen's left-most tile walks it past the edge, onto the Dell.
+    plan = d["autoTile"]["plans"].get(main["id"], {})
+    ids, frames = plan.get("ids", []), plan.get("frames", [])
+    if ids:
+        left = ids[min(range(len(ids)), key=lambda i: (frames[i][0], frames[i][1]))]
+        c.post(f"focus:{left}", 1.0)
+        c.press(c.CO, c.K["left"], 2.0)
+        d = c.settled_dump()
+        moved = next((w for w in d["windows"] if w["id"] == left), None)
+        c.record("Walk past the main screen's left edge: the window goes to the Dell, in front",
+                 bool(moved) and moved["screen"] == dell["id"] and left in per_screen(d)[dell["id"]][0],
+                 f"window {left} on {moved and moved['screen']}, Dell front {per_screen(d)[dell['id']][0]}")
+        check_screens("After walking onto the Dell")
+
     # Each screen has its own layout: Columns on the 49-inch only.
     target = (c.single_window_apps(d, state[wide["id"]][0]) or state[wide["id"]][0])[0]
     c.activate(next((w["app"] for w in d["windows"] if w["id"] == target), "com.apple.TextEdit"))
@@ -233,6 +270,18 @@ def main():
     time.sleep(6)
     check_screens("49-inch moved to the right")
 
+    # The Dell gets a layout of its own (Rows) before it's unplugged.
+    d = c.dump()
+    dell_ids = d["autoTile"]["plans"].get(dell["id"], {}).get("ids", [])
+    if dell_ids:
+        c.post(f"focus:{dell_ids[0]}", 1.0)
+        c.press(c.CO, c.DIGIT["rows"], 1.5)
+    d = c.settled_dump()
+    dell_front = d["autoTile"]["plans"].get(dell["id"], {}).get("ids", [])
+    dell_windows = {w["id"] for w in d["windows"] if w.get("screen") == dell["id"]}
+    c.record("The Dell shows Rows before it's unplugged", d["autoTile"]["plans"].get(dell["id"], {}).get("style") == "rows",
+             f"{d['autoTile']['plans'].get(dell['id'], {}).get('style')}")
+
     # Unplug the Dell: its windows go to the other screens; where they land, the windows used
     # most lately get the front.
     before = c.dump()
@@ -246,9 +295,19 @@ def main():
     for s in gained:
         most_recent_in_front(f"Dell unplugged, {round(s['frame'][2])}-wide screen", d, s["id"])
 
-    # Plug it back in.
-    plug("dell", DELL, 8, -DELL[0], 0)
-    check_screens("Dell plugged back in")
+    # Plug it back in: its windows come home, in the same layout and order, without jumping about.
+    trails = plug("dell", DELL, 8, -DELL[0], 0, watch=True)
+    d = check_screens("Dell plugged back in")
+    after = d["autoTile"]["plans"].get(dell["id"], {})
+    back = {w["id"] for w in d["windows"] if w.get("screen") == dell["id"]}
+    c.record("Dell plugged back in: it keeps its layout (Rows)", after.get("style") == "rows",
+             f"{after.get('style')}")
+    c.record("Dell plugged back in: its windows come back to it", dell_windows <= back,
+             f"had {sorted(dell_windows)}, now {sorted(back)}")
+    c.record("Dell plugged back in: the same windows in front, in the same order", after.get("ids") == dell_front,
+             f"before {dell_front}, after {after.get('ids')}")
+    jumped = jumpers(trails)
+    c.record("Dell plugged back in: no window jumps back and forth", not jumped, "; ".join(jumped[:4]))
 
     # Unplug everything: back to one screen, 3 in front.
     unplug("wide")

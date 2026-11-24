@@ -21,8 +21,9 @@ final class SnapController {
     private let mover = WindowMover.shared
     private let settings = Settings.shared
 
-    /// Snaps the focused window.
-    func perform(_ action: SnapAction) {
+    /// Snaps the focused window. With `walking` (a keyboard shortcut), the four halves move a tiled
+    /// window one spot through the auto-tile layout instead.
+    func perform(_ action: SnapAction, walking: Bool = false) {
         guard AccessibilityPermission.isTrusted else {
             PermissionWindow.shared.show()
             return
@@ -31,10 +32,10 @@ final class SnapController {
             NSSound.beep()
             return
         }
-        perform(action, on: window)
+        perform(action, on: window, walking: walking)
     }
 
-    func perform(_ action: SnapAction, on window: TrackedWindow) {
+    func perform(_ action: SnapAction, on window: TrackedWindow, walking: Bool = false) {
         guard !settings.isIgnored(window.bundleID), let frame = window.element.frame else {
             NSSound.beep()
             return
@@ -48,6 +49,10 @@ final class SnapController {
         if let last = mem.lastFrame, !frame.isClose(to: last, tolerance: 4) {
             mem = Memory(restore: frame)
         }
+
+        // ⌃⌥ + arrow on a tile: it walks one spot that way through the layout instead of snapping.
+        let directions: [SnapAction: Direction] = [.leftHalf: .left, .rightHalf: .right, .topHalf: .up, .bottomHalf: .down]
+        if walking, let direction = directions[action], tiler.walk(window, direction) { return }
 
         // Make Larger / Smaller on a tile: it grows into its neighbours, and they shrink to make room.
         if action == .larger || action == .smaller, tiler.resizeTile(window, larger: action == .larger) { return }
