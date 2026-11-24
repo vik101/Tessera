@@ -139,6 +139,7 @@ final class AutoTiler {
     /// screens over the next second or two: wait, then follow where it put them rather than
     /// pulling them back to their old screen.
     private func screensChanged() {
+        if running { rememberGoneScreens(Screens.all()) }
         quietUntil = Date().addingTimeInterval(1.5)
         followScreensUntil = Date().addingTimeInterval(5)
         candidate = nil
@@ -777,12 +778,7 @@ final class AutoTiler {
 
         // Screens that are gone: remember what they held. Screens that came back: put it back.
         let screenIDs = Set(displays.map(\.stableID))
-        for gone in Set(order.keys).union(plans.keys).subtracting(screenIDs) {
-            let list = order[gone] ?? []
-            remembered[gone] = ScreenMemory(order: list, front: plans[gone]?.ids ?? [], layout: plans[gone]?.style,
-                                            sizes: sizes.filter { list.contains($0.key) }, at: Date())
-            Log.info("Screen \(gone) gone: remembering \(list.count) windows")
-        }
+        rememberGoneScreens(displays)
         for back in screenIDs.subtracting(knownScreens) {
             if let memory = remembered.removeValue(forKey: back) { restore(memory, to: back, displays: displays, spaces: spaces) }
         }
@@ -1043,6 +1039,23 @@ final class AutoTiler {
         let since = switchingSince ?? Date()
         switchingSince = since
         return Date().timeIntervalSince(since) < 2
+    }
+
+    /// Screens that are gone: remember what each held (every window whose home it was, in tile order),
+    /// as early as possible, before macOS starts moving those windows and they get new homes.
+    private func rememberGoneScreens(_ displays: [DisplayInfo]) {
+        let present = Set(displays.map(\.stableID))
+        for gone in Set(order.keys).union(plans.keys).union(home.values).subtracting(present) {
+            // Already remembered moments ago (when the screens changed): keep that fuller picture.
+            if let memory = remembered[gone], Date().timeIntervalSince(memory.at) < 30 { continue }
+            let homed = Set(home.filter { $0.value == gone }.map(\.key))
+            let saved = order[gone] ?? []
+            let list = saved.filter { homed.contains($0) } + homed.subtracting(saved).sorted()
+            guard !list.isEmpty || plans[gone] != nil else { continue }
+            remembered[gone] = ScreenMemory(order: list, front: plans[gone]?.ids ?? [], layout: plans[gone]?.style,
+                                            sizes: sizes.filter { list.contains($0.key) }, at: Date())
+            Log.info("Screen \(gone) gone: remembering \(list.count) windows")
+        }
     }
 
     /// A screen came back: the windows it held go back to it in their old order (except ones you've
