@@ -13,6 +13,8 @@ final class Shortcuts {
     private(set) var failedKeys: [String] = []
     /// The binding mode: "main" normally; config files can add others (like AeroSpace's).
     private(set) var mode = "main"
+    /// How many keys are registered now (for the tests: a mode's plain keys must go when you leave it).
+    var registeredCount: Int { tokens.count }
 
     func start() {
         Settings.shared.observe { [weak self] change in

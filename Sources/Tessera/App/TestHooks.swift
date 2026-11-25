@@ -103,6 +103,7 @@ final class TestHooks: NSObject {
             "failedShortcuts": Shortcuts.shared.failed.map(\.id),
             "failedKeys": Shortcuts.shared.failedKeys,
             "mode": Shortcuts.shared.mode,
+            "hotkeys": Shortcuts.shared.registeredCount,
             "modes": Shortcuts.shared.modes,
             "config": [
                 "path": ConfigStore.shared.fileURL.path, "exists": ConfigStore.shared.fileExists,

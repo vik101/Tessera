@@ -562,7 +562,7 @@ outer.bottom = 20
 
 [mode.main.binding]
 ctrl-alt-shift-t = 'layout tree'
-ctrl-alt-shift-c = 'layout columns'
+ctrl-alt-c = 'layout columns'           # Tessera's own ⌃⌥C is Centre: the file's key wins
 ctrl-alt-shift-r = 'mode resize'
 
 [mode.resize.binding]
@@ -591,19 +591,25 @@ run = 'layout floating'
         between = f[xs[1]][0] - (f[xs[0]][0] + f[xs[0]][2])
         record("…and 10 between windows", abs(between - 10) <= 2, f"{between}")
 
-    c.keys("press", "ctrl,opt,shift", c.K["c"])
+    focus(ids[0])
+    c.keys("press", "ctrl,opt", c.K["c"])
     time.sleep(1.5)
-    record("A key from the file runs its command (columns)", main_style() == "columns", f"{main_style()}")
+    V2 = visible()
+    f0 = cg()[ids[0]]
+    record("A key from the file replaces Tessera's own key on it (⌃⌥C: columns, not Centre)",
+           main_style() == "columns" and abs(f0[1] + f0[3] - (V2[1] + V2[3] - 20)) <= 3, f"{main_style()}, window {f0}")
     c.keys("press", "ctrl,opt,shift", c.K["t"])
     time.sleep(1.5)
     record("…and another (tree)", main_style() == "tree", f"{main_style()}")
 
     # Binding modes: in resize mode, plain h and l resize.
     focus(ids[0])
+    main_keys = c.dump().get("hotkeys", 0)
     c.keys("press", "ctrl,opt,shift", "0x0F")   # r
     time.sleep(0.8)
     code, out, _ = cli("list-modes", "--current")
     record("A key switches to the resize mode", out.strip() == "resize", out.strip())
+    record("In the resize mode only its 3 keys are held", c.dump().get("hotkeys") == 3, f"{c.dump().get('hotkeys')} keys")
     old = cg()[ids[0]][2]
     c.keys("press", "", "0x04")   # h
     time.sleep(1.3)
@@ -613,6 +619,10 @@ run = 'layout floating'
     code, out, _ = cli("list-modes", "--current")
     record("esc goes back to main", out.strip() == "main", out.strip())
     record("The status menu knows the mode is main again", c.dump().get("mode") == "main")
+    record("Back in main, the plain keys h and l are let go (typing works again)", c.dump().get("hotkeys") == main_keys,
+           f"{c.dump().get('hotkeys')} keys, {main_keys} before")
+    code, _, err = cli("mode", "nosuch")
+    record("mode with an unknown name fails and lists the modes", code == 1 and "resize" in err, f"{code}: {err.strip()}")
 
     # Window rules: a TextEdit document called float-me floats.
     with open("/tmp/tessera-docs/float-me.txt", "w") as fh:
@@ -682,6 +692,89 @@ run = 'layout floating'
     f = cg()
     record("Without a config file, Settings rule again (no gaps)", code == 0 and abs(min(f[i][0] for i in ids) - V[0]) <= 2,
            f"{code}: {out.strip()} {[f[i] for i in ids]}")
+    focus(ids[0])
+    c.keys("press", "ctrl,opt", c.K["c"])
+    time.sleep(1.5)
+    f0 = cg()[ids[0]]
+    middle = abs((f0[0] + f0[2] / 2) - (V[0] + V[2] / 2)) <= 3
+    record("…and ⌃⌥C is Tessera's Centre again", middle, f"window {f0}")
+    run("layout", "tree", wait=1.5)
+
+
+# ---------- more edge cases ----------
+
+def keys_and_links(ids):
+    """The new layouts by their real keys and by a tessera:// link, not only by the command line tool."""
+    if len(ids) < 3:
+        return
+    focus(ids[0])
+    for digit, style in (("0x16", "tree"), ("0x1A", "stack"), ("0x1C", "float"), ("0x16", "tree")):
+        c.keys("press", "ctrl,opt", digit)
+        time.sleep(1.5)
+        record(f"⌃⌥{ {'0x16': 6, '0x1A': 7, '0x1C': 8}[digit] } picks {style.title()}", main_style() == style, f"{main_style()}")
+    c.keys("press", "ctrl,opt", c.K["l"])
+    time.sleep(1.5)
+    record("⌃⌥L from Tree goes to Auto (it steps through the auto layouts only)", main_style() == "auto", f"{main_style()}")
+    c.keys("press", "ctrl,opt,shift", c.K["l"])
+    time.sleep(1.5)
+    record("⌃⌥⇧L from Auto goes to Main + Side", main_style() == "mainAndSide", f"{main_style()}")
+    subprocess.run(["open", "-g", "tessera://run?command=layout%20stack"], timeout=20)
+    time.sleep(2.0)
+    record("tessera://run?command=layout stack works", main_style() == "stack", f"{main_style()}")
+    subprocess.run(["open", "-g", "tessera://run?command=layout%20columns%3B%20layout%20tree"], timeout=20)
+    time.sleep(2.0)
+    record("…and runs a command line with ; in it", main_style() == "tree", f"{main_style()}")
+
+
+def many_at_once():
+    """An agent may fire commands in parallel: every one must get its own, correct answer."""
+    procs = [subprocess.Popen([CLI, "list-windows", "--count"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+             for _ in range(12)]
+    answers = []
+    for p in procs:
+        try:
+            out, _ = p.communicate(timeout=20)
+        except subprocess.TimeoutExpired:
+            p.kill()
+            out = "timeout"
+        answers.append((p.returncode, out.strip()))
+    ok = all(code == 0 for code, _ in answers) and len({out for _, out in answers}) == 1
+    record("12 command line calls at once all answer, and agree", ok, f"{answers}")
+
+
+def minimum_sizes(ids):
+    """Tree with an app that won't shrink (Safari, about 500 points wide): no overlaps, even after balance."""
+    if len(ids) < 3:
+        return
+    c.keys("unhide", "com.apple.Safari")
+    time.sleep(2.0)
+    safari = [w["id"] for w in c.windows()["windows"] if w["owner"] == "Safari" and w["frame"][2] > 100]
+    if not safari:
+        record("A Safari window for the minimum-size check", False, warn=True)
+        return
+    s = safari[0]
+    everyone = ids + [s]
+    run("layout", "columns", wait=1.5)
+    run("layout", "tree", wait=1.5)
+    focus(ids[0])
+    run("balance", wait=2.5)
+    c.settled_dump()
+    V = visible()
+    f = cg()
+    record("Tree + Safari after balance: no window overlaps another", no_overlaps(everyone), f"{[f.get(i) for i in everyone]}")
+    record("…every window is on the screen", all(f.get(i) and c.inside(f[i], V, tol=2) for i in everyone),
+           f"{[f.get(i) for i in everyone]} on {V}")
+    record("…and Safari keeps the room it needs", f.get(s, [0, 0, 0])[2] >= 450, f"Safari {f.get(s)}")
+    for _ in range(3):
+        run("resize", "width", "-300", wait=0.8)
+    f = cg()
+    record("Shrinking a neighbour past Safari's minimum: still no overlaps", no_overlaps(everyone), f"{[f.get(i) for i in everyone]}")
+    c.keys("hide", "com.apple.Safari")
+    time.sleep(1.5)
+    import re
+    left = re.findall(r"\d+", tree())
+    record("Hiding Safari: the other three fill the space again", sorted(map(int, left)) == sorted(ids) and no_overlaps(ids),
+           tree())
 
 
 # ---------- the end ----------
@@ -718,6 +811,9 @@ def main():
     drop_zones(ids)
     stack_and_float(ids)
     window_commands(ids)
+    keys_and_links(ids)
+    many_at_once()
+    minimum_sizes(ids)
     subscribe(ids)
     config_file(ids)
     desktops(ids)
