@@ -111,7 +111,8 @@ enum KeyboardMoves {
         }
         // The window must be on top, so the press lands on it and not on a window over it.
         window.element.perform(kAXRaiseAction)
-        guard let grab = grabPoint(of: window, frame: frame) else {
+        let grabs = grabPoints(of: window, frame: frame)
+        guard let grab = grabs.first else {
             NSSound.beep()
             return
         }
@@ -130,10 +131,11 @@ enum KeyboardMoves {
             var held = false
             for attempt in 1...2 where !held {
                 if attempt == 2 {
+                    // Let go, and try another spot of the title bar.
                     mouse(.leftMouseUp, point)
                     try? await Task.sleep(for: .milliseconds(400))
                     window.element.perform(kAXRaiseAction)
-                    point = grab
+                    point = grabs.count > 1 ? grabs[1] : grab
                 }
                 let start = window.frame ?? frame
                 mouse(.mouseMoved, point)
@@ -180,25 +182,40 @@ enum KeyboardMoves {
         return layout.spaces[from + presses].id
     }
 
-    /// A spot in the window's title bar that drags the window: the bar itself, the toolbar or the title,
-    /// never a button, tab or text field. Found by asking Accessibility what sits at each spot.
-    private static func grabPoint(of window: TrackedWindow, frame: CGRect) -> CGPoint? {
-        let rows: [CGFloat] = [6, 10, 16, 24, 32]
-        let columns: [CGFloat] = [0.5, 0.35, 0.65, 0.2, 0.8]
-        let draggable: Set<String> = [kAXWindowRole, kAXToolbarRole, kAXStaticTextRole, "AXUnknown"]
+    /// Spots in the window's title bar that drag the window, best first, on different rows.
+    ///
+    /// Found by asking Accessibility what sits at each spot: never a button, tab or text field.
+    /// The bare bar (or toolbar) comes first. A document's title text comes last: in some apps,
+    /// pressing it opens a rename box or drags the document's file instead of the window. The top
+    /// few points of a window are its resize edge, so the rows start a little lower (macOS 26 title
+    /// bars are taller too). The middle of the bar, where the title sits, is tried last.
+    private static func grabPoints(of window: TrackedWindow, frame: CGRect) -> [CGPoint] {
+        let rows: [CGFloat] = [14, 20, 10, 26, 32]
+        let columns: [CGFloat] = [0.3, 0.7, 0.2, 0.8, 0.4, 0.6, 0.5]
+        let bare: Set<String> = [kAXWindowRole, kAXToolbarRole, "AXUnknown"]
+        var good: [(point: CGPoint, row: CGFloat)] = []
+        var titles: [(point: CGPoint, row: CGFloat)] = []
         for dy in rows {
             for share in columns {
                 let point = CGPoint(x: (frame.minX + frame.width * share).rounded(), y: frame.minY + dy)
-                guard let hit = AXElement.element(at: point), hit.pid == window.pid,
-                      let role = hit.role, draggable.contains(role) else { continue }
+                guard let hit = AXElement.element(at: point), hit.pid == window.pid, let role = hit.role,
+                      bare.contains(role) || role == kAXStaticTextRole else { continue }
                 // Only this window's own title bar: another window of the same app may sit on top.
                 if role == kAXWindowRole, hit.windowID != window.id { continue }
                 if role != kAXWindowRole, let owner = hit.window?.windowID, owner != window.id { continue }
-                Log.info("Send: grab point on \(role)")
-                return point
+                if bare.contains(role) {
+                    good.append((point, dy))
+                    break   // One spot per row is enough.
+                }
+                if titles.isEmpty { titles.append((point, dy)) }
             }
+            if good.count >= 2 { break }
         }
-        return nil
+        let points = (good + titles).prefix(2).map(\.point)
+        if let first = points.first, let hit = AXElement.element(at: first) {
+            Log.info("Send: grab point on \(hit.role ?? "?") at \(Int(first.x - frame.minX)),\(Int(first.y - frame.minY)) in the window")
+        }
+        return Array(points)
     }
 
     private static func mouse(_ type: CGEventType, _ point: CGPoint) {

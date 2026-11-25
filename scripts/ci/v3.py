@@ -426,6 +426,11 @@ def window_commands(ids):
     run("native-fullscreen", "off", wait=3.0)
     state = next((w["state"] for w in ask("list-windows", "--all") or [] if w["window-id"] == a), None)
     record("native-fullscreen off: tiled again", state == "tiled", f"state {state}")
+    time.sleep(4.0)
+    state = next((w["state"] for w in ask("list-windows", "--all") or [] if w["window-id"] == a), None)
+    f = cg()
+    record("…and it stays tiled, not taken for a window maximised by hand", state == "tiled" and no_overlaps([a, b, cc]),
+           f"state {state}, {[f.get(i) for i in (a, b, cc)]}")
 
     # Look: dim and border (off by default).
     d = c.dump()

@@ -128,6 +128,9 @@ final class AutoTiler {
     private var knownScreens: Set<String> = []
     private let debouncer = Debouncer(delay: 0.12)
     private let watchdog = RepeatingTimer()
+    /// Windows seen in macOS full screen, and when each last came out of it.
+    private var inFullScreen: Set<CGWindowID> = []
+    private var leftFullScreen: [CGWindowID: Date] = [:]
 
     var isOn: Bool { settings.autoTile && AccessibilityPermission.isTrusted }
 
@@ -1057,7 +1060,9 @@ final class AutoTiler {
     /// else (an app nudging its own window) goes back to its tile.
     private func movedByApp(_ id: CGWindowID) {
         guard running else { return }
-        if let window = registry.window(id), isTiled(window), !mover.isOwnMove(id), let frame = window.frame,
+        // Leaving macOS full screen, a window comes back full size for a moment: that isn't a maximise.
+        let justLeftFullScreen = inFullScreen.contains(id) || leftFullScreen[id].map { Date().timeIntervalSince($0) < 4 } == true
+        if !justLeftFullScreen, let window = registry.window(id), isTiled(window), !mover.isOwnMove(id), let frame = window.frame,
            let display = Screens.display(for: frame, in: Screens.all()),
            frame.isClose(to: display.visibleFrame, tolerance: 24),
            planned[id]?.isClose(to: display.visibleFrame, tolerance: 24) != true {
@@ -1443,7 +1448,11 @@ final class AutoTiler {
     private func canTile(_ window: TrackedWindow) -> Bool {
         guard !settings.isIgnored(window.bundleID), settings.rule(for: window.bundleID)?.float != true else { return false }
         if NSRunningApplication(processIdentifier: window.pid)?.isHidden == true { return false }
-        if window.element.isFullScreen { return false }
+        if window.element.isFullScreen {
+            inFullScreen.insert(window.id)
+            return false
+        }
+        if inFullScreen.remove(window.id) != nil { leftFullScreen[window.id] = Date() }
         if kind[window.id] == true { return true }
         // Only "yes" is cached: some apps finish setting up a new window a moment after showing it.
         let ok = window.isStandard && window.isResizable
@@ -1594,6 +1603,8 @@ final class AutoTiler {
         lastUsed[id] = nil
         wanted[id] = nil
         kept.remove(id)
+        inFullScreen.remove(id)
+        leftFullScreen[id] = nil
         for (key, tree) in trees where tree.contains(id) {
             var copy = tree
             copy.remove(id)
