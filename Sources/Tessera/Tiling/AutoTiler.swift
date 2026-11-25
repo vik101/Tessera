@@ -498,8 +498,8 @@ final class AutoTiler {
     /// A window you snapped by hand keeps that spot; the others tile around it.
     /// It keeps its place in the order, so a later layout puts it back where it was.
     func pin(_ window: TrackedWindow, at frame: CGRect) {
-        guard isOn, canTile(window) else { return }
-        floating.remove(window.id)
+        // A floating window (⌃⌥W) just moves: it stays floating, out of every layout.
+        guard isOn, canTile(window), !isFloating(window.id) else { return }
         pinned[window.id] = frame
         rehome(window.id, frame: frame)
         scheduleRetile()

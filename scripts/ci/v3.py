@@ -331,6 +331,10 @@ def drop_zones(ids):
     focus(b)
     run("float", "on", wait=1.0)
     run("place", "center", wait=1.0)
+    d = c.dump()
+    state = next((w["state"] for w in ask("list-windows") or [] if w["window-id"] == b), None)
+    record("Snapping a floating window keeps it floating", state == "floating" and str(b) not in (d.get("autoTile", {}).get("pinned") or {}),
+           f"state {state}, pinned {d.get('autoTile', {}).get('pinned')}")
     start = cg()[b]
     c.keys("drag-mod", "fn", str(start[0] + start[2] // 2), str(start[1] + start[3] // 2),
            str(start[0] + start[2] // 2 - 150), str(start[1] + start[3] // 2 + 80))
@@ -338,7 +342,9 @@ def drop_zones(ids):
     now = cg()[b]
     record("fn-drag moves a floating window from anywhere in it", abs(now[0] - (start[0] - 150)) <= 6 and abs(now[1] - (start[1] + 80)) <= 6,
            f"{start} → {now}")
-    run("float", "off", wait=1.2)
+    run("float", "off", wait=1.5)
+    record("A floating window you snapped and dragged goes back to its own spot when it tiles again",
+           shape(tree(), names) == "H[b V[c a]]", shape(tree(), names))
 
 
 # ---------- Stack and Float layouts ----------
@@ -596,11 +602,12 @@ run = 'layout floating'
         between = f[xs[1]][0] - (f[xs[0]][0] + f[xs[0]][2])
         record("…and 10 between windows", abs(between - 10) <= 2, f"{between}")
 
-    focus(ids[0])
+    first = left_to_right(ids)[0]
+    focus(first)
     c.keys("press", "ctrl,opt", c.K["c"])
     time.sleep(1.5)
     V2 = visible()
-    f0 = cg()[ids[0]]
+    f0 = cg()[first]
     record("A key from the file replaces Tessera's own key on it (⌃⌥C: columns, not Centre)",
            main_style() == "columns" and abs(f0[1] + f0[3] - (V2[1] + V2[3] - 20)) <= 3, f"{main_style()}, window {f0}")
     c.keys("press", "ctrl,opt,shift", c.K["t"])
@@ -697,12 +704,14 @@ run = 'layout floating'
     f = cg()
     record("Without a config file, Settings rule again (no gaps)", code == 0 and abs(min(f[i][0] for i in ids) - V[0]) <= 2,
            f"{code}: {out.strip()} {[f[i] for i in ids]}")
-    focus(ids[0])
+    first = left_to_right(ids)[0]
+    before = cg()[first]
+    focus(first)
     c.keys("press", "ctrl,opt", c.K["c"])
     time.sleep(1.5)
-    f0 = cg()[ids[0]]
-    middle = abs((f0[0] + f0[2] / 2) - (V[0] + V[2] / 2)) <= 3
-    record("…and ⌃⌥C is Tessera's Centre again", middle, f"window {f0}")
+    f0 = cg()[first]
+    middle = abs((f0[0] + f0[2] / 2) - (V[0] + V[2] / 2)) <= 3 and abs((before[0] + before[2] / 2) - (V[0] + V[2] / 2)) > 50
+    record("…and ⌃⌥C is Tessera's Centre again", middle, f"window {before} → {f0}")
     run("layout", "tree", wait=1.5)
 
 
