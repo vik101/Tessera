@@ -131,6 +131,7 @@ final class AutoTiler {
     /// Windows seen in macOS full screen, and when each last came out of it.
     private var inFullScreen: Set<CGWindowID> = []
     private var leftFullScreen: [CGWindowID: Date] = [:]
+    private var lastFullScreenChange: Date?
 
     var isOn: Bool { settings.autoTile && AccessibilityPermission.isTrusted }
 
@@ -1059,14 +1060,22 @@ final class AutoTiler {
     /// command: it wins, and the window keeps that spot until your next layout command. Anything
     /// else (an app nudging its own window) goes back to its tile.
     /// A window is going into or out of macOS full screen (Tessera asked for it).
-    func fullScreenChanging(_ id: CGWindowID) { leftFullScreen[id] = Date() }
+    func fullScreenChanging(_ id: CGWindowID) {
+        leftFullScreen[id] = Date()
+        lastFullScreenChange = Date()
+    }
 
     private func movedByApp(_ id: CGWindowID) {
         guard running else { return }
         // Going into or out of macOS full screen, a window shows odd sizes for a moment, often the
         // whole screen: that isn't a maximise.
-        if registry.window(id)?.element.isFullScreen == true { inFullScreen.insert(id) }
-        let justLeftFullScreen = inFullScreen.contains(id) || leftFullScreen[id].map { Date().timeIntervalSince($0) < 6 } == true
+        if registry.window(id)?.element.isFullScreen == true {
+            if inFullScreen.insert(id).inserted { lastFullScreenChange = Date() }
+        }
+        // While any window goes in or out of full screen, macOS may also show the app's other windows
+        // at odd sizes for a moment (seen on macOS 15 and 26): none of that is a maximise either.
+        let recent = { (date: Date?) in date.map { Date().timeIntervalSince($0) < 6 } == true }
+        let justLeftFullScreen = inFullScreen.contains(id) || recent(leftFullScreen[id]) || recent(lastFullScreenChange)
         if justLeftFullScreen {
             // Let the animation finish before putting it back in its tile.
             scheduleRetile(delay: 1.2)
@@ -1459,10 +1468,13 @@ final class AutoTiler {
         guard !settings.isIgnored(window.bundleID), settings.rule(for: window.bundleID)?.float != true else { return false }
         if NSRunningApplication(processIdentifier: window.pid)?.isHidden == true { return false }
         if window.element.isFullScreen {
-            inFullScreen.insert(window.id)
+            if inFullScreen.insert(window.id).inserted { lastFullScreenChange = Date() }
             return false
         }
-        if inFullScreen.remove(window.id) != nil { leftFullScreen[window.id] = Date() }
+        if inFullScreen.remove(window.id) != nil {
+            leftFullScreen[window.id] = Date()
+            lastFullScreenChange = Date()
+        }
         if kind[window.id] == true { return true }
         // Only "yes" is cached: some apps finish setting up a new window a moment after showing it.
         let ok = window.isStandard && window.isResizable
