@@ -9,6 +9,10 @@ final class Shortcuts {
     private var tokens: [HotKeyCenter.Token] = []
     /// Commands whose shortcut macOS refused (another app already holds it).
     private(set) var failed: [Command] = []
+    /// Config-file keys macOS refused.
+    private(set) var failedKeys: [String] = []
+    /// The binding mode: "main" normally; config files can add others (like AeroSpace's).
+    private(set) var mode = "main"
 
     func start() {
         Settings.shared.observe { [weak self] change in
@@ -17,20 +21,69 @@ final class Shortcuts {
         reload()
     }
 
+    /// The config with the preset chosen in Settings (the file's own choice wins).
+    private var config: TesseraConfig {
+        var config = ConfigStore.shared.config
+        if config.preset == nil { config.preset = Settings.shared.shortcutPreset }
+        return config
+    }
+
+    /// Every mode there is: main, plus the config file's and the preset's.
+    var modes: [String] { config.modeNames }
+
+    /// Registers the keys of the current mode: in main, Tessera's own shortcuts (unless the preset is
+    /// None) and the config file's; in other modes, only the config file's.
     func reload() {
         HotKeyCenter.shared.unregister(tokens)
         tokens = []
         failed = []
-        for (command, combo) in Settings.shared.shortcuts.bindings {
-            if let token = HotKeyCenter.shared.register(combo, handler: { Shortcuts.run(command, fromKey: true) }) {
+        failedKeys = []
+        let config = self.config
+        if mode != "main", !config.modeNames.contains(mode) { mode = "main" }
+        let extra = config.bindings(for: mode)
+        let taken = Set(extra.map(\.combo))
+        if mode == "main", config.preset != .blank {
+            for (command, combo) in Settings.shared.shortcuts.bindings where !taken.contains(combo) {
+                if let token = HotKeyCenter.shared.register(combo, handler: { Shortcuts.run(command, fromKey: true) }) {
+                    tokens.append(token)
+                } else {
+                    failed.append(command)
+                }
+            }
+        }
+        for binding in extra {
+            let commands = binding.commands
+            if let token = HotKeyCenter.shared.register(binding.combo, handler: { CommandRunner.run(commands, fromKey: true) }) {
                 tokens.append(token)
             } else {
-                failed.append(command)
+                failedKeys.append(binding.key)
             }
         }
         if !failed.isEmpty {
             Log.error("Shortcuts held by another app: " + failed.map(\.title).joined(separator: ", "))
         }
+        if !failedKeys.isEmpty {
+            Log.error("Config keys held by another app: " + failedKeys.joined(separator: ", "))
+        }
+    }
+
+    /// Switches binding mode. Returns false for a mode no config or preset defines.
+    @discardableResult
+    func setMode(_ name: String) -> Bool {
+        guard name == "main" || config.modeNames.contains(name) else { return false }
+        guard name != mode else { return true }
+        mode = name
+        reload()
+        Log.info("Mode: \(name)")
+        Events.shared.modeChanged(name)
+        return true
+    }
+
+    /// The commands bound to a key in a mode (for `trigger-binding`).
+    func commands(forKey key: String, mode: String) -> [String]? {
+        let config = self.config
+        guard let combo = try? KeyNotation.parse(key, mapping: config.keyMapping) else { return nil }
+        return config.bindings(for: mode).first { $0.combo == combo }?.commands
     }
 
     /// Pauses all shortcuts while you record a new one in Settings.

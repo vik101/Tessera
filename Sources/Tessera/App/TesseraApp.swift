@@ -22,9 +22,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         takeOverFromOtherCopies()
         buildMainMenu()
+        ConfigStore.shared.load(quiet: true)
         StatusMenu.shared.install()
         Shortcuts.shared.start()
         TestHooks.shared.start()
+        CommandServer.shared.start()
         Updater.shared.start()
         Settings.shared.importDroppedFile()
 
@@ -49,6 +51,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// Waiting windows sit just off screen: put them back before Tessera goes.
     func applicationWillTerminate(_ notification: Notification) {
         AutoTiler.shared.releaseWaiting()
+        CommandServer.shared.stop()
     }
 
     /// Opening Tessera again (from Finder or Spotlight) shows Settings.
@@ -63,6 +66,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         WindowRegistry.shared.start()
         DragSnapper.shared.start()
         AutoTiler.shared.start()
+        Events.shared.start()
+        Decorations.shared.start()
+        ModifierDrag.shared.start()
+        FocusFollowsMouse.shared.start()
+        NotificationCenter.default.addObserver(
+            forName: NSApplication.didChangeScreenParametersNotification, object: nil, queue: .main
+        ) { _ in MainActor.assumeIsolated { Setups.screensChanged() } }
         Log.info("Window engine started")
         // A Tessera that crashed or was force-quit may have left waiting windows off screen.
         after(1.5) {

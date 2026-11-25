@@ -234,6 +234,12 @@ public struct TileTree<ID: Hashable & Sendable>: Equatable, Sendable {
 
     // MARK: Moving windows
 
+    /// Puts `new` in the spot `old` had (for swapping windows between two trees).
+    public mutating func replace(_ old: ID, with new: ID) {
+        guard old != new, !contains(new), let path = path(of: old) else { return }
+        setNode(.window(new), at: path)
+    }
+
     /// Exchanges two windows. Each spot keeps its size, so the layout keeps its shape.
     public mutating func swap(_ a: ID, _ b: ID) {
         guard a != b, let pa = path(of: a), let pb = path(of: b) else { return }

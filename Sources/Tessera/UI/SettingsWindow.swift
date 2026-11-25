@@ -56,6 +56,20 @@ struct SettingsView: View {
                         Text("\(settings.gap) pt").monospacedDigit().frame(width: 44, alignment: .trailing)
                     }
                 }
+                LabeledContent("Gap at the screen's edges") {
+                    HStack {
+                        Slider(value: Binding(
+                            get: { Double(settings.outerGap < 0 ? settings.gap : settings.outerGap) },
+                            set: { settings.outerGap = Int($0.rounded()) }
+                        ), in: 0...60, step: 2)
+                        Text("\(settings.outerGap < 0 ? settings.gap : settings.outerGap) pt").monospacedDigit().frame(width: 44, alignment: .trailing)
+                    }
+                }
+                Picker("Extra keys", selection: $settings.preset) {
+                    ForEach(ShortcutPreset.allCases, id: \.rawValue) { preset in
+                        Text(preset.title).tag(preset.rawValue)
+                    }
+                }
             }
 
             Section("Snapping") {
@@ -88,6 +102,59 @@ struct SettingsView: View {
                 Text("Auto-Tile")
             } footer: {
                 Text("Auto-tile arranges every normal window on a screen so none overlap. Auto picks the best arrangement for the number of windows and the shape of the screen. Snap a window by hand to keep it in place; the others fill the rest. Restore (⌃⌥⌫) puts it back.\n\nOnly a few windows sit in front; the rest wait just off the screen's edge. Use a waiting window (click it in the Dock, ⌘Tab, or pick it with ⌃⌥Space) and it takes the place of the front window you used least lately. ⌃⌥P keeps a window in front.")
+                    .font(.callout).foregroundStyle(.secondary)
+            }
+
+            Section {
+                Toggle("Dim every window except the one you're using", isOn: $settings.dim)
+                if settings.dim {
+                    Slider(value: $settings.dimAmount, in: 0.05...0.8) { Text("How dark") }
+                }
+                Toggle("Draw a border round the window you're using", isOn: $settings.border)
+                if settings.border {
+                    Slider(value: $settings.borderWidth, in: 1...12, step: 1) { Text("Border width") }
+                    ColorPicker("Border colour", selection: Binding(
+                        get: { Color(nsColor: Decorations.color(settings.borderColor)) },
+                        set: { settings.borderColor = Decorations.hex(NSColor($0)) }
+                    ), supportsOpacity: false)
+                }
+                Toggle("Show the desktop's number in the menu bar", isOn: $settings.showDesktopNumber)
+                Toggle("Focus the window under the pointer", isOn: $settings.focusFollowsMouse)
+                Picker("Drag a window from anywhere in it with", selection: $settings.moveModifier) {
+                    Text("fn").tag("fn")
+                    Text("⌃⌘").tag("ctrl-cmd")
+                    Text("⌥⌘").tag("cmd-alt")
+                    Text("⌃⌥").tag("ctrl-alt")
+                    Text("Nothing (off)").tag("none")
+                }
+                Toggle("Bring hidden apps straight back (undo ⌘H)", isOn: $settings.unhideHiddenApps)
+            } header: {
+                Text("Focus and Look")
+            } footer: {
+                Text("All of these are off by default except dragging with fn.")
+                    .font(.callout).foregroundStyle(.secondary)
+            }
+
+            Section {
+                LabeledContent("Config file") {
+                    Text(ConfigStore.tilde(ConfigStore.shared.fileURL)).foregroundStyle(.secondary).textSelection(.enabled)
+                }
+                HStack {
+                    Button(ConfigStore.shared.fileExists ? "Open Config File" : "Make a Config File") { ConfigStore.shared.openInEditor() }
+                    Button("Import AeroSpace Config…") {
+                        Notice.shared.show(ConfigStore.shared.importAeroSpace().message)
+                    }
+                }
+                HStack {
+                    Button(CommandLineTool.isInstalled ? "Reinstall Command Line Tool" : "Install Command Line Tool") {
+                        Notice.shared.show(CommandLineTool.install())
+                    }
+                    Text("then: tessera help").foregroundStyle(.secondary).monospaced()
+                }
+            } header: {
+                Text("Config File and Command Line")
+            } footer: {
+                Text("The config file (TOML) adds key bindings, binding modes, window rules, callbacks and gaps per screen. AeroSpace's settings and commands work in it. The command line tool runs any command and lists windows, desktops and screens as JSON, for scripts and AI agents.")
                     .font(.callout).foregroundStyle(.secondary)
             }
 
@@ -126,6 +193,12 @@ struct SettingsView: View {
                                 if let i = settings.setups.firstIndex(where: { $0.name == setup.name }) { settings.setups[i].hideOthers = on }
                             }
                         )).toggleStyle(.checkbox)
+                        Toggle("Open when its screens connect", isOn: Binding(
+                            get: { setup.openOnConnect == true },
+                            set: { on in
+                                if let i = settings.setups.firstIndex(where: { $0.name == setup.name }) { settings.setups[i].openOnConnect = on }
+                            }
+                        )).toggleStyle(.checkbox)
                         Button("Open") { Setups.open(setup) }.buttonStyle(.borderless)
                         Button("Delete") { settings.setups.removeAll { $0.name == setup.name } }.buttonStyle(.borderless)
                     }
@@ -134,7 +207,7 @@ struct SettingsView: View {
             } header: {
                 Text("Setups")
             } footer: {
-                Text("A setup remembers the apps on your screens and where their windows go. Open one from the menu or with its shortcut.")
+                Text("A setup remembers the apps on your screens and where their windows go. Open one from the menu, its shortcut, `tessera setup open NAME`, or a Shortcuts automation (for example when a Focus turns on).")
                     .font(.callout).foregroundStyle(.secondary)
             }
 

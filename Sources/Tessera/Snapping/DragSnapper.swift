@@ -38,6 +38,9 @@ final class DragSnapper {
     /// True while Tessera itself drives the mouse (sending a window to another desktop).
     var suspended = false
 
+    /// A modifier drag is moving a window: auto-tile waits for it, as for any drag.
+    func externalDrag(_ active: Bool) { isMouseDown = active }
+
     private func mouseDown() {
         isMouseDown = true
         if suspended { return }

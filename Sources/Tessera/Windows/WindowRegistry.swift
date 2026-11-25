@@ -56,6 +56,15 @@ final class WindowRegistry: NSObject {
     private let hub = AXObserverHub.shared
 
     var onEvent: ((WindowEvent) -> Void)?
+    /// Others who want every event too (callbacks, the command line's `subscribe`).
+    private var listeners: [(WindowEvent) -> Void] = []
+
+    func listen(_ listener: @escaping (WindowEvent) -> Void) { listeners.append(listener) }
+
+    private func emit(_ event: WindowEvent) {
+        onEvent?(event)
+        for listener in listeners { listener(event) }
+    }
 
     private static let appNotifications = [
         kAXWindowCreatedNotification,
@@ -232,32 +241,32 @@ final class WindowRegistry: NSObject {
         switch notification {
         case kAXWindowCreatedNotification:
             if let window = register(element, pid: pid) {
-                onEvent?(.created(window.id))
+                emit(.created(window.id))
             }
         case kAXUIElementDestroyedNotification:
             if let id = idByElement[element] {
                 forget(id)
-                onEvent?(.destroyed(id))
+                emit(.destroyed(id))
             }
         case kAXFocusedWindowChangedNotification, kAXMainWindowChangedNotification:
             if NSWorkspace.shared.frontmostApplication?.processIdentifier == pid {
                 let window = element.role == kAXWindowRole ? register(element, pid: pid) : nil
-                onEvent?(.focused(window?.id))
+                emit(.focused(window?.id))
             }
         case kAXWindowMovedNotification:
-            if let id = idByElement[element] { onEvent?(.moved(id)) }
+            if let id = idByElement[element] { emit(.moved(id)) }
         case kAXWindowResizedNotification:
-            if let id = idByElement[element] { onEvent?(.resized(id)) }
+            if let id = idByElement[element] { emit(.resized(id)) }
         case kAXWindowMiniaturizedNotification:
-            if let id = idByElement[element] { onEvent?(.minimized(id)) }
+            if let id = idByElement[element] { emit(.minimized(id)) }
         case kAXWindowDeminiaturizedNotification:
-            if let id = idByElement[element] { onEvent?(.deminimized(id)) }
+            if let id = idByElement[element] { emit(.deminimized(id)) }
         case kAXTitleChangedNotification:
-            if let id = idByElement[element] { onEvent?(.titleChanged(id)) }
+            if let id = idByElement[element] { emit(.titleChanged(id)) }
         case kAXApplicationHiddenNotification:
-            onEvent?(.appHidden(pid))
+            emit(.appHidden(pid))
         case kAXApplicationShownNotification:
-            onEvent?(.appShown(pid))
+            emit(.appShown(pid))
         default:
             break
         }
@@ -272,28 +281,28 @@ final class WindowRegistry: NSObject {
     @objc private func appLaunched(_ note: Notification) {
         guard let app = Self.runningApp(note) else { return }
         track(app, attempt: 0)
-        onEvent?(.appLaunched(app.processIdentifier))
+        emit(.appLaunched(app.processIdentifier))
     }
 
     @objc private func appTerminated(_ note: Notification) {
         guard let app = Self.runningApp(note) else { return }
         let ids = untrack(app.processIdentifier)
-        onEvent?(.appTerminated(app.processIdentifier, ids))
+        emit(.appTerminated(app.processIdentifier, ids))
     }
 
     @objc private func appHidden(_ note: Notification) {
         guard let app = Self.runningApp(note) else { return }
-        onEvent?(.appHidden(app.processIdentifier))
+        emit(.appHidden(app.processIdentifier))
     }
 
     @objc private func appUnhidden(_ note: Notification) {
         guard let app = Self.runningApp(note) else { return }
-        onEvent?(.appShown(app.processIdentifier))
+        emit(.appShown(app.processIdentifier))
     }
 
     @objc private func appActivated(_ note: Notification) {
         guard let app = Self.runningApp(note) else { return }
         if apps[app.processIdentifier] == nil { track(app, attempt: 0) }
-        onEvent?(.appActivated(app.processIdentifier))
+        emit(.appActivated(app.processIdentifier))
     }
 }

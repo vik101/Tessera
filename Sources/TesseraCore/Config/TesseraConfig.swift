@@ -154,7 +154,9 @@ public struct WindowRule: Equatable, Sendable {
 /// Built-in key sets. Tessera's own keys (Rectangle's, plus ⌃⌥ for auto-tile) are always the base,
 /// except with `none`; the others add their tool's keys on top.
 public enum ShortcutPreset: String, Sendable, CaseIterable {
-    case tessera, spectacle, aerospace, spacetile, none
+    case tessera, spectacle, aerospace, spacetile
+    /// No built-in keys: only the config file's.
+    case blank = "none"
 
     public var title: String {
         switch self {
@@ -162,14 +164,14 @@ public enum ShortcutPreset: String, Sendable, CaseIterable {
         case .spectacle: "Spectacle"
         case .aerospace: "AeroSpace"
         case .spacetile: "Spacetile"
-        case .none: "None (only the config file's)"
+        case .blank: "None (only the config file's)"
         }
     }
 
     /// The extra bindings this preset adds, by mode.
     public var bindings: [String: [(key: String, command: String)]] {
         switch self {
-        case .tessera, .none:
+        case .tessera, .blank:
             return [:]
         case .spectacle:
             return ["main": [
@@ -423,7 +425,7 @@ public struct TesseraConfig: Equatable, Sendable {
                 warn("preset", "preset should be one of " + ShortcutPreset.allCases.map(\.rawValue).joined(separator: ", "))
             }
         }
-        if bool("builtin-shortcuts") == false { c.preset = ShortcutPreset.none }
+        if bool("builtin-shortcuts") == false { c.preset = .blank }
         if let apps = t["ignored-apps"] {
             if let list = apps.strings { c.ignoredApps = list } else { warn("ignored-apps", "ignored-apps should be a list of app ids") }
         }

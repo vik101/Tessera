@@ -30,6 +30,9 @@ echo "› Assembling $APP"
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources" "$APP/Contents/Frameworks"
 cp "$BIN_DIR/Tessera" "$APP/Contents/MacOS/$APP_NAME"
+# The command line tool, for scripts and agents. Homebrew links it; Settings can too.
+mkdir -p "$APP/Contents/Resources/bin"
+cp "$BIN_DIR/TesseraCLI" "$APP/Contents/Resources/bin/tessera"
 python3 scripts/make_plist.py > "$APP/Contents/Info.plist"
 cp Resources/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
 
@@ -78,6 +81,7 @@ for helper in "$FW/Versions/B/XPCServices/Installer.xpc" "$FW/Versions/B/XPCServ
   if [[ "$helper" == *Downloader.xpc ]]; then sign --preserve-metadata=entitlements "$helper"; else sign "$helper"; fi
 done
 sign "$FW"
+sign "$APP/Contents/Resources/bin/tessera"
 sign "$APP"
 
 codesign --verify --deep --strict "$APP" && echo "✓ Built $APP"

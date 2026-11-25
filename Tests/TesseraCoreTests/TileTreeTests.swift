@@ -141,7 +141,8 @@ struct TileTreeTests {
         var t = tree(H(w(1), w(2), w(3)))
         t.resize(1, along: .horizontal, by: 200, in: screen)
         let spots = t.frames(in: screen)
-        #expect(t.move(1, .right))
+        let r1 = t.move(1, .right)
+        #expect(r1)
         #expect(t.windows == [2, 1, 3])
         let after = t.frames(in: screen)
         #expect(after[2] == spots[1])
@@ -150,39 +151,48 @@ struct TileTreeTests {
 
     @Test func movingIntoAColumn() {
         var t = tree(H(w(1), V(w(2), w(3))))
-        #expect(t.move(1, .right))
+        let r2 = t.move(1, .right)
+        #expect(r2)
         #expect(shape(t) == "V[2 3 1]")
     }
 
     @Test func movingOutOfAColumnAtTheEnd() {
         var t = tree(H(w(1), V(w(2), w(3))))
-        #expect(t.move(3, .right))
+        let r3 = t.move(3, .right)
+        #expect(r3)
         #expect(shape(t) == "H[1 2 3]")
     }
 
     @Test func movingDownOutOfARow() {
         var t = tree(V(H(w(1), w(2)), w(3)))
-        #expect(t.move(1, .down))
+        let r4 = t.move(1, .down)
+        #expect(r4)
         #expect(shape(t) == "V[2 1 3]")
     }
 
     @Test func movingAcrossARootThatRunsTheOtherWaySplitsIt() {
         var t = tree(V(w(1), w(2), w(3)))
-        #expect(t.move(3, .right))
+        let r5 = t.move(3, .right)
+        #expect(r5)
         #expect(shape(t) == "H[V[1 2] 3]")
         var u = tree(V(w(1), w(2)))
-        #expect(u.move(2, .left))
+        let r6 = u.move(2, .left)
+        #expect(r6)
         #expect(shape(u) == "H[2 1]")
     }
 
     @Test func movingPastTheEdgeOfARowReturnsFalse() {
         var t = tree(H(w(1), w(2)))
-        #expect(!t.move(1, .left))
-        #expect(!t.move(2, .right))
+        let r7 = t.move(1, .left)
+        #expect(!r7)
+        let r8 = t.move(2, .right)
+        #expect(!r8)
         #expect(t.windows == [1, 2])
         var single = tree(w(1))
-        #expect(!single.move(1, .up))
-        #expect(!single.move(1, .right))
+        let r9 = single.move(1, .up)
+        #expect(!r9)
+        let r10 = single.move(1, .right)
+        #expect(!r10)
     }
 
     @Test func swappingKeepsEverySpot() {
@@ -197,30 +207,47 @@ struct TileTreeTests {
         #expect(t.frames(in: screen) == after)
     }
 
+    @Test func replacingAWindowKeepsItsSpot() {
+        var t = tree(H(w(1), V(w(2), w(3))))
+        let before = t.frames(in: screen)
+        t.replace(2, with: 9)
+        #expect(shape(t) == "H[1 V[9 3]]")
+        #expect(t.frames(in: screen)[9] == before[2])
+        t.replace(1, with: 3)       // Already in the tree: nothing changes.
+        #expect(shape(t) == "H[1 V[9 3]]")
+    }
+
     @Test func joiningMakesAColumnFromTwoNeighbours() {
         var t = tree(H(w(1), w(2), w(3)))
-        #expect(t.join(2, .right))
+        let r11 = t.join(2, .right)
+        #expect(r11)
         #expect(shape(t) == "H[1 V[2 3]]")
         // The column keeps both shares: two thirds of the width.
         #expect(t.frames(in: screen)[2] == r(640, 0, 1280, 500))
         // Joining a column that already runs the other way adds to it.
-        #expect(t.join(1, .right))
+        let r12 = t.join(1, .right)
+        #expect(r12)
         #expect(shape(t) == "V[1 2 3]")
-        #expect(!t.join(3, .down))
+        let r13 = t.join(3, .down)
+        #expect(!r13)
     }
 
     @Test func joiningFromInsideAContainerReachesItsNeighbour() {
         var t = tree(H(V(w(1), w(2)), w(3)))
-        #expect(t.join(2, .right))
+        let r14 = t.join(2, .right)
+        #expect(r14)
         #expect(shape(t) == "H[1 V[2 3]]")
     }
 
     @Test func popOutAndPopIn() {
         var t = tree(H(w(1), V(w(2), w(3))))
-        #expect(t.popOut(2))
+        let r15 = t.popOut(2)
+        #expect(r15)
         #expect(shape(t) == "H[1 3 2]")
-        #expect(!t.popOut(1))      // Already at the top.
-        #expect(t.popIn(3))
+        let r16 = t.popOut(1)  // Already at the top.
+        #expect(!r16)
+        let r17 = t.popIn(3)
+        #expect(r17)
         #expect(shape(t) == "H[1 V[3 2]]")
     }
 
@@ -292,18 +319,22 @@ struct TileTreeTests {
 
     @Test func resizeTakesFromTheSiblings() {
         var t = tree(H(w(1), w(2)))
-        #expect(t.resize(1, along: .horizontal, by: 100, in: screen))
+        let r18 = t.resize(1, along: .horizontal, by: 100, in: screen)
+        #expect(r18)
         #expect(t.frames(in: screen) == [1: r(0, 0, 1060, 1000), 2: r(1060, 0, 860, 1000)])
         // Height: no container runs that way, so nothing changes.
-        #expect(!t.resize(1, along: .vertical, by: 100, in: screen))
+        let r19 = t.resize(1, along: .vertical, by: 100, in: screen)
+        #expect(!r19)
         // Never below the minimum.
-        #expect(t.resize(2, along: .horizontal, by: -5000, in: screen, minimum: 40))
+        let r20 = t.resize(2, along: .horizontal, by: -5000, in: screen, minimum: 40)
+        #expect(r20)
         #expect(t.frames(in: screen)[2]!.width == 40)
     }
 
     @Test func resizeReachesTheNearestContainerThatRunsThatWay() {
         var t = tree(H(w(1), V(w(2), w(3))))
-        #expect(t.resize(2, along: .horizontal, by: -160, in: screen))
+        let r21 = t.resize(2, along: .horizontal, by: -160, in: screen)
+        #expect(r21)
         let f = t.frames(in: screen)
         #expect(f[1] == r(0, 0, 1120, 1000))
         #expect(f[2] == r(1120, 0, 800, 500))
@@ -312,16 +343,20 @@ struct TileTreeTests {
 
     @Test func movingAnEdgeOnlyChangesTheNeighbourAcrossIt() {
         var t = tree(H(w(1), w(2), w(3)))
-        #expect(t.moveEdge(2, .right, by: 100, in: screen))
+        let r22 = t.moveEdge(2, .right, by: 100, in: screen)
+        #expect(r22)
         let f = t.frames(in: screen)
         #expect(f[1] == r(0, 0, 640, 1000))
         #expect(f[2] == r(640, 0, 740, 1000))
         #expect(f[3] == r(1380, 0, 540, 1000))
         // The screen's edge can't move.
-        #expect(!t.moveEdge(3, .right, by: 50, in: screen))
-        #expect(!t.moveEdge(1, .left, by: 50, in: screen))
+        let r23 = t.moveEdge(3, .right, by: 50, in: screen)
+        #expect(!r23)
+        let r24 = t.moveEdge(1, .left, by: 50, in: screen)
+        #expect(!r24)
         // The left edge of 2, dragged left by 40: 2 grows, 1 shrinks.
-        #expect(t.moveEdge(2, .left, by: 40, in: screen))
+        let r25 = t.moveEdge(2, .left, by: 40, in: screen)
+        #expect(r25)
         #expect(t.frames(in: screen)[1] == r(0, 0, 600, 1000))
     }
 

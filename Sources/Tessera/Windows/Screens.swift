@@ -54,6 +54,17 @@ enum Screens {
         }
     }
 
+    /// Screens counted left to right (then top to bottom), from 1.
+    static func ordered(_ displays: [DisplayInfo]) -> [DisplayInfo] {
+        displays.sorted { ($0.frame.minX, $0.frame.minY) < ($1.frame.minX, $1.frame.minY) }
+    }
+
+    /// What config patterns (main, secondary, 2, a name) see of a screen.
+    static func context(of display: DisplayInfo, in displays: [DisplayInfo]) -> DisplayContext {
+        let index = (ordered(displays).firstIndex(of: display) ?? 0) + 1
+        return DisplayContext(name: display.name, index: index, isMain: display.isMain, count: displays.count)
+    }
+
     static func display(containing point: CGPoint, in displays: [DisplayInfo]) -> DisplayInfo? {
         displays.first { $0.frame.contains(point) }
     }

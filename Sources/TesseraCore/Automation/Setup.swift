@@ -25,6 +25,16 @@ public struct Setup: Codable, Equatable, Sendable, Identifiable {
     public var layouts: [String: String]
     /// Hide apps that aren't in the setup when it opens (they keep running).
     public var hideOthers: Bool
+    /// Open by itself when the screens it was saved on connect (nil in setups saved before 3.0).
+    public var openOnConnect: Bool?
+
+    /// The screens the setup puts windows on.
+    public var screens: Set<String> { Set(entries.map(\.screen)) }
+
+    /// Whether this setup should open now that `added` screens joined, with `connected` all the screens there are.
+    public func opens(whenAdded added: Set<String>, connected: Set<String>) -> Bool {
+        openOnConnect == true && !added.isDisjoint(with: screens) && screens.isSubset(of: connected)
+    }
 
     public var id: String { name }
 

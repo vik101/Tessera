@@ -10,8 +10,11 @@ import Foundation
 ///     tessera://import-settings?path=/Users/me/tessera.json
 ///     tessera://save-setup?name=Work                 save the windows on screen now as a setup
 ///     tessera://open-setup?name=Work
+///     tessera://run?command=layout%20tree           any command line (see `tessera help`)
 public enum URLCommand: Equatable, Sendable {
     case run(Command)
+    /// A line of Tessera's command language.
+    case script(String)
     case ignore(app: String?, ignored: Bool)
     case exportSettings(path: String)
     case importSettings(path: String)
@@ -53,6 +56,9 @@ public enum URLCommand: Equatable, Sendable {
         case "open-setup":
             guard let name = value("name") else { return nil }
             self = .openSetup(name: name)
+        case "run":
+            guard let line = value("command") ?? value("cmd"), (try? CommandParser.parse(line)) != nil else { return nil }
+            self = .script(line)
         default:
             return nil
         }

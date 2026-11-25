@@ -26,6 +26,8 @@ enum Automation {
             Setups.save(name: name)
         case .openSetup(let name):
             Setups.open(name: name)
+        case .script(let line):
+            CommandRunner.run(line)
         }
     }
 }

@@ -37,7 +37,9 @@ final class TestHooks: NSObject {
         case "permission": PermissionWindow.shared.show()
         case "fix-mac-tiling": MacTiling.turnOffEdgeDrag()
         default:
-            if command.hasPrefix("run:"), let target = Command(id: String(command.dropFirst(4))) {
+            if command.hasPrefix("line:") {
+                CommandRunner.run(String(command.dropFirst(5)))
+            } else if command.hasPrefix("run:"), let target = Command(id: String(command.dropFirst(4))) {
                 Shortcuts.run(target)
             } else if command.hasPrefix("focus:"), let id = UInt32(command.dropFirst(6)) {
                 AutoTiler.shared.bringForward(CGWindowID(id))
@@ -98,6 +100,17 @@ final class TestHooks: NSObject {
             "layouts": Settings.shared.layouts.mapValues(\.rawValue),
             "autoTileSetting": Settings.shared.autoTile,
             "failedShortcuts": Shortcuts.shared.failed.map(\.id),
+            "failedKeys": Shortcuts.shared.failedKeys,
+            "mode": Shortcuts.shared.mode,
+            "modes": Shortcuts.shared.modes,
+            "config": [
+                "path": ConfigStore.shared.fileURL.path, "exists": ConfigStore.shared.fileExists,
+                "error": ConfigStore.shared.lastError ?? "", "warnings": ConfigStore.shared.config.warnings,
+                "rules": ConfigStore.shared.config.rules.count,
+            ] as [String: Any],
+            "decorations": ["border": Decorations.shared.showing.border, "dim": Decorations.shared.showing.dim],
+            "socket": CommandServer.shared.path,
+            "desktop": Events.shared.currentDesktopNumber() ?? 0,
             "updates": Updater.shared.debugState,
             "log": Array(Log.recent.suffix(60)),
         ]

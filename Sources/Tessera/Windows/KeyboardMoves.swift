@@ -13,10 +13,11 @@ enum KeyboardMoves {
         }
         if let direction = action.direction {
             focus(direction)
-        } else if let n = action.desktopNumber {
-            send(desktop: n, forward: nil)
+        } else if let window = WindowRegistry.shared.focusedWindow() {
+            let target: DesktopTarget = action.desktopNumber.map { .number($0) } ?? (action == .nextDesktop ? .next : .previous)
+            send(window, to: target, follow: true)
         } else {
-            send(desktop: nil, forward: action == .nextDesktop)
+            NSSound.beep()
         }
     }
 
@@ -33,41 +34,75 @@ enum KeyboardMoves {
     }
 
     private static func focus(_ direction: Direction) {
-        guard let focused = WindowRegistry.shared.focusedWindow(), let frame = focused.frame else {
+        guard let focused = WindowRegistry.shared.focusedWindow() else {
             NSSound.beep()
             return
         }
-        let candidates = visibleWindows().filter { $0.id != focused.id }
+        if !focus(from: focused, direction, wrap: false) { NSSound.beep() }
+    }
+
+    /// Focuses the window that way from `window`, on any screen. With `wrap`, at the edge it goes round
+    /// to the window furthest the other way in line. Returns false when there's nothing to go to.
+    @discardableResult
+    static func focus(from window: TrackedWindow, _ direction: Direction, wrap: Bool) -> Bool {
+        guard let frame = window.frame else { return false }
+        let candidates = visibleWindows().filter { $0.id != window.id }
             .compactMap { w in w.frame.map { (id: UInt32(w.id), frame: $0) } }
-        guard let next = Navigation.neighbour(of: frame, direction: direction, among: candidates),
-              let window = WindowRegistry.shared.window(CGWindowID(next)) else {
-            NSSound.beep()
-            return
+        var next = Navigation.neighbour(of: frame, direction: direction, among: candidates)
+        if next == nil, wrap {
+            // Round to the far side: the furthest window the other way, staying in line.
+            var furthest: UInt32?
+            var probe = frame
+            while let back = Navigation.neighbour(of: probe, direction: direction.opposite, among: candidates),
+                  back != furthest, let f = candidates.first(where: { $0.id == back })?.frame {
+                furthest = back
+                probe = f
+            }
+            next = furthest
         }
-        AutoTiler.shared.focus(window)
+        guard let next, let target = WindowRegistry.shared.window(CGWindowID(next)) else { return false }
+        AutoTiler.shared.focus(target)
+        return true
+    }
+
+    /// The windows you can see on a screen, front to back.
+    static func visibleWindows(on display: DisplayInfo) -> [TrackedWindow] {
+        visibleWindows().filter { window in
+            window.frame.map { Screens.display(for: $0, in: Screens.all()) == display } ?? false
+        }
     }
 
     // MARK: Send to a desktop
 
     /// macOS can't move a window to another desktop from outside its app, except the way a person does it:
     /// hold the window by its title bar and press "Move right a space" (⌃→) or "Move left a space" (⌃←).
-    /// Tessera does exactly that, then puts the pointer back. macOS shows the new desktop afterwards.
-    private static func send(desktop number: Int?, forward: Bool?) {
-        guard !sending, let window = WindowRegistry.shared.focusedWindow(), let frame = window.frame,
+    /// Tessera does exactly that, then puts the pointer back. macOS shows the new desktop afterwards;
+    /// without `follow`, Tessera then switches back to the desktop you were on.
+    static func send(_ window: TrackedWindow, to destination: DesktopTarget, follow: Bool) {
+        guard !sending, let frame = window.frame,
               let display = Screens.display(for: frame, in: Screens.all()),
               let layout = Spaces.ordered(for: display) else {
             NSSound.beep()
             return
         }
         let presses: Int?
-        if let number {
+        switch destination {
+        case .number(let number):
             presses = DesktopSteps.presses(spaces: layout.spaces, current: layout.current, toDesktop: number)
-        } else {
-            presses = DesktopSteps.presses(spaces: layout.spaces, current: layout.current, forward: forward ?? true)
+            if presses == nil { Notice.shared.show("No Desktop \(number) on this screen") }
+        case .next:
+            presses = DesktopSteps.presses(spaces: layout.spaces, current: layout.current, forward: true)
+        case .previous:
+            presses = DesktopSteps.presses(spaces: layout.spaces, current: layout.current, forward: false)
+        case .last:
+            presses = Desktops.lastSpace(for: display).flatMap { last in
+                guard let to = layout.spaces.firstIndex(where: { $0.id == last }),
+                      let from = layout.spaces.firstIndex(where: { $0.id == layout.current }) else { return nil }
+                return to - from
+            }
         }
         guard let presses, presses != 0 else {
             NSSound.beep()
-            if let number, presses == nil { Notice.shared.show("No Desktop \(number) on this screen") }
             return
         }
         guard let key = SpaceKey(right: presses > 0), key.enabled else {
@@ -119,6 +154,10 @@ enum KeyboardMoves {
             let landed = target.map { Spaces.spaces(of: window.id).contains($0) } ?? true
             Log.info("Sent window \(window.id) \(presses) desktops along: \(landed ? "done" : "didn't land")")
             if !landed { Notice.shared.show("macOS didn't move the window") }
+            if landed, !follow, let back = SpaceKey(right: presses < 0), back.enabled {
+                try? await Task.sleep(for: .milliseconds(400))
+                for _ in 0..<abs(presses) { back.press() }
+            }
         }
     }
 
@@ -150,35 +189,5 @@ enum KeyboardMoves {
     private static func mouse(_ type: CGEventType, _ point: CGPoint) {
         let source = CGEventSource(stateID: .hidSystemState)
         CGEvent(mouseEventSource: source, mouseType: type, mouseCursorPosition: point, mouseButton: .left)?.post(tap: .cghidEventTap)
-    }
-}
-
-/// macOS's "Move left a space" / "Move right a space" shortcut, as set in Keyboard Shortcuts › Mission Control.
-private struct SpaceKey {
-    let keyCode: CGKeyCode
-    let flags: CGEventFlags
-    let enabled: Bool
-
-    init?(right: Bool) {
-        // Entries 79 (left) and 81 (right) in com.apple.symbolichotkeys; missing means the default, ⌃← / ⌃→.
-        let entry = (UserDefaults(suiteName: "com.apple.symbolichotkeys")?
-            .dictionary(forKey: "AppleSymbolicHotKeys")?[right ? "81" : "79"]) as? [String: Any]
-        let parameters = ((entry?["value"] as? [String: Any])?["parameters"] as? [NSNumber]) ?? []
-        enabled = (entry?["enabled"] as? NSNumber)?.boolValue ?? true
-        if parameters.count >= 3 {
-            keyCode = CGKeyCode(parameters[1].intValue)
-            flags = CGEventFlags(rawValue: parameters[2].uint64Value)
-        } else {
-            keyCode = right ? 0x7C : 0x7B
-            flags = [.maskControl, .maskSecondaryFn]
-        }
-    }
-
-    func press() {
-        for down in [true, false] {
-            let event = CGEvent(keyboardEventSource: CGEventSource(stateID: .hidSystemState), virtualKey: keyCode, keyDown: down)
-            event?.flags = flags
-            event?.post(tap: .cghidEventTap)
-        }
     }
 }

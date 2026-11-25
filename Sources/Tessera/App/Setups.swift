@@ -5,6 +5,18 @@ import TesseraCore
 @MainActor
 enum Setups {
     private static var opening = false
+    private static var knownScreens: Set<String> = Set(Screens.all().map(\.stableID))
+
+    /// Screens changed: a setup that opens when its screens connect does so (once they've settled).
+    static func screensChanged() {
+        let now = Set(Screens.all().map(\.stableID))
+        let added = now.subtracting(knownScreens)
+        knownScreens = now
+        guard !added.isEmpty,
+              let setup = Settings.shared.setups.first(where: { $0.opens(whenAdded: added, connected: now) }) else { return }
+        Log.info("Screens connected: opening setup “\(setup.name)”")
+        after(2.5) { open(setup) }
+    }
 
     /// Saves the windows on screen now (every screen, this desktop) as a setup, replacing one of the same name.
     @discardableResult

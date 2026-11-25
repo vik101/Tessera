@@ -8,13 +8,14 @@ cask "tessera" do
 
   url "https://github.com/vik101/Tessera/releases/latest/download/Tessera.zip"
   name "Tessera"
-  desc "Rectangle-style window snapping plus adaptive auto-tiling"
+  desc "Rectangle-style snapping, adaptive auto-tiling and a tiling tree, with a CLI"
   homepage "https://github.com/vik101/Tessera"
 
   auto_updates true
   depends_on macos: :sequoia
 
   app "Tessera.app"
+  binary "#{appdir}/Tessera.app/Contents/Resources/bin/tessera"
 
   # Tessera isn't notarized by Apple yet, so macOS would refuse to open a download.
   # Remove this once releases are notarized.

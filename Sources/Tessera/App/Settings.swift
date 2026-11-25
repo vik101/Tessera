@@ -7,13 +7,40 @@ import TesseraCore
 final class Settings: ObservableObject {
     static let shared = Settings()
 
-    enum Change { case shortcuts, tiling, other }
+    enum Change { case shortcuts, tiling, appearance, other }
 
     private let store = UserDefaults.standard
     private var listeners: [@MainActor (Change) -> Void] = []
 
     /// Points between snapped or tiled windows (0–30).
     @Published var gap: Int { didSet { save("gap", gap, .tiling) } }
+    /// Points at the screen's edges around tiled windows (-1: the same as `gap`).
+    @Published var outerGap: Int { didSet { save("outerGap", outerGap, .tiling) } }
+    /// Gaps on or off without losing their sizes (Spacetile's "toggle spacing").
+    @Published var spacing: Bool { didSet { save("spacing", spacing, .tiling) } }
+    /// The strip each neighbour shows in an accordion (Tree layout), in points.
+    @Published var accordionPadding: Double { didSet { save("accordionPadding", accordionPadding, .tiling) } }
+
+    /// Dim every window except the focused one (off by default).
+    @Published var dim: Bool { didSet { save("dim", dim, .appearance) } }
+    /// How dark the dimming is (0.05–0.9).
+    @Published var dimAmount: Double { didSet { save("dimAmount", dimAmount, .appearance) } }
+    /// A border round the focused window (off by default).
+    @Published var border: Bool { didSet { save("border", border, .appearance) } }
+    @Published var borderWidth: Double { didSet { save("borderWidth", borderWidth, .appearance) } }
+    /// As #rrggbb.
+    @Published var borderColor: String { didSet { save("borderColor", borderColor, .appearance) } }
+    /// The desktop's number beside Tessera's menu bar icon (off by default).
+    @Published var showDesktopNumber: Bool { didSet { save("showDesktopNumber", showDesktopNumber, .appearance) } }
+
+    /// Focus the window under the pointer when the pointer rests on it (off by default).
+    @Published var focusFollowsMouse: Bool { didSet { save("focusFollowsMouse", focusFollowsMouse, .other) } }
+    /// Hold this and drag anywhere in a window to move it: "fn", "ctrl-cmd", "cmd-alt", "ctrl-alt" or "none".
+    @Published var moveModifier: String { didSet { save("moveModifier", moveModifier, .other) } }
+    /// Extra built-in keys: "tessera", "spectacle", "aerospace", "spacetile" or "none".
+    @Published var preset: String { didSet { save("preset", preset, .shortcuts) } }
+    /// Undo ⌘H: hidden apps come straight back (AeroSpace's automatically-unhide-macos-hidden-apps).
+    @Published var unhideHiddenApps: Bool { didSet { save("unhideHiddenApps", unhideHiddenApps, .other) } }
     /// Drag a window to a screen edge or corner to snap it.
     @Published var dragToSnap: Bool { didSet { save("dragToSnap", dragToSnap, .other) } }
     /// Dragging a snapped window away gives it back its old size.
@@ -68,6 +95,19 @@ final class Settings: ObservableObject {
         }
         store.register(defaults: [
             "gap": 0,
+            "outerGap": -1,
+            "spacing": true,
+            "accordionPadding": 30.0,
+            "dim": false,
+            "dimAmount": 0.25,
+            "border": false,
+            "borderWidth": 4.0,
+            "borderColor": "#4c9aff",
+            "showDesktopNumber": false,
+            "focusFollowsMouse": false,
+            "moveModifier": "fn",
+            "preset": "tessera",
+            "unhideHiddenApps": false,
             "dragToSnap": true,
             "restoreSizeOnDrag": true,
             "cycleSizes": true,
@@ -79,6 +119,19 @@ final class Settings: ObservableObject {
             "ignoredApps": ["com.apple.calculator", "com.apple.systempreferences"],
         ])
         gap = store.integer(forKey: "gap")
+        outerGap = store.integer(forKey: "outerGap")
+        spacing = store.bool(forKey: "spacing")
+        accordionPadding = store.double(forKey: "accordionPadding")
+        dim = store.bool(forKey: "dim")
+        dimAmount = store.double(forKey: "dimAmount")
+        border = store.bool(forKey: "border")
+        borderWidth = store.double(forKey: "borderWidth")
+        borderColor = store.string(forKey: "borderColor") ?? "#4c9aff"
+        showDesktopNumber = store.bool(forKey: "showDesktopNumber")
+        focusFollowsMouse = store.bool(forKey: "focusFollowsMouse")
+        moveModifier = store.string(forKey: "moveModifier") ?? "fn"
+        preset = store.string(forKey: "preset") ?? "tessera"
+        unhideHiddenApps = store.bool(forKey: "unhideHiddenApps")
         dragToSnap = store.bool(forKey: "dragToSnap")
         restoreSizeOnDrag = store.bool(forKey: "restoreSizeOnDrag")
         cycleSizes = store.bool(forKey: "cycleSizes")
@@ -117,7 +170,18 @@ final class Settings: ObservableObject {
         listeners.append(listener)
     }
 
-    func layout(for screenID: String) -> LayoutStyle { layouts[screenID] ?? .auto }
+    func layout(for screenID: String) -> LayoutStyle { layouts[screenID] ?? ConfigStore.shared.defaultLayout ?? .auto }
+
+    /// The gaps on a screen: the config file's (which can differ per screen) or the sliders',
+    /// and none while spacing is toggled off.
+    func gaps(for display: DisplayInfo, in displays: [DisplayInfo]) -> Gaps {
+        guard spacing else { return Gaps(inner: 0, outer: 0) }
+        if let fromFile = ConfigStore.shared.config.gaps { return fromFile }
+        return Gaps(inner: CGFloat(gap), outer: CGFloat(outerGap < 0 ? gap : outerGap))
+    }
+
+    /// The shortcut preset in use (the config file's wins).
+    var shortcutPreset: ShortcutPreset { ConfigStore.shared.config.preset ?? ShortcutPreset(rawValue: preset) ?? .tessera }
 
     func isIgnored(_ bundleID: String) -> Bool { ignoredApps.contains(bundleID) }
 

@@ -10,13 +10,27 @@ final class StatusMenu: NSObject, NSMenuDelegate {
     private let menu = NSMenu()
 
     func install() {
-        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         item.button?.image = MenuIcons.statusIcon
+        item.button?.imagePosition = .imageLeading
         item.button?.setAccessibilityLabel("Tessera")
         menu.delegate = self
         menu.autoenablesItems = false
         item.menu = menu
         statusItem = item
+        Settings.shared.observe { [weak self] change in
+            if change == .appearance { self?.refreshTitle() }
+        }
+        refreshTitle()
+    }
+
+    /// Beside the icon: the desktop's number (if you turned that on) and the binding mode, when it isn't main.
+    func refreshTitle() {
+        var parts: [String] = []
+        if Settings.shared.showDesktopNumber, let number = Events.shared.currentDesktopNumber() { parts.append(String(number)) }
+        let mode = Shortcuts.shared.mode
+        if mode != "main" { parts.append(mode) }
+        statusItem?.button?.title = parts.isEmpty ? "" : " " + parts.joined(separator: " · ")
     }
 
     /// Opens the menu (used by the test harness to take a screenshot).
@@ -49,6 +63,16 @@ final class StatusMenu: NSObject, NSMenuDelegate {
         }
         if !Shortcuts.shared.failed.isEmpty {
             menu.addItem(item("⚠︎ Some shortcuts are taken by another app…", #selector(showSettings)))
+            warnings = true
+        }
+        let config = ConfigStore.shared
+        if config.lastError != nil || !config.config.warnings.isEmpty {
+            let count = config.lastError != nil ? 1 : config.config.warnings.count
+            menu.addItem(item("⚠︎ The config file has \(count) problem\(count == 1 ? "" : "s")…", #selector(showConfigProblems)))
+            warnings = true
+        }
+        if Shortcuts.shared.mode != "main" {
+            menu.addItem(item("Mode: \(Shortcuts.shared.mode) — Back to Main", #selector(backToMainMode)))
             warnings = true
         }
         if warnings { menu.addItem(.separator()) }
@@ -193,6 +217,21 @@ final class StatusMenu: NSObject, NSMenuDelegate {
         setupsParent.submenu = setupsMenu
         menu.addItem(setupsParent)
         menu.addItem(.separator())
+
+        // The config file and the command line tool.
+        let advanced = NSMenu()
+        advanced.autoenablesItems = false
+        advanced.addItem(item(config.fileExists ? "Open Config File" : "Make a Config File", #selector(openConfig)))
+        let reload = item("Reload Config File", #selector(reloadConfig))
+        reload.isEnabled = config.fileExists
+        advanced.addItem(reload)
+        advanced.addItem(item("Import AeroSpace Config…", #selector(importAeroSpace)))
+        advanced.addItem(.separator())
+        advanced.addItem(item(CommandLineTool.isInstalled ? "Command Line Tool Installed" : "Install Command Line Tool…",
+                              #selector(installCommandLineTool)))
+        let advancedParent = NSMenuItem(title: "Config and Command Line", action: nil, keyEquivalent: "")
+        advancedParent.submenu = advanced
+        menu.addItem(advancedParent)
 
         let settingsItem = item("Settings…", #selector(showSettings))
         settingsItem.keyEquivalent = ","
@@ -340,6 +379,46 @@ final class StatusMenu: NSObject, NSMenuDelegate {
 
     @objc private func saveSetup() { Setups.saveWithPrompt() }
 
+    @objc private func openConfig() { ConfigStore.shared.openInEditor() }
+
+    @objc private func reloadConfig() {
+        let result = ConfigStore.shared.load(quiet: true)
+        Notice.shared.show(result.ok ? "Config reloaded" : result.message)
+    }
+
+    @objc private func importAeroSpace() {
+        let alert = NSAlert()
+        alert.messageText = "Import your AeroSpace config?"
+        alert.informativeText = "Tessera copies ~/.aerospace.toml into \(ConfigStore.tilde(ConfigStore.shared.fileURL)) and reads it. "
+            + "Workspaces become your macOS desktops. Anything that won't work is listed at the top of the file. "
+            + "An existing Tessera config is kept as a .bak file."
+        alert.addButton(withTitle: "Import")
+        alert.addButton(withTitle: "Cancel")
+        NSApp.activate()
+        guard alert.runModal() == .alertFirstButtonReturn else { return }
+        let result = ConfigStore.shared.importAeroSpace()
+        Notice.shared.show(result.message)
+    }
+
+    @objc private func installCommandLineTool() {
+        let result = CommandLineTool.install()
+        Notice.shared.show(result)
+    }
+
+    @objc private func showConfigProblems() {
+        let store = ConfigStore.shared
+        let alert = NSAlert()
+        alert.messageText = "Problems in \(ConfigStore.tilde(store.fileURL))"
+        let lines = store.lastError.map { [$0] } ?? store.config.warnings
+        alert.informativeText = lines.prefix(12).joined(separator: "\n") + (lines.count > 12 ? "\n…and \(lines.count - 12) more" : "")
+        alert.addButton(withTitle: "Open Config File")
+        alert.addButton(withTitle: "OK")
+        NSApp.activate()
+        if alert.runModal() == .alertFirstButtonReturn { store.openInEditor() }
+    }
+
+    @objc private func backToMainMode() { Shortcuts.shared.setMode("main") }
+
     @objc private func quit() { NSApp.terminate(nil) }
 }
 
@@ -358,7 +437,27 @@ enum MenuIcons {
     static func layoutIcon(_ style: LayoutStyle, on screen: DisplayInfo?, count: Int, height: CGFloat) -> NSImage {
         let area = screen?.visibleFrame ?? CGRect(x: 0, y: 0, width: 1600, height: 1000)
         let ratio = CGFloat(Settings.shared.mainRatio)
-        let frames = TilePlanner.frames(count: count, in: area, style: style, mainRatio: style == .mainAndSide ? ratio : 0.5)
+        let frames: [CGRect]
+        switch style {
+        case .tree:
+            // A main tile, and the other side split again: the shape a tree grows into.
+            var tree = TileTree<Int>(orientation: Orientation.along(area.size))
+            for i in 0..<max(count, 1) { tree.insert(i, splitting: i - 1, direction: i % 2 == 1 ? .right : .down) }
+            let byID = tree.frames(in: area)
+            frames = (0..<max(count, 1)).compactMap { byID[$0] }
+        case .stack:
+            // Windows on top of each other, each a little lower.
+            let step = area.height * 0.08
+            frames = (0..<3).map { i in
+                CGRect(x: area.minX + CGFloat(i) * step, y: area.minY + CGFloat(i) * step,
+                       width: area.width - 2 * step, height: area.height - 2 * step)
+            }
+        case .float:
+            frames = [CGRect(x: area.minX + area.width * 0.08, y: area.minY + area.height * 0.12, width: area.width * 0.5, height: area.height * 0.55),
+                      CGRect(x: area.minX + area.width * 0.42, y: area.minY + area.height * 0.35, width: area.width * 0.5, height: area.height * 0.55)]
+        default:
+            frames = TilePlanner.frames(count: count, in: area, style: style, mainRatio: style == .mainAndSide ? ratio : 0.5)
+        }
         return picture(of: frames, in: area, height: height)
     }
 

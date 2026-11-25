@@ -58,6 +58,30 @@ enum Spaces {
         return result.isEmpty ? nil : result
     }
 
+    /// The display UUID macOS uses for a screen's Spaces ("Main" when all screens share one set).
+    static func displayUUID(_ display: DisplayInfo) -> String? {
+        guard let uuid = CGDisplayCreateUUIDFromDisplayID(display.displayID)?.takeRetainedValue() else { return nil }
+        return (CFUUIDCreateString(nil, uuid) as String?)?.uppercased()
+    }
+
+    /// The Space each display shows, by the display's UUID (or "MAIN").
+    static func currentByDisplay() -> [String: SpaceID]? {
+        guard let connection, let copyDisplaySpaces,
+              let list = copyDisplaySpaces(connection)?.takeRetainedValue() as? [[String: Any]] else { return nil }
+        var result: [String: SpaceID] = [:]
+        for entry in list {
+            guard let identifier = entry["Display Identifier"] as? String,
+                  let current = entry["Current Space"] as? [String: Any],
+                  let id = (current["ManagedSpaceID"] ?? current["id64"]) as? NSNumber else { continue }
+            result[identifier.uppercased()] = id.uint64Value
+        }
+        // With one shared set of Spaces, every screen answers to "MAIN".
+        if let shared = result["MAIN"] {
+            for display in Screens.all() { if let uuid = displayUUID(display) { result[uuid] = shared } }
+        }
+        return result
+    }
+
     /// All desktops, in order, for the tests.
     static func all() -> [[String: Any]] {
         guard let connection, let copyDisplaySpaces,

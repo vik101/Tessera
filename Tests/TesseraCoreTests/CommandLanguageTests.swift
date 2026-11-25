@@ -266,3 +266,57 @@ struct CommandLanguageTests {
         #expect(Toggle.on.apply(to: false) == true)
     }
 }
+
+@Suite("Command line tool")
+struct CommandLineToolTests {
+    @Test func everyHelpExampleParses() {
+        for entry in CommandHelp.entries {
+            #expect((try? CommandParser.parse(entry.example)) != nil, "\(entry.example)")
+        }
+        #expect(CommandHelp.overview.contains("list-windows"))
+        #expect(CommandHelp.detail("focus")?.contains("Example: tessera focus left") == true)
+        #expect(CommandHelp.detail("workspace")?.contains("desktop") == true)
+        #expect(CommandHelp.detail("nonsense") == nil)
+    }
+
+    @Test func formats() {
+        let row = ["window-id": "42", "app-name": "Safari", "window-title": "50% off"]
+        #expect(ListFormat.render("%{window-id} %{app-name}", row) == "42 Safari")
+        #expect(ListFormat.render("%{window-title} %% %{missing}!", row) == "50% off % !")
+        #expect(ListFormat.render("100%", row) == "100%")
+        #expect(ListFormat.table([["1", "Safari", "Home"], ["1234", "Terminal", "zsh"]]) == "1    | Safari   | Home\n1234 | Terminal | zsh")
+        #expect(ListFormat.table([]) == "")
+    }
+
+    @Test func framesRoundTrip() throws {
+        let request = Wire.Request(args: ["focus", "left"], windowID: 7)
+        let data = try JSONEncoder().encode(request)
+        let framed = Wire.frame(data)
+        #expect(Wire.length(framed.prefix(4)) == data.count)
+        let back = try JSONDecoder().decode(Wire.Request.self, from: framed.dropFirst(4))
+        #expect(back == request)
+        #expect(Wire.socketPath(uid: 501) == "/tmp/tessera-501.sock")
+        #expect(Wire.length(Data([1, 2])) == nil)
+    }
+
+    @Test func runLinks() {
+        #expect(URLCommand(url: URL(string: "tessera://run?command=layout%20tree")!) == .script("layout tree"))
+        #expect(URLCommand(url: URL(string: "tessera://run?command=nonsense%20here")!) == nil)
+        #expect(URLCommand(url: URL(string: "tessera://run")!) == nil)
+    }
+
+    @Test func setupsOpenWhenTheirScreensConnect() {
+        var setup = Setup(name: "Desk", entries: [
+            .init(bundleID: "a", screen: "dell", place: .full), .init(bundleID: "b", screen: "laptop", place: .full),
+        ])
+        #expect(!setup.opens(whenAdded: ["dell"], connected: ["dell", "laptop"]))   // Not switched on.
+        setup.openOnConnect = true
+        #expect(setup.opens(whenAdded: ["dell"], connected: ["dell", "laptop"]))
+        #expect(!setup.opens(whenAdded: ["tv"], connected: ["dell", "laptop", "tv"]))   // Its screens didn't change.
+        #expect(!setup.opens(whenAdded: ["dell"], connected: ["dell"]))                 // The laptop's screen is missing.
+        // Setups saved before 3.0 have no such switch.
+        let old = #"{"name":"Old","entries":[],"layouts":{},"hideOthers":true}"#
+        let decoded = try? JSONDecoder().decode(Setup.self, from: Data(old.utf8))
+        #expect(decoded?.openOnConnect == nil)
+    }
+}

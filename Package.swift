@@ -13,6 +13,7 @@ let package = Package(
     platforms: [.macOS(.v15)],
     products: [
         .executable(name: "Tessera", targets: ["Tessera"]),
+        .executable(name: "TesseraCLI", targets: ["TesseraCLI"]),
         .library(name: "TesseraCore", targets: ["TesseraCore"]),
     ],
     dependencies: [
@@ -37,6 +38,9 @@ let package = Package(
                 .linkedFramework("ServiceManagement"),
             ]
         ),
+
+        // The `tessera` command line tool (bundled in the app as Contents/Resources/bin/tessera).
+        .executableTarget(name: "TesseraCLI", dependencies: ["TesseraCore"]),
 
         .testTarget(name: "TesseraCoreTests", dependencies: ["TesseraCore"]),
     ]
