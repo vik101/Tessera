@@ -13,6 +13,7 @@ Newest first. Each version's lines become the release notes in the update window
 - Key presets for Spectacle, AeroSpace and Spacetile users.
 - Off unless you turn them on: dim the other windows, a border round the window you're in, and focus follows the mouse.
 - A setup can open by itself when its screens are plugged in.
+- Sending a window to a desktop works even while a modifier key is still held. Leaving macOS full screen no longer pins a window over the others.
 
 ## 2.5.1
 

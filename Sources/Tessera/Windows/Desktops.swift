@@ -133,10 +133,29 @@ struct SpaceKey {
                         enabled: (entry["enabled"] as? NSNumber)?.boolValue ?? false)
     }
 
+    /// Presses the shortcut the way a keyboard does: modifier keys down, the key, modifier keys up.
+    /// Without the "up" for each modifier, macOS can go on thinking ⌃ is held, and the next click
+    /// becomes a ⌃-click (a right-click).
     func press() {
+        let source = CGEventSource(stateID: .hidSystemState)
+        let modifiers: [(CGEventFlags, CGKeyCode)] = [(.maskControl, 0x3B), (.maskAlternate, 0x3A), (.maskShift, 0x38), (.maskCommand, 0x37)]
+        let used = modifiers.filter { flags.contains($0.0) }
+        var held: CGEventFlags = []
+        for (flag, code) in used {
+            held.insert(flag)
+            let event = CGEvent(keyboardEventSource: source, virtualKey: code, keyDown: true)
+            event?.flags = held
+            event?.post(tap: .cghidEventTap)
+        }
         for down in [true, false] {
-            let event = CGEvent(keyboardEventSource: CGEventSource(stateID: .hidSystemState), virtualKey: keyCode, keyDown: down)
+            let event = CGEvent(keyboardEventSource: source, virtualKey: keyCode, keyDown: down)
             event?.flags = flags
+            event?.post(tap: .cghidEventTap)
+        }
+        for (flag, code) in used.reversed() {
+            held.remove(flag)
+            let event = CGEvent(keyboardEventSource: source, virtualKey: code, keyDown: false)
+            event?.flags = held
             event?.post(tap: .cghidEventTap)
         }
     }
