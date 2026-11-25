@@ -791,6 +791,66 @@ def minimum_sizes(ids):
            tree())
 
 
+# ---------- a setup that opens when its screen is plugged in ----------
+
+def setup_on_connect(ids):
+    """Save a setup with a window on a second screen, mark it to open on connect, unplug and replug."""
+    if len(ids) < 3 or not os.path.exists("/tmp/vdisplay"):
+        record("A pretend screen for the setup check", False, "no /tmp/vdisplay", warn=True)
+        return
+    import screens as sc
+    sc.plug("dell", sc.DELL, 7071, 1920, 0)
+    d = c.dump()
+    dell = sc.screen_of_size(d, sc.DELL)
+    if not dell:
+        record("The pretend Dell screen is connected", False, f"{[x['frame'] for x in d['displays']]}")
+        sc.unplug("dell")
+        return
+    w = ids[0]
+    run("--window-id", str(w), "send-to-display", "right", wait=2.5)
+    f = cg().get(w)
+    on_dell = f is not None and c.inside(f, [round(v) for v in dell["frame"]], tol=2)
+    record("send-to-display right puts the window on the Dell", on_dell, f"window {f}, Dell {dell['frame']}")
+    code, _, err = cli("setup", "save", "Desk")
+    record("setup save works from the command line", code == 0, f"{code}: {err.strip()}")
+    path = "/tmp/tessera-setups.json"
+    if os.path.exists(path):
+        os.remove(path)
+    subprocess.run(["open", "-g", f"tessera://export-settings?path={path}"], timeout=20)
+    time.sleep(2.0)
+    try:
+        data = json.load(open(path))
+        for setup in data.get("setups", []):
+            if setup.get("name") == "Desk":
+                setup["openOnConnect"] = True
+        json.dump(data, open(path, "w"))
+        subprocess.run(["open", "-g", f"tessera://import-settings?path={path}"], timeout=20)
+        time.sleep(2.0)
+    except (OSError, ValueError) as error:
+        record("Settings file with the setup", False, repr(error))
+    sc.unplug("dell")
+    time.sleep(2.0)
+    f = cg().get(w)
+    V = visible()
+    record("Unplugging the Dell brings its window to the main screen", f is not None and c.inside(f, V, tol=2), f"window {f}")
+    # Move it yourself, so Tessera's screen memory won't take it back: only the setup should.
+    focus(w)
+    run("place", "left-half", wait=1.5)
+    sc.plug("dell", sc.DELL, 7071, 1920, 0)
+    time.sleep(5.0)
+    d = c.dump()
+    dell = sc.screen_of_size(d, sc.DELL)
+    f = cg().get(w)
+    back = dell is not None and f is not None and c.inside(f, [round(v) for v in dell["frame"]], tol=2)
+    record("Plugging the Dell back in opens the setup: the window is on the Dell again", back,
+           f"window {f}, Dell {dell and dell['frame']}; " + " | ".join(l for l in d.get("log", []) if "setup" in l.lower())[-300:])
+    sc.unplug("dell")
+    cli("setup", "delete", "Desk")
+    for bundle in OTHERS:
+        c.keys("hide", bundle)
+    time.sleep(1.0)
+
+
 # ---------- the end ----------
 
 def tidy():
@@ -831,6 +891,7 @@ def main():
     subscribe(ids)
     config_file(ids)
     desktops(ids)
+    setup_on_connect(textedit_ids()[:3])
     tidy()
     unreachable()
 

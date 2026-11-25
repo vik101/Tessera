@@ -119,6 +119,8 @@ A rule tells Tessera what to do with one app's windows, every time. Set rules fr
 
 A setup remembers which apps are on your screens and where their windows are. **Setups ▸ Save Current Setup…** in the menu saves one. Open it from the same menu, or with ⌃⌥⌘1–9 (by its place in the list).
 
+**Open by itself:** in **Settings › Setups**, turn on **Open when its screens connect** for a setup. Plugging in a screen it uses then opens it, for example your desk setup when you dock the laptop. To open one when an app starts or at a set time, use a Shortcuts automation that runs `tessera setup open Work`.
+
 Opening a setup starts any of its apps that aren't running, hides the apps that aren't in it (they keep running; switch this off per setup in Settings), and puts each window back on its screen and in its place. Places are saved as shares of the screen, so a setup also works on a screen of another size. With auto-tile on, each screen also gets the layout it had.
 
 ## Scripts and links
