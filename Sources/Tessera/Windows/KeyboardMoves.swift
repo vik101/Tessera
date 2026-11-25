@@ -226,6 +226,10 @@ enum KeyboardMoves {
 
     private static func mouse(_ type: CGEventType, _ point: CGPoint) {
         let source = CGEventSource(stateID: .hidSystemState)
-        CGEvent(mouseEventSource: source, mouseType: type, mouseCursorPosition: point, mouseButton: .left)?.post(tap: .cghidEventTap)
+        guard let event = CGEvent(mouseEventSource: source, mouseType: type, mouseCursorPosition: point, mouseButton: .left) else { return }
+        // No modifier keys: an event takes the last ones pressed (Tessera's own ⌃→ for desktops leaves
+        // ⌃ and fn behind), and ⌃-click is a right-click, fn-drag is Tessera's own move.
+        event.flags = []
+        event.post(tap: .cghidEventTap)
     }
 }

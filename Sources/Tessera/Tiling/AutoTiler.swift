@@ -1067,7 +1067,12 @@ final class AutoTiler {
         // whole screen: that isn't a maximise.
         if registry.window(id)?.element.isFullScreen == true { inFullScreen.insert(id) }
         let justLeftFullScreen = inFullScreen.contains(id) || leftFullScreen[id].map { Date().timeIntervalSince($0) < 6 } == true
-        if !justLeftFullScreen, let window = registry.window(id), isTiled(window), !mover.isOwnMove(id), let frame = window.frame,
+        if justLeftFullScreen {
+            // Let the animation finish before putting it back in its tile.
+            scheduleRetile(delay: 1.2)
+            return
+        }
+        if let window = registry.window(id), isTiled(window), !mover.isOwnMove(id), let frame = window.frame,
            let display = Screens.display(for: frame, in: Screens.all()),
            frame.isClose(to: display.visibleFrame, tolerance: 24),
            planned[id]?.isClose(to: display.visibleFrame, tolerance: 24) != true {
@@ -1608,8 +1613,7 @@ final class AutoTiler {
         lastUsed[id] = nil
         wanted[id] = nil
         kept.remove(id)
-        inFullScreen.remove(id)
-        leftFullScreen[id] = nil
+        // Full screen state stays: macOS may report a window gone and back while it changes to full screen.
         for (key, tree) in trees where tree.contains(id) {
             var copy = tree
             copy.remove(id)
