@@ -33,6 +33,8 @@ enum WindowActions {
         let now = window.element.isFullScreen
         let want = toggle.apply(to: now)
         guard want != now else { return true }
+        // macOS animates in and out of full screen, showing odd sizes on the way: auto-tile waits it out.
+        AutoTiler.shared.fullScreenChanging(window.id)
         window.element.set("AXFullScreen", bool: want)
         return true
     }

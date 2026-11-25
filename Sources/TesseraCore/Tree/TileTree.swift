@@ -94,6 +94,16 @@ public struct TileTree<ID: Hashable & Sendable>: Equatable, Sendable {
         public var anchor: ID
         /// Which side of the anchor it was on.
         public var direction: Direction
+        /// Every window in the neighbouring branch it sat beside (the anchor's whole split). While
+        /// that branch is still one piece, the window goes back beside all of it, even if tidying
+        /// the tree removed the split they shared.
+        public var branch: [ID]
+
+        public init(anchor: ID, direction: Direction, branch: [ID] = []) {
+            self.anchor = anchor
+            self.direction = direction
+            self.branch = branch
+        }
     }
 
     public var root: Container
@@ -181,6 +191,13 @@ public struct TileTree<ID: Hashable & Sendable>: Equatable, Sendable {
             return
         }
         let axis = Orientation.of(hint.direction)
+        // The branch it sat beside is still one piece: back beside the whole of it.
+        if !hint.branch.isEmpty, let branchPath = commonPath(of: hint.branch),
+           Set(Self.leaves(of: node(at: branchPath))) == Set(hint.branch) {
+            place(id, beside: branchPath, axis: axis, after: hint.direction.isForward)
+            normalize()
+            return
+        }
         for level in stride(from: path.count - 1, through: 0, by: -1) {
             let containerPath = Array(path[0..<level])
             guard container(at: containerPath).orientation == axis else { continue }
@@ -208,9 +225,9 @@ public struct TileTree<ID: Hashable & Sendable>: Equatable, Sendable {
         let parent = container(at: parentPath)
         var hint: Hint?
         if index > 0, let anchor = Self.leaves(of: parent.children[index - 1]).last {
-            hint = Hint(anchor: anchor, direction: parent.orientation.forward)
+            hint = Hint(anchor: anchor, direction: parent.orientation.forward, branch: Self.leaves(of: parent.children[index - 1]))
         } else if index + 1 < parent.children.count, let anchor = Self.leaves(of: parent.children[index + 1]).first {
-            hint = Hint(anchor: anchor, direction: parent.orientation.backward)
+            hint = Hint(anchor: anchor, direction: parent.orientation.backward, branch: Self.leaves(of: parent.children[index + 1]))
         }
         let weight = detach(at: path)
         withContainer(at: parentPath) { parent in
@@ -663,6 +680,48 @@ public struct TileTree<ID: Hashable & Sendable>: Equatable, Sendable {
     }
 
     // MARK: Helpers
+
+    /// The node at a path (an empty path is the root).
+    func node(at path: [Int]) -> Node {
+        guard let index = path.last else { return .container(root) }
+        let parent = container(at: Array(path.dropLast()))
+        return parent.children.indices.contains(index) ? parent.children[index] : .container(root)
+    }
+
+    /// The path of the smallest node holding all these windows, or nil if one is missing.
+    func commonPath(of ids: [ID]) -> [Int]? {
+        var common: [Int]?
+        for id in ids {
+            guard let p = path(of: id) else { return nil }
+            guard let so = common else { common = p; continue }
+            common = zip(so, p).prefix { $0.0 == $0.1 }.map { $0.0 }
+        }
+        return common
+    }
+
+    /// Puts a window beside the node at `path`, along `axis`: into its container if that runs the
+    /// same way, otherwise in a new split that holds the two.
+    private mutating func place(_ id: ID, beside path: [Int], axis: Orientation, after: Bool) {
+        guard let index = path.last else {
+            let old = root
+            root = Container(orientation: axis, children: after ? [.container(old), .window(id)] : [.window(id), .container(old)])
+            return
+        }
+        let parentPath = Array(path.dropLast())
+        if container(at: parentPath).orientation == axis {
+            withContainer(at: parentPath) { c in
+                let half = c.weights[index] / 2
+                c.weights[index] = half
+                let at = after ? index + 1 : index
+                c.children.insert(.window(id), at: at)
+                c.weights.insert(half, at: at)
+            }
+        } else {
+            let existing = node(at: path)
+            let split = Container(orientation: axis, children: after ? [existing, .window(id)] : [.window(id), existing])
+            setNode(.container(split), at: path)
+        }
+    }
 
     static func leaves(of node: Node) -> [ID] {
         switch node {

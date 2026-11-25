@@ -1058,10 +1058,15 @@ final class AutoTiler {
     /// double-click on the title bar. If the window now fills the screen, that was a "maximise"
     /// command: it wins, and the window keeps that spot until your next layout command. Anything
     /// else (an app nudging its own window) goes back to its tile.
+    /// A window is going into or out of macOS full screen (Tessera asked for it).
+    func fullScreenChanging(_ id: CGWindowID) { leftFullScreen[id] = Date() }
+
     private func movedByApp(_ id: CGWindowID) {
         guard running else { return }
-        // Leaving macOS full screen, a window comes back full size for a moment: that isn't a maximise.
-        let justLeftFullScreen = inFullScreen.contains(id) || leftFullScreen[id].map { Date().timeIntervalSince($0) < 4 } == true
+        // Going into or out of macOS full screen, a window shows odd sizes for a moment, often the
+        // whole screen: that isn't a maximise.
+        if registry.window(id)?.element.isFullScreen == true { inFullScreen.insert(id) }
+        let justLeftFullScreen = inFullScreen.contains(id) || leftFullScreen[id].map { Date().timeIntervalSince($0) < 6 } == true
         if !justLeftFullScreen, let window = registry.window(id), isTiled(window), !mover.isOwnMove(id), let frame = window.frame,
            let display = Screens.display(for: frame, in: Screens.all()),
            frame.isClose(to: display.visibleFrame, tolerance: 24),

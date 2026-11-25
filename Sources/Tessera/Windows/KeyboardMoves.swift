@@ -121,7 +121,11 @@ enum KeyboardMoves {
         DragSnapper.shared.suspended = true
         let home = Screens.mouseLocation
         Task { @MainActor in
+            // While Tessera holds the window, auto-tile must treat it as a drag and not put it back.
+            DragSnapper.shared.externalDrag(true)
             defer {
+                DragSnapper.shared.externalDrag(false)
+                AutoTiler.shared.mouseReleased()
                 DragSnapper.shared.suspended = false
                 sending = false
             }
@@ -148,8 +152,10 @@ enum KeyboardMoves {
                     try? await Task.sleep(for: .milliseconds(20))
                 }
                 try? await Task.sleep(for: .milliseconds(150))
-                held = window.frame.map { abs($0.minX - start.minX) >= 4 } ?? false
-                Log.info("Send: holding window \(window.id) at \(Int(grab.x)),\(Int(grab.y)), try \(attempt): \(held ? "it follows the pointer" : "it didn't move")")
+                let now = window.frame
+                held = now.map { abs($0.minX - start.minX) >= 4 } ?? false
+                Log.info("Send: holding window \(window.id) at \(Int(point.x)),\(Int(point.y)), try \(attempt): "
+                         + (held ? "it follows the pointer" : "it didn't move (still at \(now.map { "\(Int($0.minX)),\(Int($0.minY))" } ?? "?"))"))
             }
             if held {
                 for _ in 0..<abs(presses) {

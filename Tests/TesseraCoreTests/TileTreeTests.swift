@@ -112,14 +112,47 @@ struct TileTreeTests {
         var t = tree(H(w(1), V(w(2), w(3)), w(4)))
         let before = t.frames(in: screen)
         let hint = t.remove(3)
-        #expect(hint == Tree.Hint(anchor: 2, direction: .down))
+        #expect(hint == Tree.Hint(anchor: 2, direction: .down, branch: [2]))
         t.insert(3, hint: hint, fallback: 1, direction: .right)
         #expect(t.frames(in: screen) == before)
         // The first child remembers the window after it.
         let first = t.remove(1)
-        #expect(first == Tree.Hint(anchor: 2, direction: .left))
+        #expect(first == Tree.Hint(anchor: 2, direction: .left, branch: [2, 3]))
         t.insert(1, hint: first, fallback: nil, direction: .right)
         #expect(shape(t) == "H[1 V[2 3] 4]")
+    }
+
+    @Test func aWindowGoesBackBesideTheWholeSplitEvenWhenTidyingRemovedItsOwn() {
+        // H[1 V[2 3]]: taking 1 out leaves V[2 3] alone, and tidying makes it the root.
+        var t = tree(H(w(1), V(w(2), w(3))))
+        let before = t.frames(in: screen)
+        let hint = t.remove(1)
+        #expect(shape(t) == "V[2 3]")
+        t.insert(1, hint: hint, fallback: 2, direction: .right)
+        #expect(shape(t) == "H[1 V[2 3]]")
+        #expect(t.frames(in: screen) == before)
+        // The same one level down: V[H[1 2] 3], take 3 out, then back below both.
+        var u = tree(V(H(w(1), w(2)), w(3)))
+        let under = u.remove(3)
+        #expect(shape(u) == "H[1 2]")
+        u.insert(3, hint: under, fallback: 1, direction: .right)
+        #expect(shape(u) == "V[H[1 2] 3]")
+        // A window beside one window whose split was tidied away: a new split of just that one.
+        var v = tree(H(w(1), V(w(2), w(3))))
+        let middle = v.remove(2)
+        #expect(shape(v) == "H[1 3]")
+        v.insert(2, hint: middle, fallback: 1, direction: .right)
+        #expect(shape(v) == "H[1 V[2 3]]")
+    }
+
+    @Test func aHintWhoseBranchWasSplitUpUsesItsAnchor() {
+        // 1 sat left of V[2 3]; then 3 moved away. The branch isn't one piece any more.
+        var t = tree(H(w(1), V(w(2), w(3)), w(4)))
+        let hint = t.remove(1)
+        t.remove(3)
+        t.insert(1, hint: hint, fallback: 4, direction: .right)
+        #expect(t.contains(1) && t.windows.count == 3)
+        #expect(shape(t).hasPrefix("H[1 2"))
     }
 
     @Test func aHintWhoseAnchorIsGoneFallsBack() {
