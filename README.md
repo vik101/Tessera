@@ -70,7 +70,7 @@ More actions are in the menu with no shortcut yet: Centre Half, Centre Two Third
 | ⌃⌥A | Auto-tile on or off |
 | ⌃⌥1 … ⌃⌥5 | Auto, Columns, Rows, Grid, Main + Side |
 | ⌃⌥6 ⌃⌥7 ⌃⌥8 | Tree, Stack, Float |
-| ⌃⌥L | Next layout style for this screen |
+| ⌃⌥L | Next layout style for this screen (Auto to Main + Side) |
 | ⌃⌥⇧L | Previous layout style |
 | ⌃⌥M | Swap this window with the main window |
 | ⌃⌥W | Float this window (Tessera leaves it alone), or tile it again |
@@ -368,6 +368,9 @@ flowchart TB
         MENU["StatusMenu<br/>menu bar"] --> CMD
         DRAG["DragSnapper<br/>mouse watcher"] --> SNAP
         LINK["Automation<br/>tessera:// links"] --> CMD
+        CLI["CommandServer<br/>the tessera tool's socket"] --> RUN["CommandRunner<br/>the command language"]
+        CFG["ConfigStore<br/>tessera.toml"] --> RUN
+        RUN --> CMD
         CMD --> SNAP["SnapController<br/>one window"]
         CMD --> TILE["AutoTiler<br/>every window"]
         CMD --> ARR["Arranger<br/>Tile All, Cascade"]
@@ -387,7 +390,11 @@ flowchart TB
         KEYS["ShortcutSet<br/>who owns which key"]
         AUTO["URLCommand, SettingsFile,<br/>AppRule, Setup"]
         NAV["Arrange, Navigation"]
+        TREE["TileTree<br/>the Tree layout"]
+        LANG["CommandParser, TOML,<br/>TesseraConfig"]
     end
+    TILE --> TREE
+    RUN --> LANG
     SNAP --> CALC
     TILE --> PLAN
     TILE --> FRONT
@@ -406,12 +413,17 @@ All the maths lives in **TesseraCore**, which has no AppKit. That is where almos
 | `Sources/TesseraCore/Tiling` | `TilePlanner` (layout styles, Auto's scoring, space left by snapped windows) and `FrontWindows` (the front-window limit: who sits in front, who waits, who steps back) |
 | `Sources/TesseraCore/Shortcuts` | Key combos, commands, and the user's shortcut set |
 | `Sources/TesseraCore/Automation` | Links (`URLCommand`), settings files, app rules, setups |
+| `Sources/TesseraCore/Tree` | `TileTree`: the Tree layout's splits, and every change to them (join, move, resize…) |
+| `Sources/TesseraCore/Commands` | The command language (`TextCommand.swift`), its help, and the command line tool's wire format |
+| `Sources/TesseraCore/Config` | A TOML reader, `TesseraConfig` (the config file, AeroSpace's keys too) and key names like `alt-shift-h` |
+| `Sources/Tessera/Commands` | Running commands and queries, the socket server, events and callbacks |
+| `Sources/TesseraCLI` | The `tessera` command line tool (it only talks to the app) |
 | `Sources/Tessera/Snapping` | Keyboard and mouse snapping |
 | `Sources/Tessera/Tiling` | `AutoTiler`: decides which windows to tile and when |
 | `Sources/Tessera/Windows` | Window tracking, screens, desktops (`Spaces.swift`), moving windows |
 | `Sources/Tessera/UI` | Menu, Settings, the window picker (`WindowPicker.swift`), permission window, overlays |
 | `Tests/TesseraCoreTests` | Unit tests for every snap and layout |
-| `scripts/` | Build, release, and the real-Mac test (`smoke-test.sh`, `ci/check.py`) |
+| `scripts/` | Build, release, and the real-Mac test (`smoke-test.sh`, `ci/check.py`, `ci/screens.py`, `ci/v3.py`) |
 
 ### How auto-tile stays still
 
@@ -463,7 +475,7 @@ Version, bundle ID and signing live in `scripts/config.env`. `CHANGELOG.md` hold
 ```mermaid
 flowchart LR
     A["Bump VERSION and BUILD<br/>in config.env;<br/>add a CHANGELOG section"] --> B["Commit titled<br/>'Tessera 2.5.0: …'<br/>and push to main"]
-    B --> C["CI: build, unit tests,<br/>600+ real-window checks"]
+    B --> C["CI: build, unit tests,<br/>800+ real-window checks"]
     C -- "all pass" --> D["GitHub release v2.5.0<br/>Tessera.zip + appcast.xml"]
     D --> E["Installed copies<br/>update themselves"]
 ```
@@ -497,6 +509,9 @@ For a Developer ID, add the secrets listed at the top of `setup-release-keys.sh`
 | How Tile All, Cascade and stacks work | `Arrange.swift` (maths) and `Arranger.swift` (windows) |
 | Focus by direction, desktop moves | `Navigation.swift` (maths) and `KeyboardMoves.swift` (windows) |
 | App rules, setups | `AppRule.swift`, `Setup.swift` (core); `AutoTiler.swift`, `Setups.swift` (app) |
+| Add a command | Parse it in `TextCommand.swift`, describe it in `CommandHelp.swift`, run it in `CommandRunner.swift` |
+| Add a config setting | `TesseraConfig.swift` (reading it, and `template`), then `ConfigStore.apply` |
+| How the Tree layout changes | `TileTree.swift`; `AutoTiler.treeLayout` turns it into window frames |
 
 Add a test in `Tests/TesseraCoreTests` with each change. The `everyWindowGetsItsOwnSpace` test checks every style, 1 to 12 windows, on four screen shapes. `everyStyleKeepsItsShapeWithRealAppSizes` checks each style still has its shape when apps won't shrink.
 
@@ -519,7 +534,9 @@ Add a test in `Tests/TesseraCoreTests` with each change. The `everyWindowGetsIts
 - Setups: save by link, maximise the windows, open the setup: each window must be back in its place, and the window that was in front is in front.
 - Windows in front: with a limit of 3, the other windows wait off screen. It then brings windows forward from their app, the menu and the ⌃⌥Space picker, and checks each one takes the right spot and nothing else moves. It also covers new and closed windows, minimising, ⌃⌥P, Auto, turning auto-tile off and No Limit.
 
-Results and screenshots go to the `tessera-ci` branch (`tessera-ci-latest` for Tahoe).
+- Tessera 3.0 (`scripts/ci/v3.py`), all through the `tessera` tool: its answers and exit codes; every Tree command, checked by the tree's shape and each window's place; drop zones and fn-drag; Stack and Float; minimise, float and close, each coming back to the same spot; native full screen; dim and border; events; a config file with gaps, keys, a binding mode, a rule and a callback; a broken config that must keep the last good one; an AeroSpace import; desktop commands, watching for jumps. Last, it quits Tessera and checks the tool says so (exit 2).
+
+Results and screenshots go to the `tessera-ci` branch (`tessera-ci-latest` for Tahoe). A quick job (build and unit tests only) publishes to `tessera-ci-quick` within minutes.
 
 `launch-test.yml` also opens the downloadable app with a second screen attached and checks it starts, its menu opens and its keys work.
 
@@ -538,4 +555,7 @@ The test talks to Tessera through a hidden switch that is off by default:
 | Auto-tile grabs a window you want free | Float it (⌃⌥W) or ignore its app from the menu. |
 | One window stays put when you change layout | It is floating. Press ⌃⌥W on it to tile it again. |
 | A window seems to have vanished | It's probably waiting just off the screen's edge. Click it in the Dock, ⌘Tab to it, or press ⌃⌥Space. Set **Windows in Front › No Limit** to show every window. |
+| `tessera` says Tessera isn't running | Open Tessera. The tool needs Tessera 3.0 or later. |
+| A key in the config file does nothing | Open the menu: a ⚠︎ line names any key another app already uses. `tessera config` lists the file's problems by line. |
+| `desktop 3` steps through each desktop | Turn on **Switch to Desktop 3** in System Settings › Keyboard › Keyboard Shortcuts › Mission Control. |
 | See what Tessera is doing | Console app, filter by `com.vikram.Tessera`. |

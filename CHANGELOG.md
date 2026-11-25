@@ -2,6 +2,18 @@
 
 Newest first. Each version's lines become the release notes in the update window.
 
+## 3.0.0
+
+- New Tree layout (⌃⌥6): split windows by hand, like AeroSpace and i3. Join, move, swap, resize, accordion, balance, flatten, mirror, rotate, preselect and zoom. Switching to it moves nothing.
+- New Stack (⌃⌥7) and Float (⌃⌥8) layouts.
+- Drop a window near another window's edge to split it; drop it in the middle to swap. Hold fn and drag from anywhere in a window to move it.
+- A config file, ~/.config/tessera/tessera.toml: key bindings, binding modes, window rules, callbacks, and gaps for each screen. It reads AeroSpace's settings, and the menu can import an aerospace.toml.
+- The tessera command line tool, for scripts and AI agents: run any command, list windows, desktops and screens as JSON, and follow events.
+- Desktop commands: go to a desktop by number, the next, the previous or the last one; send a window there with or without following it.
+- Key presets for Spectacle, AeroSpace and Spacetile users.
+- Off unless you turn them on: dim the other windows, a border round the window you're in, and focus follows the mouse.
+- A setup can open by itself when its screens are plugged in.
+
 ## 2.5.1
 
 - With auto-tile on, ⌃⌥ + arrow walks a window one spot through the layout, trading places with the window that way. The layout keeps its shape. Past the screen's edge it goes to the next screen.

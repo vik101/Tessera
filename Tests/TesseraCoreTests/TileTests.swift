@@ -80,6 +80,7 @@ struct TileTests {
         let mainTall = plan(3, portrait, .mainAndSide)
         #expect(mainTall[0].width == portrait.width)
         #expect(LayoutStyle.auto.next == .columns && LayoutStyle.mainAndSide.next == .auto)
+        #expect(LayoutStyle.allCases.filter(\.isAdaptive) == [.auto, .columns, .rows, .grid, .mainAndSide])
     }
 
     @Test func mainRatioChangesTheMainWindow() {
@@ -152,15 +153,18 @@ struct TileTests {
     @Test func layoutsCycleBothWays() {
         var style = LayoutStyle.auto
         var seen: [LayoutStyle] = []
-        for _ in 0..<LayoutStyle.allCases.count - 1 {
+        for _ in 0..<5 {
             style = style.next
             seen.append(style)
         }
-        // Float is left out, so stepping through layouts never stops tiling.
-        #expect(seen == [.columns, .rows, .grid, .mainAndSide, .tree, .stack, .auto])
-        #expect(LayoutStyle.auto.previous == .stack && LayoutStyle.columns.previous == .auto)
-        for style in LayoutStyle.allCases where style != .float { #expect(style.next.previous == style) }
-        #expect(LayoutStyle.float.next == .auto)
+        // Only the adaptive styles: Tree, Stack and Float have their own keys.
+        #expect(seen == [.columns, .rows, .grid, .mainAndSide, .auto])
+        #expect(LayoutStyle.auto.previous == .mainAndSide && LayoutStyle.columns.previous == .auto)
+        for style in LayoutStyle.allCases where style.isAdaptive { #expect(style.next.previous == style) }
+        // From Tree, Stack or Float, ⌃⌥L goes to Auto and ⌃⌥⇧L to Main + Side.
+        for style in [LayoutStyle.tree, .stack, .float] {
+            #expect(style.next == .auto && style.previous == .mainAndSide)
+        }
     }
 
     @Test func whenNothingFitsItStillPlacesEveryWindow() {

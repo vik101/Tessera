@@ -118,6 +118,8 @@ final class ConfigStore {
     private func notify() {
         for listener in listeners { listener() }
         watch()
+        // Gaps, padding and layouts from the file take effect now, not at the next window change.
+        if AutoTiler.shared.isOn { AutoTiler.shared.retile() }
     }
 
     /// With auto-reload-config on, the file is read again whenever it changes (checked every second).

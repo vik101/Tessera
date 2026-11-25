@@ -66,8 +66,9 @@ final class StatusMenu: NSObject, NSMenuDelegate {
             warnings = true
         }
         let config = ConfigStore.shared
-        if config.lastError != nil || !config.config.warnings.isEmpty {
-            let count = config.lastError != nil ? 1 : config.config.warnings.count
+        let taken = Shortcuts.shared.failedKeys
+        if config.lastError != nil || !config.config.warnings.isEmpty || !taken.isEmpty {
+            let count = (config.lastError != nil ? 1 : config.config.warnings.count) + taken.count
             menu.addItem(item("⚠︎ The config file has \(count) problem\(count == 1 ? "" : "s")…", #selector(showConfigProblems)))
             warnings = true
         }
@@ -409,7 +410,8 @@ final class StatusMenu: NSObject, NSMenuDelegate {
         let store = ConfigStore.shared
         let alert = NSAlert()
         alert.messageText = "Problems in \(ConfigStore.tilde(store.fileURL))"
-        let lines = store.lastError.map { [$0] } ?? store.config.warnings
+        let lines = (store.lastError.map { [$0] } ?? store.config.warnings)
+            + Shortcuts.shared.failedKeys.map { "\($0): another app already uses this key, so it does nothing" }
         alert.informativeText = lines.prefix(12).joined(separator: "\n") + (lines.count > 12 ? "\n…and \(lines.count - 12) more" : "")
         alert.addButton(withTitle: "Open Config File")
         alert.addButton(withTitle: "OK")

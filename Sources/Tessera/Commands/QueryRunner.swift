@@ -57,6 +57,7 @@ enum QueryRunner {
                 "path": store.fileURL.path, "exists": store.fileExists, "error": store.lastError ?? "",
                 "warnings": store.config.warnings, "modes": store.config.modeNames,
                 "rules": store.config.rules.count, "preset": Settings.shared.shortcutPreset.rawValue,
+                "keys-taken": Shortcuts.shared.failedKeys,
             ]
             return (true, output.json ? json(summary) : summary.sorted { $0.key < $1.key }.map { "\($0.key): \(text($0.value))" }.joined(separator: "\n"))
         case .subscribe:

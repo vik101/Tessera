@@ -109,6 +109,8 @@ enum KeyboardMoves {
             Notice.shared.show("Turn on “Move \(presses > 0 ? "right" : "left") a space” in Keyboard Shortcuts")
             return
         }
+        // The window must be on top, so the press lands on it and not on a window over it.
+        window.element.perform(kAXRaiseAction)
         guard let grab = grabPoint(of: window, frame: frame) else {
             NSSound.beep()
             return
@@ -123,19 +125,30 @@ enum KeyboardMoves {
                 sending = false
             }
             // Press, then drag a few points the way a hand does, so macOS starts moving the window.
+            // If macOS didn't pick the window up, let go and try once more.
             var point = grab
-            mouse(.mouseMoved, point)
-            try? await Task.sleep(for: .milliseconds(60))
-            mouse(.leftMouseDown, point)
-            try? await Task.sleep(for: .milliseconds(150))
-            for _ in 0..<10 {
-                point.x += 2
-                mouse(.leftMouseDragged, point)
-                try? await Task.sleep(for: .milliseconds(20))
+            var held = false
+            for attempt in 1...2 where !held {
+                if attempt == 2 {
+                    mouse(.leftMouseUp, point)
+                    try? await Task.sleep(for: .milliseconds(400))
+                    window.element.perform(kAXRaiseAction)
+                    point = grab
+                }
+                let start = window.frame ?? frame
+                mouse(.mouseMoved, point)
+                try? await Task.sleep(for: .milliseconds(80))
+                mouse(.leftMouseDown, point)
+                try? await Task.sleep(for: .milliseconds(150))
+                for _ in 0..<10 {
+                    point.x += 2
+                    mouse(.leftMouseDragged, point)
+                    try? await Task.sleep(for: .milliseconds(20))
+                }
+                try? await Task.sleep(for: .milliseconds(150))
+                held = window.frame.map { abs($0.minX - start.minX) >= 4 } ?? false
+                Log.info("Send: holding window \(window.id) at \(Int(grab.x)),\(Int(grab.y)), try \(attempt): \(held ? "it follows the pointer" : "it didn't move")")
             }
-            try? await Task.sleep(for: .milliseconds(150))
-            let held = window.frame.map { abs($0.minX - frame.minX) >= 4 } ?? false
-            Log.info("Send: holding window \(window.id) at \(Int(grab.x)),\(Int(grab.y)): \(held ? "it follows the pointer" : "it didn't move")")
             if held {
                 for _ in 0..<abs(presses) {
                     key.press()
@@ -178,7 +191,9 @@ enum KeyboardMoves {
                 let point = CGPoint(x: (frame.minX + frame.width * share).rounded(), y: frame.minY + dy)
                 guard let hit = AXElement.element(at: point), hit.pid == window.pid,
                       let role = hit.role, draggable.contains(role) else { continue }
+                // Only this window's own title bar: another window of the same app may sit on top.
                 if role == kAXWindowRole, hit.windowID != window.id { continue }
+                if role != kAXWindowRole, let owner = hit.window?.windowID, owner != window.id { continue }
                 Log.info("Send: grab point on \(role)")
                 return point
             }

@@ -47,8 +47,10 @@ public enum LayoutStyle: String, CaseIterable, Codable, Sendable {
     public var next: LayoutStyle { step(1) }
     public var previous: LayoutStyle { step(-1) }
 
+    /// Next and Previous Layout (⌃⌥L) step through the adaptive styles only, as before 3.0. Tree,
+    /// Stack and Float have their own keys: stepping into them would bring every waiting window forward.
     private func step(_ by: Int) -> LayoutStyle {
-        let all = Self.allCases.filter { $0 != .float }
+        let all = Self.allCases.filter(\.isAdaptive)
         guard let index = all.firstIndex(of: self) else { return by > 0 ? all[0] : all[all.count - 1] }
         return all[(index + by + all.count) % all.count]
     }

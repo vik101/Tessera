@@ -77,9 +77,16 @@ def tree():
 
 def shape(text, names):
     """H[12 V[13 14]] → H[a V[b c]] using names {id: letter}."""
-    for wid, name in names.items():
-        text = text.replace(str(wid), name)
-    return text
+    import re
+    return re.sub(r"\d+", lambda m: names.get(int(m.group()), m.group()), text)
+
+
+def main_style():
+    """The layout style Tessera is using on the main screen."""
+    d = c.dump()
+    main = (d.get("displays") or [{}])[0].get("id")
+    plans = d.get("autoTile", {}).get("plans", {})
+    return (plans.get(main) or {}).get("style")
 
 
 def visible():
@@ -120,10 +127,10 @@ def fresh(count):
         c.activate(TEXTEDIT)
         c.keys("press", "cmd", c.K["n"])
         time.sleep(0.8)
-    ids = textedit_ids()
-    for extra in ids[count:]:
-        focus(extra)
-        c.keys("press", "cmd", c.K["m"])
+    # Close any extra windows (minimising them would bring them back later, with every other
+    # minimised window, when a check un-minimises one).
+    for extra in textedit_ids()[count:]:
+        cli("--window-id", str(extra), "close")
         time.sleep(0.6)
     time.sleep(1.0)
     return textedit_ids()[:count]
@@ -243,11 +250,7 @@ def tree_layout():
         names[d] = "d"
         record("preselect down: the new window opens below the one you're in", shape(tree(), names) == "H[V[a d] b c]",
                f"{shape(tree(), names)} a {f.get(a)} d {f.get(d)}")
-        focus(d)
-        c.keys("press", "cmd", c.K["w"])
-        time.sleep(1.0)
-        c.keys("close-untitled", TEXTEDIT)
-        time.sleep(1.5)
+        run("--window-id", str(d), "close", wait=2.0)
         record("Closing it gives its space back", shape(tree(), names) == "H[a b c]" and c.close(cg()[a], old_frame_full(a, f), 3),
                f"{shape(tree(), names)} a {cg().get(a)}")
     else:
@@ -344,6 +347,7 @@ def stack_and_float(ids):
     if len(ids) < 3:
         return
     V = visible()
+    before_tree = tree()
     run("layout", "stack", wait=1.5)
     f = cg()
     record("Stack: every window fills the desktop", all(c.close(f.get(i), V, 3) for i in ids), f"{[f.get(i) for i in ids]} vs {V}")
@@ -368,6 +372,9 @@ def stack_and_float(ids):
     record("…and none of them counts as tiled", all(states.get(str(i)) == "floating" for i in ids), out.strip()[:200])
     run("layout", "tree", wait=1.5)
     record("Back to Tree: tiled again, no overlaps", no_overlaps(ids))
+    names = dict(zip(sorted(ids), "xyz"))
+    record("…and the tree is the one from before Stack and Float", shape(tree(), names) == shape(before_tree, names),
+           f"{shape(before_tree, names)} → {shape(tree(), names)}")
 
 
 # ---------- window commands ----------
@@ -375,6 +382,8 @@ def stack_and_float(ids):
 def window_commands(ids):
     if len(ids) < 3:
         return
+    run("layout", "columns", wait=1.0)
+    run("layout", "tree", wait=1.5)
     focus(ids[0])
     run("move-mouse", "window-force-center", wait=0.5)
     x, y = (int(v) for v in c.keys("mouse").split())
@@ -406,9 +415,7 @@ def window_commands(ids):
         record("minimize (by window id) minimises it", e not in textedit_ids())
         c.keys("unminimize", TEXTEDIT)
         time.sleep(1.5)
-        run("--window-id", str(e), "close", wait=1.5)
-        c.keys("close-untitled", TEXTEDIT)
-        time.sleep(1.0)
+        run("--window-id", str(e), "close", wait=2.0)
         record("close (by window id) closes it", e not in textedit_ids())
 
     # Native full screen and back.
@@ -428,9 +435,13 @@ def window_commands(ids):
     c.shot("v3-dim-border")
     d = c.dump()
     record("dim on and border on show them", d.get("decorations") == {"border": True, "dim": True}, f"{d.get('decorations')}")
-    focus(b)
-    time.sleep(0.6)
-    record("Clicks still reach windows under the dimming", c.dump().get("focused") == b)
+    focus(a)
+    fb = cg()[b]
+    c.keys("click", str(fb[0] + fb[2] // 2), str(fb[1] + fb[3] // 2))
+    time.sleep(1.0)
+    record("A click on a dimmed window still reaches it", c.dump().get("focused") == b, f"focused {c.dump().get('focused')} want {b}")
+    d = c.dump()
+    record("…and the border follows the focus", d.get("decorations", {}).get("border") is True)
     run("toggle", "dim", wait=0.6)
     run("border", "off", wait=0.6)
     record("…and off again", c.dump().get("decorations") == {"border": False, "dim": False}, f"{c.dump().get('decorations')}")
@@ -478,16 +489,19 @@ def desktops(ids):
     if len(spaces) < 2:
         record("Two desktops for the desktop checks", False, f"{spaces}", warn=True)
         return
-    start = cg()
-    run("desktop", "2", wait=2.0)
+    settled = {i: c.frame_of(i) for i in ids}
+    moves = c.dump()["autoTile"]["moves"]
+    run("desktop", "2", wait=0)
+    jumps = c.watch_for_jumps(settled, 2.0)
     now, _ = c.desktops(c.dump())
     record("desktop 2 switches to desktop 2", now == spaces[1], f"now {now}, desktop 2 is {spaces[1]}")
-    run("desktop", "last", wait=2.0)
+    run("desktop", "last", wait=0)
+    jumps += c.watch_for_jumps(settled, 2.0)
     now, _ = c.desktops(c.dump())
     record("desktop last goes back", now == home, f"now {now}, home {home}")
-    after = cg()
-    moved = [i for i in ids if i in start and i in after and not c.close(start[i], after[i], 3)]
-    record("Switching desktops moves no window (Tree layout)", not moved, f"{moved}")
+    record("Switching desktops by command: no window jumped (Tree layout)", not jumps, "; ".join(jumps[:4]))
+    record("…and Tessera moved nothing", c.settled_dump()["autoTile"]["moves"] == moves,
+           f"{c.dump()['autoTile']['moves'] - moves} moves")
     run("desktop", "next", wait=2.0)
     now, _ = c.desktops(c.dump())
     record("desktop next", now == spaces[1], f"now {now}")
@@ -503,7 +517,9 @@ def desktops(ids):
         d = c.dump()
         on = next((x["spaces"] for x in d["windows"] if x["id"] == w), [])
         now, _ = c.desktops(d)
-        record("send-to-desktop 2 takes the window there, and you with it", spaces[1] in on and now == spaces[1], f"window on {on}, now {now}")
+        others = [(x["owner"], x["id"], [round(v) for v in x["frame"]]) for x in c.windows()["windows"]][:8]
+        record("send-to-desktop 2 takes the window there, and you with it", spaces[1] in on and now == spaces[1],
+               f"window on {on}, now {now}; on screen {others}; " + " | ".join(l for l in d.get("log", []) if "Send" in l)[-400:])
         focus(w)
         run("move-node-to-workspace", "1", wait=6.0)
         d = c.dump()
@@ -563,6 +579,8 @@ run = 'layout floating'
     record("reload-config reads a good file", code == 0, f"{code}: {out.strip()} {err.strip()}")
     d = c.dump()
     record("…with no problems", not d.get("config", {}).get("warnings") and not d.get("config", {}).get("error"), f"{d.get('config')}")
+    record("…and every key in it is Tessera's", not d.get("failedKeys"), f"taken: {d.get('failedKeys')}")
+    record("…and its modes are known", "resize" in (d.get("modes") or []), f"{d.get('modes')}")
     time.sleep(1.5)
     V = visible()
     f = cg()
@@ -575,11 +593,10 @@ run = 'layout floating'
 
     c.keys("press", "ctrl,opt,shift", c.K["c"])
     time.sleep(1.5)
-    record("A key from the file runs its command (columns)", (c.screen_plan(c.dump()) or {}).get("style") == "columns",
-           f"{(c.screen_plan(c.dump()) or {}).get('style')}")
+    record("A key from the file runs its command (columns)", main_style() == "columns", f"{main_style()}")
     c.keys("press", "ctrl,opt,shift", c.K["t"])
     time.sleep(1.5)
-    record("…and another (tree)", (c.screen_plan(c.dump()) or {}).get("style") == "tree")
+    record("…and another (tree)", main_style() == "tree", f"{main_style()}")
 
     # Binding modes: in resize mode, plain h and l resize.
     focus(ids[0])
@@ -595,8 +612,7 @@ run = 'layout floating'
     time.sleep(0.8)
     code, out, _ = cli("list-modes", "--current")
     record("esc goes back to main", out.strip() == "main", out.strip())
-    typed = c.keys("press", "", "0x04")
-    record("Back in main, h is just a letter again", c.dump().get("mode") == "main")
+    record("The status menu knows the mode is main again", c.dump().get("mode") == "main")
 
     # Window rules: a TextEdit document called float-me floats.
     with open("/tmp/tessera-docs/float-me.txt", "w") as fh:
@@ -649,7 +665,7 @@ run = 'layout floating'
     text = open(CONFIG).read() if os.path.exists(CONFIG) else ""
     header = text.split("\n\n", 1)[0]
     record("Importing an AeroSpace config writes Tessera's file and lists what won't work",
-           text.startswith("# Imported from AeroSpace") and "don't work in Tessera" in header and "A" in header, header[:400])
+           text.startswith("# Imported from AeroSpace") and "don't work in Tessera" in header, header[:400])
     record("…and keeps the old file as .bak", os.path.exists(CONFIG + ".bak"))
     record("…and Tessera reads it", d.get("config", {}).get("rules") == 1 and not d.get("config", {}).get("error"), f"{d.get('config')}")
     time.sleep(1.0)

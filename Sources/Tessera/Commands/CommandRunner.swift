@@ -326,10 +326,13 @@ enum CommandRunner {
     static func layout(_ choices: [LayoutChoice], window: TrackedWindow?) -> Result {
         let tiler = AutoTiler.shared
         guard let display = WindowActions.display(of: window) else { return .failed("No screen") }
-        for choice in choices {
+        for (index, choice) in choices.enumerated() {
+            let isLast = index == choices.count - 1
             switch choice {
             case .style(let style):
-                if tiler.isOn, tiler.currentStyle(on: display) == style { continue }
+                // `layout tree stack` toggles; a single `layout tree` always applies (the latest command
+                // wins: snapped windows join again and sizes even out, like picking it from the menu).
+                if !isLast, tiler.isOn, tiler.currentStyle(on: display) == style { continue }
                 tiler.setLayout(style, for: display)
                 return .done
             case .floating, .tiling:
