@@ -136,6 +136,12 @@ enum KeyboardMoves {
                 try? await Task.sleep(for: .milliseconds(100))
             }
             let left = CGEventSource.flagsState(.combinedSessionState).intersection(modifiers)
+            // Still down after a second: macOS can think keys are held that a script pressed and never
+            // let go. Let them go, as a hand would, so the grab isn't a ⌃-click.
+            if !left.isEmpty {
+                releaseModifiers(left)
+                try? await Task.sleep(for: .milliseconds(80))
+            }
             // Press, then drag a few points the way a hand does, so macOS starts moving the window.
             // If macOS didn't pick the window up, let go and try again: once as the keys are now,
             // then at another spot of the title bar.
@@ -231,6 +237,21 @@ enum KeyboardMoves {
             Log.info("Send: grab point on \(hit.role ?? "?") at \(Int(first.x - frame.minX)),\(Int(first.y - frame.minY)) in the window")
         }
         return Array(points)
+    }
+
+    /// Posts "key up" for each modifier macOS thinks is down (⌃, ⌥, ⇧, ⌘, fn).
+    private static func releaseModifiers(_ held: CGEventFlags) {
+        let keys: [(CGEventFlags, CGKeyCode)] = [(.maskControl, 0x3B), (.maskAlternate, 0x3A), (.maskShift, 0x38),
+                                                 (.maskCommand, 0x37), (.maskSecondaryFn, 0x3F)]
+        var still = held
+        let source = CGEventSource(stateID: .hidSystemState)
+        for (flag, code) in keys where held.contains(flag) {
+            still.remove(flag)
+            guard let event = CGEvent(keyboardEventSource: source, virtualKey: code, keyDown: false) else { continue }
+            event.flags = still
+            event.post(tap: .cghidEventTap)
+        }
+        Log.info("Send: let go of keys still held (\(held.rawValue))")
     }
 
     /// `plain`: no modifier keys. Otherwise the event takes the keys macOS thinks are down (an event
