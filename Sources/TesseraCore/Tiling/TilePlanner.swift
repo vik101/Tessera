@@ -15,6 +15,12 @@ public enum LayoutStyle: String, CaseIterable, Codable, Sendable {
     case grid
     /// One big main window, the rest stacked beside it.
     case mainAndSide
+    /// A tree of splits you shape yourself: a new window splits the one you're in (like AeroSpace and bspwm).
+    case tree
+    /// Every window fills the desktop; step through them.
+    case stack
+    /// Nothing on this desktop is tiled.
+    case float
 
     public var title: String {
         switch self {
@@ -23,15 +29,28 @@ public enum LayoutStyle: String, CaseIterable, Codable, Sendable {
         case .rows: "Rows"
         case .grid: "Grid"
         case .mainAndSide: "Main + Side"
+        case .tree: "Tree"
+        case .stack: "Stack"
+        case .float: "Float"
         }
     }
 
+    /// The layouts that pick their own arrangement and keep only a few windows in front.
+    public var isAdaptive: Bool {
+        switch self {
+        case .auto, .columns, .rows, .grid, .mainAndSide: true
+        case .tree, .stack, .float: false
+        }
+    }
+
+    /// Next Layout and Previous Layout skip Float, so stepping through never stops tiling.
     public var next: LayoutStyle { step(1) }
     public var previous: LayoutStyle { step(-1) }
 
     private func step(_ by: Int) -> LayoutStyle {
-        let all = Self.allCases
-        return all[(all.firstIndex(of: self)! + by + all.count) % all.count]
+        let all = Self.allCases.filter { $0 != .float }
+        guard let index = all.firstIndex(of: self) else { return by > 0 ? all[0] : all[all.count - 1] }
+        return all[(index + by + all.count) % all.count]
     }
 }
 
@@ -95,11 +114,20 @@ public enum TilePlanner {
         sizes: [CGSize] = []
     ) -> Plan {
         guard count > 0, area.width > 0, area.height > 0 else { return Plan(frames: [], fits: true) }
+        switch style {
+        case .float:
+            return Plan(frames: [], fits: true)
+        case .stack:
+            let frame = applyGap(area, in: area, gap: gap)
+            return Plan(frames: Array(repeating: frame, count: count), fits: true)
+        default:
+            break
+        }
         let shape = ScreenShape.of(area.size)
         let minimums = (0..<count).map { $0 < minimumSizes.count ? minimumSizes[$0] ?? .zero : .zero }
         let shares = (0..<count).map { $0 < sizes.count ? sizes[$0] : TileSizes.even }
 
-        if style == .auto, count == 1, shape == .ultrawide, minimums[0].width <= area.width * 2 / 3 {
+        if style == .auto || style == .tree, count == 1, shape == .ultrawide, minimums[0].width <= area.width * 2 / 3 {
             // One window on a very wide screen: centred, not stretched edge to edge.
             let frame = area.part(UnitRect(x: 1.0 / 6, y: 0, width: 2.0 / 3, height: 1))
             return Plan(frames: [applyGap(frame, in: area, gap: gap)], fits: true)
@@ -109,7 +137,7 @@ public enum TilePlanner {
         for arrangement in candidates(count, style: style, shape: shape, area: area, mainRatio: mainRatio) {
             // Auto may move a window that can't shrink to a roomier slot. A chosen style keeps
             // your window order, so the main window stays main and columns stay in order.
-            let orders = style == .auto
+            let orders = style == .auto || style == .tree
                 ? assignments(arrangement, minimums: minimums, area: area, gap: gap)
                 : [Array(0..<count)]
             for order in orders {
@@ -137,7 +165,7 @@ public enum TilePlanner {
             return [Arrangement(rows: shape == .portrait, counts: [1, n - 1], weights: [ratio, 1 - ratio])]
         case .grid:
             return ranked(grids(n), in: area)
-        case .auto:
+        case .auto, .tree, .stack, .float:
             // Every way to split the windows into rows or columns (fewer windows in earlier lines).
             // Above 12 windows that gets slow, so stick to grids.
             let options = n <= 12

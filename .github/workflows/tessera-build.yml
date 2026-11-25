@@ -27,6 +27,40 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  quick:
+    # Build and unit tests only, published in a few minutes to the tessera-ci-quick branch.
+    runs-on: macos-15
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and unit tests
+        id: check
+        continue-on-error: true
+        run: |
+          mkdir -p quick
+          swift build 2>&1 | tee quick/build.log
+          swift test 2>&1 | tee quick/test.log
+      - name: Publish results
+        if: ${{ !cancelled() }}
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p quick
+          {
+            echo "commit: ${GITHUB_SHA}"
+            echo "check: ${{ steps.check.outcome }}"
+            echo "errors: $(grep -c 'error:' quick/build.log 2>/dev/null || echo 0)"
+            echo "tests: $(grep -E 'Test run with|Executed [0-9]+ tests' quick/test.log 2>/dev/null | tail -2 | tr '\n' ' ')"
+          } > quick/summary.txt
+          grep -E 'error:|warning: unre|✘|failed' quick/build.log quick/test.log 2>/dev/null | head -200 > quick/problems.txt || true
+          cd quick
+          git init -q -b tessera-ci-quick
+          git config user.name "Tessera CI"
+          git config user.email "ci@users.noreply.github.com"
+          git add -A
+          git commit -qm "Quick check for ${GITHUB_SHA}"
+          git push -f "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" tessera-ci-quick
+
   build:
     runs-on: macos-15
     timeout-minutes: 85

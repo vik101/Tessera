@@ -17,7 +17,8 @@ private func plan(_ n: Int, _ area: CGRect = standard, _ style: LayoutStyle = .a
 @Suite("Auto-tile layouts")
 struct TileTests {
     /// The promise to the user: every window gets its own space, inside the screen, with nothing hidden.
-    @Test(arguments: LayoutStyle.allCases)
+    /// (Stack and Float are the exceptions by design; the Tree layout plans its first arrangement like Auto.)
+    @Test(arguments: [LayoutStyle.auto, .columns, .rows, .grid, .mainAndSide, .tree])
     func everyWindowGetsItsOwnSpace(style: LayoutStyle) {
         for area in [standard, ultrawide, portrait, laptop, superUltrawide, squarish, macBook16] {
             for n in 1...12 {
@@ -120,7 +121,7 @@ struct TileTests {
     }
 
     /// The bug from version 2.0.0: with real apps, every chosen style looked like Auto.
-    @Test(arguments: LayoutStyle.allCases)
+    @Test(arguments: LayoutStyle.allCases.filter(\.isAdaptive))
     func everyStyleKeepsItsShapeWithRealAppSizes(style: LayoutStyle) {
         // Seven windows on a laptop: Safari and Chrome won't go below 574 wide, Finder 460.
         let minimums: [CGSize?] = [nil, CGSize(width: 574, height: 248), CGSize(width: 574, height: 300),
@@ -141,21 +142,25 @@ struct TileTests {
             let rows = Dictionary(grouping: frames, by: \.minY)
             #expect(rows.count > 1 && rows.count < 7)
             #expect(rows.values.allSatisfy { row in Set(row.map(\.height)).count == 1 })
-        case .auto:
+        case .auto, .tree:
             #expect(frames.map { $0.width * $0.height }.reduce(0, +) == laptop.width * laptop.height)
+        case .stack, .float:
+            break
         }
     }
 
     @Test func layoutsCycleBothWays() {
         var style = LayoutStyle.auto
         var seen: [LayoutStyle] = []
-        for _ in 0..<LayoutStyle.allCases.count {
+        for _ in 0..<LayoutStyle.allCases.count - 1 {
             style = style.next
             seen.append(style)
         }
-        #expect(seen == [.columns, .rows, .grid, .mainAndSide, .auto])
-        #expect(LayoutStyle.auto.previous == .mainAndSide && LayoutStyle.columns.previous == .auto)
-        for style in LayoutStyle.allCases { #expect(style.next.previous == style) }
+        // Float is left out, so stepping through layouts never stops tiling.
+        #expect(seen == [.columns, .rows, .grid, .mainAndSide, .tree, .stack, .auto])
+        #expect(LayoutStyle.auto.previous == .stack && LayoutStyle.columns.previous == .auto)
+        for style in LayoutStyle.allCases where style != .float { #expect(style.next.previous == style) }
+        #expect(LayoutStyle.float.next == .auto)
     }
 
     @Test func whenNothingFitsItStillPlacesEveryWindow() {

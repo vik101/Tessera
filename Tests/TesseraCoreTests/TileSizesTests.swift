@@ -101,7 +101,7 @@ struct TileSizesTests {
     }
 
     /// Any mix of shares, any style, any screen: every window keeps its own space on the screen.
-    @Test(arguments: LayoutStyle.allCases)
+    @Test(arguments: LayoutStyle.allCases.filter(\.isAdaptive))
     func anySharesKeepEveryWindowOnScreenWithoutOverlaps(style: LayoutStyle) {
         var seed: UInt64 = 42
         func random() -> CGFloat {
