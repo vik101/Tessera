@@ -1,6 +1,8 @@
 # Tessera
 
-Tessera snaps windows like Rectangle, and can also tile them for you. Auto-tile picks the best layout for the number of windows and the shape of each screen. You can switch layout styles with one key.
+Tessera snaps windows like Rectangle, and can also tile them for you. Auto-tile picks the best layout for the number of windows and the shape of each screen. Or pick the Tree layout and split windows by hand, like AeroSpace and i3. You can switch layout styles with one key.
+
+Power users get a config file (TOML, the same shape as AeroSpace's) and a `tessera` command line tool. The tool lists windows as JSON and runs any command, so scripts and AI agents can drive Tessera.
 
 It is a menu bar app for macOS 15 or later, written in Swift 6. Its one outside library is Sparkle, which installs updates.
 
@@ -67,6 +69,7 @@ More actions are in the menu with no shortcut yet: Centre Half, Centre Two Third
 | --- | --- |
 | ⌃⌥A | Auto-tile on or off |
 | ⌃⌥1 … ⌃⌥5 | Auto, Columns, Rows, Grid, Main + Side |
+| ⌃⌥6 ⌃⌥7 ⌃⌥8 | Tree, Stack, Float |
 | ⌃⌥L | Next layout style for this screen |
 | ⌃⌥⇧L | Previous layout style |
 | ⌃⌥M | Swap this window with the main window |
@@ -99,6 +102,8 @@ The menu's **All Windows** list has Rectangle's actions that move every window o
 **⌃⇧⌘ + arrow** moves the focus to the next window that way. It prefers a window in line with yours, then the nearest. Windows waiting off screen are skipped.
 
 **⌃⌥⇧ + number** sends the window you're in to that desktop on its screen, and macOS shows that desktop. macOS has no way for one app to move another app's window to a desktop. So Tessera does what you would do by hand: it holds the window by its title bar and presses **Move right a space** (⌃→) or **Move left a space** (⌃←), then puts the pointer back. Those two macOS shortcuts must be on (System Settings › Keyboard › Keyboard Shortcuts › Mission Control). They are on unless you turned them off.
+
+**Desktop commands** (for the config file and the command line): `desktop 3`, `desktop next`, `desktop prev`, `desktop last` (the one you were on before). `send-to-desktop 2` sends the window and takes you with it. AeroSpace's `move-node-to-workspace 2` sends it and you stay. Tessera's "workspaces" are your macOS desktops, numbered from 1 on each screen. For `desktop 3` to be instant, turn on **Switch to Desktop 3** in System Settings › Keyboard › Keyboard Shortcuts › Mission Control. Without it, Tessera steps there one desktop at a time.
 
 ## App rules
 
@@ -158,6 +163,11 @@ Auto-tile keeps every normal window on a screen arranged. Windows never overlap,
 | Rows | One above another |
 | Grid | An even grid; the last row widens to fill the gap |
 | Main + Side | One big main window; the rest stack beside it. Drag its edge to change its size. |
+| **Tree** | You split windows by hand, like AeroSpace and i3. See [The Tree layout](#the-tree-layout). |
+| Stack | Every window fills the desktop, one on top of another. `stack next` steps through them. |
+| Float | Tessera leaves every window where you put it. |
+
+Auto, Columns, Rows, Grid and Main + Side keep only a few windows in front (see [Windows in front](#windows-in-front)). Tree, Stack and Float show every window.
 
 Each switch shows a picture of the new layout in the middle of the screen. The menu shows the same pictures, drawn for the windows you have open.
 
@@ -188,6 +198,34 @@ flowchart LR
     A["Grid<br/>4 windows"] -- "⌃⌥↩ on one" --> B["That window fills the screen<br/>the other 3 tile behind it"]
     B -- "⌃⌥3 Rows" --> C["All 4 in Rows<br/>the big one back in its old place"]
 ```
+
+### The Tree layout
+
+In Tree, each desktop is a tree of splits. A split runs left to right or top to bottom, and holds windows or more splits. You change the tree with commands. Give them keys in the [config file](#config-file), or run them with the [command line tool](#command-line-tool).
+
+```mermaid
+flowchart LR
+    A["a | b | c<br/>three columns"] -- "join right<br/>(on b)" --> B["a | b over c<br/>b and c share a column"]
+    B -- "move left<br/>(on c)" --> C["a | c | b"]
+    C -- "layout accordion" --> D["a, c, b stacked<br/>with a strip of each showing"]
+```
+
+| Command | What it does |
+| --- | --- |
+| `join left` (and right, up, down) | Puts this window and the one that way into a new split |
+| `move left` | Moves the window that way, out of its split if it's at the edge |
+| `swap left`, `swap next` | Trades places with that window |
+| `preselect down` | The next new window opens below this one |
+| `layout tiles vertical`, `layout accordion` | Changes the split this window is in |
+| `resize width +100`, `resize smart -50` | Grows or shrinks the window's tile |
+| `balance`, `flatten` | Evens out the sizes; or undoes every split |
+| `mirror horizontal`, `rotate 90` | Flips or turns the whole tree |
+| `zoom` | The window fills the desktop; again, it goes back |
+| `float on`, `float off` | Takes the window out of the tree, and back into its old spot |
+
+**Switching to Tree moves nothing.** Tessera reads the tree from where your windows already are. A window you close, minimise or float leaves a hint, so it comes back to the same spot.
+
+**With the mouse:** drag a window onto the middle of another to swap them. Drop it near another window's edge to split that window and sit beside it. Hold **fn** and drag from anywhere inside a window to move it, not only its title bar. (Change the key in Settings › Focus and Look.)
 
 ### Windows in front
 
@@ -228,6 +266,82 @@ TextEdit was used least lately, so Chrome takes its spot. Safari and Terminal st
 
 **Desktops (Spaces).** Only windows on the desktop you can see take part. Swiping to another desktop never moves a window, so nothing jumps. Each desktop keeps its own layout. A desktop Tessera hasn't seen yet starts with the layout you picked last. A window set to show on every desktop is left alone.
 
+## Config file
+
+The config file is optional. Without it, Tessera runs from Settings alone. With it, anything the file sets wins over Settings, and the file adds what Settings can't: key bindings, binding modes, window rules, callbacks and gaps for each screen.
+
+It lives at `~/.config/tessera/tessera.toml` (or `~/.tessera.toml`). The menu's **Config and Command Line ▸ Make a Config File** writes one with the main options explained. That file turns on `auto-reload-config`, so Tessera reads it again each time you save. Otherwise run `tessera reload-config`.
+
+```toml
+layout = 'tree'                       # the layout for new desktops
+preset = 'aerospace'                  # extra keys: tessera, spectacle, aerospace, spacetile, none
+on-focus-changed = ['move-mouse window-lazy-center']
+
+[gaps]
+inner.horizontal = 10                 # between windows
+inner.vertical = 10
+outer.left = 20                       # at the screen's edges
+outer.top = [{ monitor.'built-in' = 8 }, 20]   # 8 on the laptop screen, 20 elsewhere
+
+[mode.main.binding]
+alt-h = 'focus left'
+alt-shift-h = 'move left'
+alt-r = 'mode resize'                 # a binding mode: other keys until you leave it
+
+[mode.resize.binding]
+h = 'resize width -50'                # plain keys work in a mode
+l = 'resize width +50'
+esc = 'mode main'
+
+[[on-window-detected]]                # a window rule
+if.app-id = 'com.apple.calculator'
+run = 'layout floating'
+```
+
+Settings that aren't in a table (`layout`, `preset`, `on-focus-changed`) must come before the first `[table]`. That's a TOML rule.
+
+**A mistake never stops Tessera.** It keeps the last good config, and the menu says what's wrong and on which line. `tessera config` says the same.
+
+**Coming from AeroSpace?** Tessera reads AeroSpace's settings and commands. **Import AeroSpace Config…** (in the menu or Settings) copies your `aerospace.toml` and lists at the top what won't work here. Any older Tessera file is kept as `tessera.toml.bak`.
+
+## Command line tool
+
+`tessera` runs any command and answers questions, for scripts and AI agents. Install it from the menu: **Config and Command Line ▸ Install Command Line Tool**. With Homebrew it's installed for you.
+
+```bash
+tessera list-windows --json            # every window: id, app, title, desktop, screen, state, frame
+tessera focus left
+tessera --window-id 1234 send-to-desktop 2
+tessera layout tree && tessera join right
+tessera tree                           # the Tree layout as text: H[1234 V[5678 9012]]
+tessera subscribe focus-changed        # one JSON line per event, until you stop it
+tessera help resize                    # what a command does, with an example
+```
+
+| Exit code | Means |
+| --- | --- |
+| 0 | It worked |
+| 1 | It ran but failed (no such window, nothing to do) |
+| 2 | Tessera isn't running |
+| 3 | A typo: unknown command or bad argument. The message says why. |
+
+Commands chain with `;`, `&&` and `||`, like a shell. AeroSpace's and Spacetile's command names work too (`workspace 2`, `focus west`). The tool talks to Tessera over a socket only you can open (`/tmp/tessera-<your user id>.sock`).
+
+**Run a setup when an app opens, or at a set time.** Make a Shortcuts automation that runs the shell script `tessera setup open Work`, or opens the link `tessera://run?command=setup%20open%20Work`.
+
+## Coming from AeroSpace or Spacetile
+
+| They have | In Tessera |
+| --- | --- |
+| Tree tiling: join, split, move, resize, accordion, flatten, balance | The Tree layout, with the same commands |
+| Workspaces | Your macOS desktops, numbered 1, 2, 3… on each screen |
+| A config file, binding modes, window rules, callbacks | `tessera.toml`, which reads AeroSpace's keys too |
+| A command line tool | `tessera`, with JSON output |
+| Gaps per screen | `[gaps]` with screen patterns |
+| Stack, float, zoom, preselect, drop zones, fn-drag (Spacetile) | All there |
+| Dim others, focus border, focus follows mouse | In Settings › Focus and Look. Off until you turn them on. |
+| Named workspaces, moving a workspace to another screen, instant hidden switching | Not supported. Tessera uses real macOS desktops, so it never hides windows off screen to fake them. |
+
 ## Settings
 
 Open **Settings…** from the menu (⌘,). It is one page:
@@ -239,6 +353,9 @@ Open **Settings…** from the menu (⌘,). It is one page:
 - Specified Size, and Export / Import of a settings file.
 - Updates: a switch for the daily check.
 - Every keyboard shortcut. Click one and press new keys. Esc cancels; Delete removes it. If a key is taken, it moves to the new action and Tessera tells you.
+- A key preset (Tessera, Spectacle, AeroSpace, Spacetile or none), and the gap at the screen's edges.
+- Focus and Look: dim the other windows, a border around the window you're in, focus follows the mouse, and the key to hold for dragging from anywhere in a window.
+- The config file and the command line tool.
 
 ## For maintainers
 

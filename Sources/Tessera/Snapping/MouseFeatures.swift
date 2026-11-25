@@ -62,11 +62,10 @@ final class ModifierDrag {
     }
 
     /// Returns true when Tessera takes the event (the app never sees it).
-    fileprivate func handle(_ type: CGEventType, _ event: CGEvent) -> Bool {
-        let point = event.location
+    fileprivate func handle(_ type: CGEventType, at point: CGPoint, flags: CGEventFlags) -> Bool {
         switch type {
         case .leftMouseDown:
-            guard let required, event.flags.contains(required), !DragSnapper.shared.suspended,
+            guard let required, flags.contains(required), !DragSnapper.shared.suspended,
                   let found = WindowRegistry.shared.window(at: point), !Settings.shared.isIgnored(found.bundleID),
                   let frame = found.frame else { return false }
             window = found
@@ -105,7 +104,10 @@ private func modifierDragCallback(_ proxy: CGEventTapProxy, _ type: CGEventType,
         }
         return Unmanaged.passUnretained(event)
     }
-    let taken = MainActor.assumeIsolated { ModifierDrag.shared.handle(type, event) }
+    // Only plain values cross into the main actor, never the event itself.
+    let point = event.location
+    let flags = event.flags
+    let taken = MainActor.assumeIsolated { ModifierDrag.shared.handle(type, at: point, flags: flags) }
     return taken ? nil : Unmanaged.passUnretained(event)
 }
 
