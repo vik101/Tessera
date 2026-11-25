@@ -433,7 +433,7 @@ final class ShortcutRecorder: ObservableObject {
 /// Names and icons of apps, by bundle identifier.
 @MainActor
 enum AppInfo {
-    static var version: String {
+    nonisolated static var version: String {
         let info = Bundle.main.infoDictionary
         let short = info?["CFBundleShortVersionString"] as? String ?? "dev"
         let build = info?["CFBundleVersion"] as? String ?? "0"

@@ -36,6 +36,7 @@ final class TestHooks: NSObject {
         case "close-settings": SettingsWindow.shared.close()
         case "permission": PermissionWindow.shared.show()
         case "fix-mac-tiling": MacTiling.turnOffEdgeDrag()
+        case "import-aerospace": Log.info(ConfigStore.shared.importAeroSpace().message)
         default:
             if command.hasPrefix("line:") {
                 CommandRunner.run(String(command.dropFirst(5)))

@@ -5,6 +5,8 @@
 //   keys activate com.apple.TextEdit   bring an app to the front
 //   keys post dump                     send a test command to Tessera
 //   keys drag X1 Y1 X2 Y2              drag with the left button
+//   keys drag-mod fn X1 Y1 X2 Y2       the same while holding modifiers (fn, ctrl, opt, cmd)
+//   keys mouse                         where the pointer is: X Y
 //   keys click X Y
 //   keys displays                      list screens and their frames
 //   keys trusted                       does this tool have Accessibility? (needed for the next four)
@@ -48,9 +50,9 @@ func key(_ code: CGKeyCode, down: Bool, _ flags: CGEventFlags) {
     usleep(30_000)
 }
 
-func mouse(_ type: CGEventType, _ x: Double, _ y: Double) {
+func mouse(_ type: CGEventType, _ x: Double, _ y: Double, _ held: CGEventFlags = []) {
     let event = CGEvent(mouseEventSource: source, mouseType: type, mouseCursorPosition: CGPoint(x: x, y: y), mouseButton: .left)!
-    event.flags = []   // No leftover ⌃ from earlier key presses: ⌃-click is a right-click.
+    event.flags = held   // No leftover ⌃ from earlier key presses: ⌃-click is a right-click.
     event.post(tap: .cghidEventTap)
 }
 
@@ -201,6 +203,25 @@ case "drag" where args.count >= 5:
     }
     mouse(.leftMouseUp, x2, y2)
     usleep(150_000)
+
+case "drag-mod" where args.count >= 6:
+    let held = flags(args[1])
+    let x1 = Double(args[2])!, y1 = Double(args[3])!, x2 = Double(args[4])!, y2 = Double(args[5])!
+    mouse(.mouseMoved, x1, y1, held)
+    usleep(150_000)
+    mouse(.leftMouseDown, x1, y1, held)
+    usleep(200_000)
+    for step in 1...30 {
+        let t = Double(step) / 30
+        mouse(.leftMouseDragged, x1 + (x2 - x1) * t, y1 + (y2 - y1) * t, held)
+        usleep(25_000)
+    }
+    mouse(.leftMouseUp, x2, y2, held)
+    usleep(300_000)
+
+case "mouse":
+    let point = CGEvent(source: nil)?.location ?? .zero
+    print("\(Int(point.x.rounded())) \(Int(point.y.rounded()))")
 
 case "displays":
     for screen in NSScreen.screens {

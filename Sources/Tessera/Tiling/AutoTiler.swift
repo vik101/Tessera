@@ -836,7 +836,8 @@ final class AutoTiler {
             } else { other = nil }
         case .direction(let direction):
             let others = zip(plan.ids, plan.frames).filter { $0.0 != window.id }.map { (id: UInt32($0.0), frame: $0.1) }
-            other = Navigation.neighbour(of: plan.frames[index], direction: direction, among: others).map(CGWindowID.init)
+            let found: UInt32? = Navigation.neighbour(of: plan.frames[index], direction: direction, among: others)
+            other = found
         }
         guard let other, other != window.id else { return nil }
         touch(window.id)

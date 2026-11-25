@@ -65,8 +65,14 @@ clang -fobjc-arc -framework Foundation -framework CoreGraphics scripts/ci/vdispl
 limit 900 python3 scripts/ci/screens.py "$OUT" 2>&1 | tee "$OUT/screens.log"
 [[ ${PIPESTATUS[0]} -ne 0 ]] && status=1
 
-limit 120 log show --last 45m --info --style compact --predicate "subsystem == \"$BUNDLE_ID\"" > "$OUT/tessera.log" 2>&1
+# Tessera 3.0: Tree, Stack and Float, the command line tool, the config file, desktops (quits Tessera at the end).
 pgrep -x "$APP_NAME" >/dev/null && echo "Tessera still running" >> "$OUT/check.log" || echo "TESSERA CRASHED OR QUIT" >> "$OUT/check.log"
+export TESSERA_CLI="$PWD/$APP/Contents/Resources/bin/tessera"
+[[ "$APP" == /* ]] && TESSERA_CLI="$APP/Contents/Resources/bin/tessera"
+limit 1200 python3 scripts/ci/v3.py "$OUT" 2>&1 | tee "$OUT/v3.log"
+[[ ${PIPESTATUS[0]} -ne 0 ]] && status=1
+
+limit 120 log show --last 75m --info --style compact --predicate "subsystem == \"$BUNDLE_ID\"" > "$OUT/tessera.log" 2>&1
 ls ~/Library/Logs/DiagnosticReports/ 2>/dev/null | grep -i tessera > "$OUT/crashes.txt" && cp ~/Library/Logs/DiagnosticReports/*essera* "$OUT/" 2>/dev/null
 pkill -x "$APP_NAME"
 exit $status

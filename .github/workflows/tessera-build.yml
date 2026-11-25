@@ -63,7 +63,7 @@ jobs:
 
   build:
     runs-on: macos-15
-    timeout-minutes: 85
+    timeout-minutes: 120
     env:
       # Set once by scripts/setup-release-keys.sh. Without them, builds are ad-hoc signed and don't auto-update.
       SPARKLE_PUBLIC_KEY: ${{ vars.SPARKLE_PUBLIC_KEY }}
@@ -109,7 +109,7 @@ jobs:
         id: smoke
         if: steps.app.outcome == 'success'
         continue-on-error: true
-        timeout-minutes: 45
+        timeout-minutes: 75
         run: ./scripts/smoke-test.sh build/debug/Tessera.app
 
       - name: Universal release build
@@ -221,7 +221,7 @@ jobs:
   latest-xcode:
     # The newest macOS (Tahoe) and Swift: build, unit tests, and the full real-window test.
     runs-on: macos-26
-    timeout-minutes: 70
+    timeout-minutes: 110
     steps:
       - uses: actions/checkout@v4
       - name: Build and test
@@ -236,7 +236,7 @@ jobs:
         id: smoke
         if: steps.check.outcome == 'success'
         continue-on-error: true
-        timeout-minutes: 48
+        timeout-minutes: 80
         run: |
           ./scripts/build-app.sh debug 2>&1 | tee ci-latest/app.log
           ./scripts/smoke-test.sh build/debug/Tessera.app

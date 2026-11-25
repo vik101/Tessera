@@ -107,8 +107,13 @@ final class Events {
         publish("desktop-changed", ["desktop": now ?? 0, "previous": previous ?? 0])
         let argv = ConfigStore.shared.config.execOnDesktopChange
         if !argv.isEmpty {
-            let extra = ["TESSERA_FOCUSED_DESKTOP": now.map(String.init) ?? "", "TESSERA_PREV_DESKTOP": previous.map(String.init) ?? "",
-                         "AEROSPACE_FOCUSED_WORKSPACE": now.map(String.init) ?? "", "AEROSPACE_PREV_WORKSPACE": previous.map(String.init) ?? ""]
+            let focused: String = now.map { String($0) } ?? ""
+            let before: String = previous.map { String($0) } ?? ""
+            var extra: [String: String] = [:]
+            extra["TESSERA_FOCUSED_DESKTOP"] = focused
+            extra["TESSERA_PREV_DESKTOP"] = before
+            extra["AEROSPACE_FOCUSED_WORKSPACE"] = focused
+            extra["AEROSPACE_PREV_WORKSPACE"] = before
             launch(argv, extra: extra)
         }
     }
