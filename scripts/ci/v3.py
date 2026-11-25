@@ -840,10 +840,12 @@ def setup_on_connect(ids):
     time.sleep(5.0)
     d = c.dump()
     dell = sc.screen_of_size(d, sc.DELL)
-    f = cg().get(w)
-    back = dell is not None and f is not None and c.inside(f, [round(v) for v in dell["frame"]], tol=2)
-    record("Plugging the Dell back in opens the setup: the window is on the Dell again", back,
-           f"window {f}, Dell {dell and dell['frame']}; " + " | ".join(l for l in d.get("log", []) if "setup" in l.lower())[-300:])
+    # A setup remembers apps, not window numbers: any one TextEdit window goes back to the Dell.
+    frames = {i: f for i, f in cg().items() if i in textedit_ids() or i in ids}
+    on = [i for i, f in frames.items() if dell is not None and c.inside(f, [round(v) for v in dell["frame"]], tol=2)]
+    record("Plugging the Dell back in opens the setup: a TextEdit window is on the Dell again", len(on) == 1,
+           f"on the Dell {on}; frames {frames}; Dell {dell and dell['frame']}; "
+           + " | ".join(l for l in d.get("log", []) if "setup" in l.lower())[-300:])
     sc.unplug("dell")
     cli("setup", "delete", "Desk")
     for bundle in OTHERS:

@@ -129,43 +129,52 @@ enum KeyboardMoves {
                 DragSnapper.shared.suspended = false
                 sending = false
             }
+            // The keys that ran this command may still be down: wait (a moment) for them to go up,
+            // because a press with ⌃ held is a right-click, not a grab.
+            let modifiers: CGEventFlags = [.maskControl, .maskAlternate, .maskShift, .maskCommand, .maskSecondaryFn]
+            for _ in 0..<10 where !CGEventSource.flagsState(.combinedSessionState).intersection(modifiers).isEmpty {
+                try? await Task.sleep(for: .milliseconds(100))
+            }
+            let left = CGEventSource.flagsState(.combinedSessionState).intersection(modifiers)
             // Press, then drag a few points the way a hand does, so macOS starts moving the window.
-            // If macOS didn't pick the window up, let go and try once more.
+            // If macOS didn't pick the window up, let go and try again: once as the keys are now,
+            // then at another spot of the title bar.
             var point = grab
             var held = false
-            for attempt in 1...2 where !held {
-                if attempt == 2 {
-                    // Let go, and try another spot of the title bar.
-                    mouse(.leftMouseUp, point)
+            for attempt in 1...3 where !held {
+                if attempt > 1 {
+                    mouse(.leftMouseUp, point, plain: true)
                     try? await Task.sleep(for: .milliseconds(400))
                     window.element.perform(kAXRaiseAction)
-                    point = grabs.count > 1 ? grabs[1] : grab
+                    point = attempt == 3 && grabs.count > 1 ? grabs[1] : grab
                 }
+                let plain = attempt != 2
                 let start = window.frame ?? frame
-                mouse(.mouseMoved, point)
+                mouse(.mouseMoved, point, plain: plain)
                 try? await Task.sleep(for: .milliseconds(80))
-                mouse(.leftMouseDown, point)
+                mouse(.leftMouseDown, point, plain: plain)
                 try? await Task.sleep(for: .milliseconds(150))
                 for _ in 0..<10 {
                     point.x += 2
-                    mouse(.leftMouseDragged, point)
+                    mouse(.leftMouseDragged, point, plain: plain)
                     try? await Task.sleep(for: .milliseconds(20))
                 }
                 try? await Task.sleep(for: .milliseconds(150))
                 let now = window.frame
                 held = now.map { abs($0.minX - start.minX) >= 4 } ?? false
-                Log.info("Send: holding window \(window.id) at \(Int(point.x)),\(Int(point.y)), try \(attempt): "
+                Log.info("Send: holding window \(window.id) at \(Int(point.x)),\(Int(point.y)), try \(attempt)"
+                         + (plain ? "" : " (keys as they are: \(left.rawValue))") + ": "
                          + (held ? "it follows the pointer" : "it didn't move (still at \(now.map { "\(Int($0.minX)),\(Int($0.minY))" } ?? "?"))"))
             }
             if held {
                 for _ in 0..<abs(presses) {
                     key.press()
                     try? await Task.sleep(for: .milliseconds(700))
-                    mouse(.leftMouseDragged, point)   // Keep the drag alive while the desktop slides.
+                    mouse(.leftMouseDragged, point, plain: true)   // Keep the drag alive while the desktop slides.
                     try? await Task.sleep(for: .milliseconds(60))
                 }
             }
-            mouse(.leftMouseUp, point)
+            mouse(.leftMouseUp, point, plain: true)
             try? await Task.sleep(for: .milliseconds(300))
             CGWarpMouseCursorPosition(home)
             guard held else {
@@ -224,12 +233,12 @@ enum KeyboardMoves {
         return Array(points)
     }
 
-    private static func mouse(_ type: CGEventType, _ point: CGPoint) {
+    /// `plain`: no modifier keys. Otherwise the event takes the keys macOS thinks are down (an event
+    /// made this way can carry ones pressed by an earlier synthetic key, like Tessera's own ⌃→).
+    private static func mouse(_ type: CGEventType, _ point: CGPoint, plain: Bool) {
         let source = CGEventSource(stateID: .hidSystemState)
         guard let event = CGEvent(mouseEventSource: source, mouseType: type, mouseCursorPosition: point, mouseButton: .left) else { return }
-        // No modifier keys: an event takes the last ones pressed (Tessera's own ⌃→ for desktops leaves
-        // ⌃ and fn behind), and ⌃-click is a right-click, fn-drag is Tessera's own move.
-        event.flags = []
+        if plain { event.flags = [] }
         event.post(tap: .cghidEventTap)
     }
 }
