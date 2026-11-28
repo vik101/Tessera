@@ -1,0 +1,156 @@
++ 14:31:51 brew --version
+Homebrew 7.0.15
++ 14:31:51 brew trust --help
+[1mUsage: brew[0m [1mtrust[0m [[4moptions[0m] [[4mtarget[0m ...]
+
+Trust non-official tap formulae, casks or commands so Homebrew may load them.
+Trusted entries are stored in [1m${XDG_CONFIG_HOME}/homebrew/trust.json[0m if
+[1m$XDG_CONFIG_HOME[0m is set or [1m~/.homebrew/trust.json[0m otherwise.
+
+      --tap, --taps                Trust the named tap.
+      --formula, --formulae        Trust the named formula.
+      --cask, --casks              Trust the named cask.
+      --command, --commands        Trust the named external command.
+      --json                       Print trusted entries as JSON. A [4mversion[0m
+                                   number is required. The only accepted value
+                                   for [4mversion[0m is [1mv1[0m.
+  -d, --debug                      Display any debugging information.
+  -q, --quiet                      Make some output more quiet.
+  -v, --verbose                    Make some output more verbose.
+  -h, --help                       Show this message.
++ 14:31:52 grep -i -A2 trust
++ 14:31:52 brew tap --help
++ 14:31:53 local secs=300
++ 14:31:53 shift
++ 14:31:53 perl -e 'alarm shift; exec @ARGV' 300 brew tap vik101/tessera /Users/runner/work/Tessera/Tessera
+[34m==>[0m [1mTapping vik101/tessera[0m
+Cloning into '/opt/homebrew/Library/Taps/vik101/homebrew-tessera'...
+Tapped 1 cask (138 files, 2.5MB).
++ 14:31:54 local secs=60
++ 14:31:54 shift
++ 14:31:54 perl -e 'alarm shift; exec @ARGV' 60 brew trust vik101/tessera
+Trusted tap: /users/runner/work/tessera/tessera
++ 14:31:54 local secs=120
++ 14:31:54 shift
++ 14:31:54 perl -e 'alarm shift; exec @ARGV' 120 brew style --cask vik101/tessera/tessera
+[33mWarning:[0m [1mstyle[0m is a developer command, so Homebrew's
+developer mode has been automatically turned on.
+To turn developer mode off, run:
+  brew developer off
+
+Fetching gem metadata from https://rubygems.org/.........
+Fetching bindata 3.0.1
+Fetching concurrent-ruby 1.3.8
+Fetching elftools 2.2.0
+Fetching ast 2.4.3
+Fetching erubi 1.13.1
+Fetching json 3.1.0
+Fetching rexml 3.4.4
+Fetching kramdown 2.5.2
+Fetching kramdown-parser-gfm 1.1.0
+Fetching language_server-protocol 3.17.0.6
+Fetching lint_roller 1.1.0
+Fetching logger 1.7.0
+Installing json 3.1.0 with native extensions
+Fetching racc 1.8.1
+Fetching parallel 2.3.0
+Fetching parser 3.3.13.0
+Fetching patchelf 1.7.0
+Fetching plist 3.7.2
+Installing racc 1.8.1 with native extensions
+Fetching prism 1.9.0
+Fetching rainbow 3.1.1
+Installing prism 1.9.0 with native extensions
+Fetching tsort 0.2.0
+Fetching rbs 4.2.0
+Fetching rbi 0.5.0
+Fetching regexp_parser 2.13.1
+Fetching rubocop-ast 1.51.0
+Fetching ruby-progressbar 1.13.0
+Fetching unicode-emoji 4.3.0
+Fetching unicode-display_width 3.3.0
+Fetching rubocop 1.92.2
+Fetching rubocop-md 3.0.0
+Fetching rubocop-performance 1.27.0
+Fetching rubocop-rspec 3.10.2
+Fetching sorbet-static 0.6.13640 (universal-darwin)
+Fetching sorbet 0.6.13640
+Fetching sorbet-runtime 0.6.13640
+Fetching sorbet-static-and-runtime 0.6.13640
+Fetching thor 1.5.0
+Fetching spoom 1.8.13
+Fetching rubocop-sorbet 0.17.2
+Fetching ruby-macho 7.0.0
+Fetching rubydex 0.4.4 (arm64-darwin)
+Fetching test-prof 1.6.4
+Installing ast 2.4.3
+Installing bindata 3.0.1
+Installing elftools 2.2.0
+Installing erubi 1.13.1
+Installing concurrent-ruby 1.3.8
+Installing rexml 3.4.4
+Installing kramdown-parser-gfm 1.1.0
+Installing kramdown 2.5.2
+Installing lint_roller 1.1.0
+Installing logger 1.7.0
+Installing language_server-protocol 3.17.0.6
+Installing parallel 2.3.0
+Installing patchelf 1.7.0
+Installing plist 3.7.2
+Installing rainbow 3.1.1
+Installing parser 3.3.13.0
+Installing tsort 0.2.0
+Installing rbi 0.5.0
+Installing regexp_parser 2.13.1
+Installing rubocop-ast 1.51.0
+Installing ruby-progressbar 1.13.0
+Installing unicode-emoji 4.3.0
+Installing unicode-display_width 3.3.0
+Installing rubocop 1.92.2
+Installing rubocop-md 3.0.0
+Installing rubocop-performance 1.27.0
+Installing rubocop-rspec 3.10.2
+Installing sorbet-static 0.6.13640 (universal-darwin)
+Installing sorbet 0.6.13640
+Installing sorbet-runtime 0.6.13640
+Installing sorbet-static-and-runtime 0.6.13640
+Installing thor 1.5.0
+Installing spoom 1.8.13
+Installing rubocop-sorbet 0.17.2
+Installing ruby-macho 7.0.0
+Installing rubydex 0.4.4 (arm64-darwin)
+Installing test-prof 1.6.4
+Installing rbs 4.2.0 with native extensions
+Bundle complete! 38 Gemfile dependencies, 41 gems now installed.
+Bundled gems are installed into `../../../../../opt/homebrew/Library/Homebrew/vendor/bundle`
+3 installed gems you directly depend on are looking for funding.
+  Run `bundle fund` for details
+[36mCasks/tessera.rb[0m:9:3: [33mC[0m: Cask/Url: Use GitHub tarballs rather than zipballs ([33murl[0m is url "https://github.com/vik101/Tessera/releases/latest/download/Tessera.zip").
+  url "https://github.com/vik101/Tessera/releases/latest/download/Tessera.zip"
+  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[36mCasks/tessera.rb[0m:22:3: [33mC[0m: Cask/InstallSteps: Casks must use [33mpostflight_steps[0m instead of [33mpostflight[0m.
+  postflight do [33m...[0m
+  ^^^^^^^^^^^^^
+
+1 file inspected, [31m2 offenses[0m detected
++ 14:32:29 local secs=600
++ 14:32:29 shift
++ 14:32:29 perl -e 'alarm shift; exec @ARGV' 600 brew install --cask vik101/tessera/tessera
+[34m==>[0m [1mTrusted cask vik101/tessera/tessera[0m
+::warning::Calling `postflight` is deprecated! Use `postflight_steps` instead.%0APlease report this issue to the vik101/homebrew-tessera tap (not Homebrew/* repositories), or even better, submit a PR to fix it:%0A  /opt/homebrew/Library/Taps/vik101/homebrew-tessera/Casks/tessera.rb:22%0A%0A
+[32m==>[0m [1mFetching downloads for: [32mvik101/tessera/tessera[39m[0m
+::warning::No checksum defined for cask 'tessera', skipping verification.
+✔︎ Cask tessera (latest)
+[32m==>[0m [1mInstalling Cask [32mtessera[39m[0m
+[34m==>[0m [1mMoving App 'Tessera.app' to '/Applications/Tessera.app'[0m
+[34m==>[0m [1mLinking Binary 'tessera' to '/opt/homebrew/bin/tessera'[0m
+🍺  tessera was successfully installed!
++ 14:32:35 local secs=120
++ 14:32:35 shift
++ 14:32:35 perl -e 'alarm shift; exec @ARGV' 120 brew uninstall --cask vik101/tessera/tessera
+::warning::Calling `postflight` is deprecated! Use `postflight_steps` instead.%0APlease report this issue to the vik101/homebrew-tessera tap (not Homebrew/* repositories), or even better, submit a PR to fix it:%0A  /opt/homebrew/Library/Taps/vik101/homebrew-tessera/Casks/tessera.rb:22%0A%0A
+[32m==>[0m [1mUninstalling Cask [32mtessera[39m[0m
+[34m==>[0m [1mBacking up App 'Tessera.app' to '/opt/homebrew/Caskroom/tessera/latest/Tessera.app'[0m
+[34m==>[0m [1mRemoving App '/Applications/Tessera.app'[0m
+[34m==>[0m [1mUnlinking Binary '/opt/homebrew/bin/tessera'[0m
+[34m==>[0m [1mPurging files for version latest of Cask tessera[0m

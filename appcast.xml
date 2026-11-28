@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+  <channel>
+    <title>Tessera</title>
+    <item>
+      <title>Tessera 9.9.9</title>
+      <pubDate>Sat, 28 Nov 2026 14:31:41 GMT</pubDate>
+      <sparkle:version>999</sparkle:version>
+      <sparkle:shortVersionString>9.9.9</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <description><![CDATA[]]></description>
+      <enclosure url="https://example.invalid/Tessera.zip" type="application/octet-stream"
+                 sparkle:edSignature="u1OKPG5bFIG1c1AONb6TwP8O403EWrhEY5q4VLJDbn8lYIqMmc/KHqe8aDac1E6TzXUZQKzG6drfsVHYwvbQBA==" length="3323920"/>
+    </item>
+  </channel>
+</rss>

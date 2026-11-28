@@ -1,0 +1,112 @@
+++ 14:31:05 local fw=/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v101/Tessera.app/Contents/Frameworks/Sparkle.framework
+++ 14:31:05 for helper in '"$fw/Versions/B/XPCServices/Installer.xpc"' '"$fw/Versions/B/XPCServices/Downloader.xpc"' '"$fw/Versions/B/Autoupdate"' '"$fw/Versions/B/Updater.app"'
+++ 14:31:05 [[ -e /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v101/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc ]]
+++ 14:31:05 codesign --force --timestamp=none --preserve-metadata=entitlements --sign E2D233D996C9FE9A94A81D100E93624F42041F35 /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v101/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc
+/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v101/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc: replacing existing signature
+++ 14:31:05 for helper in '"$fw/Versions/B/XPCServices/Installer.xpc"' '"$fw/Versions/B/XPCServices/Downloader.xpc"' '"$fw/Versions/B/Autoupdate"' '"$fw/Versions/B/Updater.app"'
+++ 14:31:05 [[ -e /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v101/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc ]]
+++ 14:31:05 codesign --force --timestamp=none --preserve-metadata=entitlements --sign E2D233D996C9FE9A94A81D100E93624F42041F35 /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v101/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc
+/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v101/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc: replacing existing signature
+++ 14:31:05 for helper in '"$fw/Versions/B/XPCServices/Installer.xpc"' '"$fw/Versions/B/XPCServices/Downloader.xpc"' '"$fw/Versions/B/Autoupdate"' '"$fw/Versions/B/Updater.app"'
+++ 14:31:05 [[ -e /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v101/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate ]]
+++ 14:31:05 codesign --force --timestamp=none --preserve-metadata=entitlements --sign E2D233D996C9FE9A94A81D100E93624F42041F35 /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v101/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate
+/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v101/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate: replacing existing signature
+++ 14:31:05 for helper in '"$fw/Versions/B/XPCServices/Installer.xpc"' '"$fw/Versions/B/XPCServices/Downloader.xpc"' '"$fw/Versions/B/Autoupdate"' '"$fw/Versions/B/Updater.app"'
+++ 14:31:05 [[ -e /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v101/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app ]]
+++ 14:31:05 codesign --force --timestamp=none --preserve-metadata=entitlements --sign E2D233D996C9FE9A94A81D100E93624F42041F35 /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v101/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app
+/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v101/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app: replacing existing signature
+++ 14:31:05 codesign --force --timestamp=none --sign E2D233D996C9FE9A94A81D100E93624F42041F35 /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v101/Tessera.app/Contents/Frameworks/Sparkle.framework
+/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v101/Tessera.app/Contents/Frameworks/Sparkle.framework: replacing existing signature
+++ 14:31:05 codesign --force --timestamp=none --sign E2D233D996C9FE9A94A81D100E93624F42041F35 /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v101/Tessera.app
+/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v101/Tessera.app: replacing existing signature
+++ 14:31:05 echo '== build 101'
+== build 101
+++ 14:31:05 codesign -dv --verbose=2 /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v101/Tessera.app
+Executable=/private/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v101/Tessera.app/Contents/MacOS/Tessera
+Identifier=com.vikram.Tessera
+Format=app bundle with Mach-O thin (arm64)
+CodeDirectory v=20400 size=39115 flags=0x0(none) hashes=1216+3 location=embedded
+Signature size=1631
+Authority=Tessera Signing
+Signed Time=Nov 28, 2026 at 2:31:05 PM
+Info.plist entries=21
+TeamIdentifier=not set
+Sealed Resources version=2 rules=13 files=3
+Internal requirements count=1 size=96
+++ 14:31:05 codesign -d -r- /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v101/Tessera.app
+Executable=/private/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v101/Tessera.app/Contents/MacOS/Tessera
+designated => identifier "com.vikram.Tessera" and certificate leaf = H"e2d233d996c9fe9a94a81d100e93624f42041f35"
+++ 14:31:05 local fw=/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v102/Tessera.app/Contents/Frameworks/Sparkle.framework
+++ 14:31:05 for helper in '"$fw/Versions/B/XPCServices/Installer.xpc"' '"$fw/Versions/B/XPCServices/Downloader.xpc"' '"$fw/Versions/B/Autoupdate"' '"$fw/Versions/B/Updater.app"'
+++ 14:31:05 [[ -e /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v102/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc ]]
+++ 14:31:05 codesign --force --timestamp=none --preserve-metadata=entitlements --sign E2D233D996C9FE9A94A81D100E93624F42041F35 /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v102/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc
+/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v102/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc: replacing existing signature
+++ 14:31:05 for helper in '"$fw/Versions/B/XPCServices/Installer.xpc"' '"$fw/Versions/B/XPCServices/Downloader.xpc"' '"$fw/Versions/B/Autoupdate"' '"$fw/Versions/B/Updater.app"'
+++ 14:31:05 [[ -e /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v102/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc ]]
+++ 14:31:05 codesign --force --timestamp=none --preserve-metadata=entitlements --sign E2D233D996C9FE9A94A81D100E93624F42041F35 /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v102/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc
+/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v102/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc: replacing existing signature
+++ 14:31:05 for helper in '"$fw/Versions/B/XPCServices/Installer.xpc"' '"$fw/Versions/B/XPCServices/Downloader.xpc"' '"$fw/Versions/B/Autoupdate"' '"$fw/Versions/B/Updater.app"'
+++ 14:31:05 [[ -e /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v102/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate ]]
+++ 14:31:05 codesign --force --timestamp=none --preserve-metadata=entitlements --sign E2D233D996C9FE9A94A81D100E93624F42041F35 /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v102/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate
+/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v102/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate: replacing existing signature
+++ 14:31:05 for helper in '"$fw/Versions/B/XPCServices/Installer.xpc"' '"$fw/Versions/B/XPCServices/Downloader.xpc"' '"$fw/Versions/B/Autoupdate"' '"$fw/Versions/B/Updater.app"'
+++ 14:31:05 [[ -e /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v102/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app ]]
+++ 14:31:05 codesign --force --timestamp=none --preserve-metadata=entitlements --sign E2D233D996C9FE9A94A81D100E93624F42041F35 /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v102/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app
+/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v102/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app: replacing existing signature
+++ 14:31:06 codesign --force --timestamp=none --sign E2D233D996C9FE9A94A81D100E93624F42041F35 /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v102/Tessera.app/Contents/Frameworks/Sparkle.framework
+/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v102/Tessera.app/Contents/Frameworks/Sparkle.framework: replacing existing signature
+++ 14:31:06 codesign --force --timestamp=none --sign E2D233D996C9FE9A94A81D100E93624F42041F35 /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v102/Tessera.app
+/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v102/Tessera.app: replacing existing signature
+++ 14:31:06 echo '== build 102'
+== build 102
+++ 14:31:06 codesign -dv --verbose=2 /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v102/Tessera.app
+Executable=/private/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v102/Tessera.app/Contents/MacOS/Tessera
+Identifier=com.vikram.Tessera
+Format=app bundle with Mach-O thin (arm64)
+CodeDirectory v=20400 size=39115 flags=0x0(none) hashes=1216+3 location=embedded
+Signature size=1631
+Authority=Tessera Signing
+Signed Time=Nov 28, 2026 at 2:31:06 PM
+Info.plist entries=21
+TeamIdentifier=not set
+Sealed Resources version=2 rules=13 files=3
+Internal requirements count=1 size=96
+++ 14:31:06 codesign -d -r- /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v102/Tessera.app
+Executable=/private/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v102/Tessera.app/Contents/MacOS/Tessera
+designated => identifier "com.vikram.Tessera" and certificate leaf = H"e2d233d996c9fe9a94a81d100e93624f42041f35"
+++ 14:31:06 local fw=/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v103/Tessera.app/Contents/Frameworks/Sparkle.framework
+++ 14:31:06 for helper in '"$fw/Versions/B/XPCServices/Installer.xpc"' '"$fw/Versions/B/XPCServices/Downloader.xpc"' '"$fw/Versions/B/Autoupdate"' '"$fw/Versions/B/Updater.app"'
+++ 14:31:06 [[ -e /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v103/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc ]]
+++ 14:31:06 codesign --force --timestamp=none --preserve-metadata=entitlements --sign - /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v103/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc
+/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v103/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc: replacing existing signature
+++ 14:31:06 for helper in '"$fw/Versions/B/XPCServices/Installer.xpc"' '"$fw/Versions/B/XPCServices/Downloader.xpc"' '"$fw/Versions/B/Autoupdate"' '"$fw/Versions/B/Updater.app"'
+++ 14:31:06 [[ -e /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v103/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc ]]
+++ 14:31:06 codesign --force --timestamp=none --preserve-metadata=entitlements --sign - /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v103/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc
+/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v103/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc: replacing existing signature
+++ 14:31:06 for helper in '"$fw/Versions/B/XPCServices/Installer.xpc"' '"$fw/Versions/B/XPCServices/Downloader.xpc"' '"$fw/Versions/B/Autoupdate"' '"$fw/Versions/B/Updater.app"'
+++ 14:31:06 [[ -e /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v103/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate ]]
+++ 14:31:06 codesign --force --timestamp=none --preserve-metadata=entitlements --sign - /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v103/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate
+/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v103/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate: replacing existing signature
+++ 14:31:06 for helper in '"$fw/Versions/B/XPCServices/Installer.xpc"' '"$fw/Versions/B/XPCServices/Downloader.xpc"' '"$fw/Versions/B/Autoupdate"' '"$fw/Versions/B/Updater.app"'
+++ 14:31:06 [[ -e /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v103/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app ]]
+++ 14:31:06 codesign --force --timestamp=none --preserve-metadata=entitlements --sign - /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v103/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app
+/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v103/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app: replacing existing signature
+++ 14:31:06 codesign --force --timestamp=none --sign - /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v103/Tessera.app/Contents/Frameworks/Sparkle.framework
+/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v103/Tessera.app/Contents/Frameworks/Sparkle.framework: replacing existing signature
+++ 14:31:06 codesign --force --timestamp=none --sign - /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v103/Tessera.app
+/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v103/Tessera.app: replacing existing signature
+++ 14:31:06 echo '== build 103'
+== build 103
+++ 14:31:06 codesign -dv --verbose=2 /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v103/Tessera.app
+Executable=/private/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v103/Tessera.app/Contents/MacOS/Tessera
+Identifier=com.vikram.Tessera
+Format=app bundle with Mach-O thin (arm64)
+CodeDirectory v=20400 size=39115 flags=0x2(adhoc) hashes=1216+3 location=embedded
+Signature=adhoc
+Info.plist entries=21
+TeamIdentifier=not set
+Sealed Resources version=2 rules=13 files=3
+Internal requirements count=0 size=12
+++ 14:31:06 codesign -d -r- /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v103/Tessera.app
+Executable=/private/var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/tmp.hZ3QaAR4bf/v103/Tessera.app/Contents/MacOS/Tessera
+# designated => cdhash H"29110e74d1dd14ca0a056d17eaed02c4220ea224"

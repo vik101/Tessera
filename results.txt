@@ -1,0 +1,15 @@
+13 passed, 1 warnings, 0 failed
+PASS certificate imported (E2D233D996C9FE9A94A81D100E93624F42041F35)
+PASS two builds signed with the certificate share one requirement
+PASS a certificate-signed build verifies
+PASS first version has Accessibility
+PASS an update signed with the same certificate keeps Accessibility
+PASS an ad-hoc update loses Accessibility (the test can tell the difference)
+PASS Sparkle's sign_update tool found
+PASS the appcast's signature matches the download
+PASS a build with a feed and key starts Sparkle
+PASS Sparkle.framework is inside the app
+PASS Homebrew taps the repo
+WARN brew style has notes on the cask (see homebrew.txt)
+PASS brew install --cask puts Tessera in Applications
+PASS the installed app opens without the download warning

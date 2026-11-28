@@ -1,0 +1,30 @@
+{
+  "CFBundleDevelopmentRegion" => "en"
+  "CFBundleDisplayName" => "Tessera"
+  "CFBundleExecutable" => "Tessera"
+  "CFBundleIconFile" => "AppIcon"
+  "CFBundleIdentifier" => "com.vikram.Tessera"
+  "CFBundleInfoDictionaryVersion" => "6.0"
+  "CFBundleName" => "Tessera"
+  "CFBundlePackageType" => "APPL"
+  "CFBundleShortVersionString" => "3.0.0"
+  "CFBundleURLTypes" => [
+    0 => {
+      "CFBundleURLName" => "com.vikram.Tessera"
+      "CFBundleURLSchemes" => [
+        0 => "tessera"
+      ]
+    }
+  ]
+  "CFBundleVersion" => "11"
+  "LSApplicationCategoryType" => "public.app-category.productivity"
+  "LSMinimumSystemVersion" => "15.0"
+  "LSUIElement" => 1
+  "NSHighResolutionCapable" => 1
+  "NSHumanReadableCopyright" => "© 2026 Vikram"
+  "SUEnableAutomaticChecks" => 1
+  "SUEnableSystemProfiling" => 0
+  "SUFeedURL" => "https://github.com/vik101/Tessera/releases/latest/download/appcast.xml"
+  "SUPublicEDKey" => "Wn99NM506vO7k5oQDxgBXiWIdA469xFWKkPq24ujj6k="
+  "SUScheduledCheckInterval" => 86400
+}

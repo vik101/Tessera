@@ -1,0 +1,96 @@
+› Compiling (debug)…
+Fetching https://github.com/sparkle-project/Sparkle
+[1/44658] Fetching sparkle
+Fetched https://github.com/sparkle-project/Sparkle from cache (2.21s)
+Computing version for https://github.com/sparkle-project/Sparkle
+Computed https://github.com/sparkle-project/Sparkle at 2.10.1 (7.25s)
+Creating working copy for https://github.com/sparkle-project/Sparkle
+Working copy of https://github.com/sparkle-project/Sparkle resolved at 2.10.1
+Downloading binary artifact https://github.com/sparkle-project/Sparkle/releases/download/2.10.1/Sparkle-for-Swift-Package-Manager.zip
+[16375/10197413] Downloading https://github.com/sparkle-project/Sparkle/releases/download/2.10.1/Sparkle-for-Swift-Package-Manager.zip
+Downloaded https://github.com/sparkle-project/Sparkle/releases/download/2.10.1/Sparkle-for-Swift-Package-Manager.zip (1.02s)
+Building for debugging...
+[0/13] Write sources
+[0/13] Write TesseraCLI-entitlement.plist
+[0/13] Write sources
+[0/13] Write Tessera-entitlement.plist
+[5/13] Copying Sparkle.framework
+[6/13] Write swift-version--79AA4F9932D1E87A.txt
+[8/28] Compiling TesseraCore AppRule.swift
+[9/28] Compiling TesseraCore SettingsFile.swift
+[10/28] Compiling TesseraCore Setup.swift
+[11/28] Compiling TesseraCore URLCommand.swift
+[12/28] Compiling TesseraCore CommandHelp.swift
+[13/28] Compiling TesseraCore TextCommand.swift
+[14/28] Compiling TesseraCore Wire.swift
+[15/28] Emitting module TesseraCore
+[16/28] Compiling TesseraCore KeyNotation.swift
+[17/28] Compiling TesseraCore TOML.swift
+[18/28] Compiling TesseraCore TesseraConfig.swift
+[19/28] Compiling TesseraCore Geometry.swift
+[20/28] Compiling TesseraCore Commands.swift
+[21/28] Compiling TesseraCore KeyCombo.swift
+[22/28] Compiling TesseraCore Arrange.swift
+[23/35] Compiling TesseraCore Navigation.swift
+[24/35] Compiling TesseraCore SnapAction.swift
+[25/35] Compiling TesseraCore SnapCalculator.swift
+[26/35] Compiling TesseraCore FrontWindows.swift
+[27/35] Compiling TesseraCore TilePlanner.swift
+[28/35] Compiling TesseraCore TileSizes.swift
+[29/35] Compiling TesseraCore TileTree.swift
+[30/62] Emitting module TesseraCLI
+[31/62] Compiling TesseraCLI main.swift
+[31/62] Write Objects.LinkFileList
+[32/62] Linking TesseraCLI
+[33/62] Applying TesseraCLI
+[35/62] Compiling Tessera AXElement.swift
+[36/62] Compiling Tessera AXObserverHub.swift
+[37/62] Compiling Tessera Automation.swift
+[38/62] Compiling Tessera ConfigStore.swift
+[39/62] Compiling Tessera Settings.swift
+[40/62] Compiling Tessera Setups.swift
+[41/62] Compiling Tessera TesseraApp.swift
+[42/62] Compiling Tessera TestHooks.swift
+[43/62] Compiling Tessera Updater.swift
+[44/62] Compiling Tessera CommandLineTool.swift
+[45/62] Compiling Tessera CommandRunner.swift
+[46/62] Compiling Tessera CommandServer.swift
+[47/73] Emitting module Tessera
+[48/73] Compiling Tessera Events.swift
+[49/73] Compiling Tessera QueryRunner.swift
+[50/73] Compiling Tessera HotKeyCenter.swift
+[51/73] Compiling Tessera Shortcuts.swift
+[52/73] Compiling Tessera Arranger.swift
+[53/73] Compiling Tessera DragSnapper.swift
+[54/73] Compiling Tessera MouseFeatures.swift
+[55/73] Compiling Tessera SnapController.swift
+[56/73] Compiling Tessera Support.swift
+[57/73] Compiling Tessera AutoTiler.swift
+[58/73] Compiling Tessera Decorations.swift
+[59/73] Compiling Tessera Overlays.swift
+[60/73] Compiling Tessera PermissionWindow.swift
+[61/73] Compiling Tessera SettingsWindow.swift
+[62/73] Compiling Tessera StatusMenu.swift
+[63/73] Compiling Tessera WindowPicker.swift
+[64/73] Compiling Tessera Desktops.swift
+[65/73] Compiling Tessera KeyboardMoves.swift
+[66/73] Compiling Tessera Screens.swift
+[67/73] Compiling Tessera Spaces.swift
+[68/73] Compiling Tessera WindowActions.swift
+[69/73] Compiling Tessera WindowMover.swift
+[70/73] Compiling Tessera WindowRegistry.swift
+[70/73] Write Objects.LinkFileList
+[71/73] Linking Tessera
+[72/73] Applying Tessera
+Build complete! (34.21s)
+› Assembling build/debug/Tessera.app
+/Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/install_name_tool: warning: changes being made to the file will invalidate the code signature in: build/debug/Tessera.app/Contents/MacOS/Tessera
+› Signing with: - (Apple-issued: no)
+build/debug/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc: replacing existing signature
+build/debug/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc: replacing existing signature
+build/debug/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate: replacing existing signature
+build/debug/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app: replacing existing signature
+build/debug/Tessera.app/Contents/Frameworks/Sparkle.framework: replacing existing signature
+build/debug/Tessera.app/Contents/Resources/bin/tessera: replacing existing signature
+build/debug/Tessera.app: replacing existing signature
+✓ Built build/debug/Tessera.app

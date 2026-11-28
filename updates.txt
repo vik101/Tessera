@@ -1,0 +1,1 @@
+{'automatic': True, 'configured': True, 'feed': 'https://github.com/vik101/Tessera/releases/latest/download/appcast.xml', 'running': True}
