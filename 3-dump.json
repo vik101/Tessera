@@ -1,0 +1,257 @@
+{
+  "autoTile" : {
+    "crowded" : [
+
+    ],
+    "currentLayouts" : {
+      "0-0-305419896" : "auto"
+    },
+    "currentSpaces" : [
+      "1:1"
+    ],
+    "desktops" : [
+      {
+        "current" : 1,
+        "display" : "EEBC8EBB-1747-4179-8CB3-7038F756154C",
+        "spaces" : [
+          {
+            "id" : 1,
+            "type" : 0
+          }
+        ]
+      }
+    ],
+    "floating" : [
+
+    ],
+    "frontLimit" : 0,
+    "kept" : [
+
+    ],
+    "lastUsed" : {
+      "30" : 1,
+      "36" : 3,
+      "37" : 5,
+      "38" : 2
+    },
+    "limits" : {
+      "0-0-305419896" : 2
+    },
+    "minimums" : {
+
+    },
+    "moves" : 15,
+    "on" : false,
+    "order" : {
+
+    },
+    "pendingLayout" : {
+
+    },
+    "pinned" : {
+
+    },
+    "plans" : {
+
+    },
+    "preselected" : {
+
+    },
+    "sizes" : {
+
+    },
+    "spaceLayouts" : {
+      "0-0-305419896#1" : "auto"
+    },
+    "spacesSupported" : true,
+    "trees" : {
+
+    },
+    "waiting" : {
+
+    },
+    "zoomed" : [
+
+    ]
+  },
+  "autoTileSetting" : false,
+  "config" : {
+    "error" : "",
+    "exists" : false,
+    "path" : "\/Users\/runner\/.config\/tessera\/tessera.toml",
+    "rules" : 0,
+    "warnings" : [
+
+    ]
+  },
+  "decorations" : {
+    "border" : false,
+    "dim" : false
+  },
+  "desktop" : 1,
+  "displays" : [
+    {
+      "frame" : [
+        0,
+        0,
+        1024,
+        768
+      ],
+      "id" : "0-0-305419896",
+      "name" : "Apple Virtual",
+      "number" : 1,
+      "visible" : [
+        0,
+        31,
+        1024,
+        677
+      ]
+    }
+  ],
+  "failedKeys" : [
+
+  ],
+  "failedShortcuts" : [
+
+  ],
+  "focused" : 37,
+  "gap" : 0,
+  "hotkeys" : 58,
+  "layouts" : {
+    "0-0-305419896" : "auto",
+    "x-display" : "columns"
+  },
+  "log" : [
+    "2:58:05 PM I Test hooks on",
+    "2:58:05 PM I Desktops (Spaces) supported",
+    "2:58:05 PM I Move 37 (com.apple.TextEdit) from {{0, 31}, {1024, 676}} to {{0, 31}, {512, 677}}",
+    "2:58:05 PM I Move 36 (com.apple.TextEdit) from {{108, 85}, {673, 439}} to {{512, 31}, {512, 677}}",
+    "2:58:05 PM I Move 38 (com.apple.TextEdit) from {{79, 56}, {673, 439}} to {{1023, 767}, {673, 439}}",
+    "2:58:05 PM I Move 30 (com.apple.finder) from {{52, 91}, {920, 436}} to {{1023, 767}, {920, 436}}",
+    "2:58:05 PM I Window engine started",
+    "2:58:05 PM I Tessera 3.0.0 (11) started",
+    "2:58:05 PM I Command line tool: listening on \/tmp\/tessera-501.sock",
+    "2:58:15 PM I Test command: menu",
+    "2:58:19 PM I Test command: settings",
+    "2:58:22 PM I Test command: close-settings",
+    "2:58:23 PM I Shortcut: layout.columns",
+    "2:58:24 PM I Shortcut: layout.rows",
+    "2:58:25 PM I Move 37 (com.apple.TextEdit) from {{-0, 31}, {512, 676}} to {{0, 31}, {1024, 339}}",
+    "2:58:25 PM I Move 36 (com.apple.TextEdit) from {{512, 31}, {512, 676}} to {{0, 370}, {1024, 338}}",
+    "2:58:26 PM I Shortcut: layout.grid",
+    "2:58:26 PM I Move 37 (com.apple.TextEdit) from {{-0, 31}, {1024, 339}} to {{0, 31}, {512, 677}}",
+    "2:58:26 PM I Move 36 (com.apple.TextEdit) from {{0, 370}, {1024, 338}} to {{512, 31}, {512, 677}}",
+    "2:58:28 PM I Shortcut: layout.mainAndSide",
+    "2:58:30 PM I Shortcut: layout.auto",
+    "2:58:33 PM I Shortcut: tile.nextLayout",
+    "2:58:34 PM I Shortcut: tile.nextLayout",
+    "2:58:34 PM I Move 37 (com.apple.TextEdit) from {{-0, 31}, {512, 676}} to {{0, 31}, {1024, 339}}",
+    "2:58:34 PM I Move 36 (com.apple.TextEdit) from {{512, 31}, {512, 676}} to {{0, 370}, {1024, 338}}",
+    "2:58:36 PM I Shortcut: tile.nextLayout",
+    "2:58:36 PM I Move 37 (com.apple.TextEdit) from {{-0, 31}, {1024, 339}} to {{0, 31}, {512, 677}}",
+    "2:58:36 PM I Move 36 (com.apple.TextEdit) from {{0, 370}, {1024, 338}} to {{512, 31}, {512, 677}}",
+    "2:58:37 PM I Shortcut: tile.nextLayout",
+    "2:58:39 PM I Shortcut: tile.nextLayout",
+    "2:58:42 PM I Shortcut: snap.leftHalf",
+    "2:58:44 PM I Shortcut: tile.toggleAutoTile",
+    "2:58:44 PM I Move 38 (com.apple.TextEdit) from {{1023, 676}, {673, 439}} to {{176, 150}, {673, 439}}",
+    "2:58:44 PM I Move 30 (com.apple.finder) from {{1023, 656}, {920, 436}} to {{52, 152}, {920, 436}}",
+    "2:58:47 PM I Test command: dump"
+  ],
+  "macEdgeTiling" : true,
+  "mode" : "main",
+  "modes" : [
+    "main"
+  ],
+  "path" : "\/Applications\/Tessera.app",
+  "picker" : {
+    "entries" : [
+
+    ],
+    "selection" : 0,
+    "showing" : false
+  },
+  "socket" : "\/tmp\/tessera-501.sock",
+  "trusted" : true,
+  "updates" : {
+    "automatic" : false,
+    "configured" : false,
+    "feed" : "",
+    "running" : false
+  },
+  "version" : "3.0.0 (11)",
+  "windows" : [
+    {
+      "app" : "com.apple.TextEdit",
+      "frame" : [
+        0,
+        31,
+        512,
+        676
+      ],
+      "fullScreen" : false,
+      "id" : 37,
+      "screen" : "",
+      "spaces" : [
+        1
+      ],
+      "standard" : true,
+      "tiled" : false,
+      "waiting" : false
+    },
+    {
+      "app" : "com.apple.TextEdit",
+      "frame" : [
+        512,
+        31,
+        512,
+        676
+      ],
+      "fullScreen" : false,
+      "id" : 36,
+      "screen" : "",
+      "spaces" : [
+        1
+      ],
+      "standard" : true,
+      "tiled" : false,
+      "waiting" : false
+    },
+    {
+      "app" : "com.apple.TextEdit",
+      "frame" : [
+        176,
+        150,
+        673,
+        439
+      ],
+      "fullScreen" : false,
+      "id" : 38,
+      "screen" : "",
+      "spaces" : [
+        1
+      ],
+      "standard" : true,
+      "tiled" : false,
+      "waiting" : false
+    },
+    {
+      "app" : "com.apple.finder",
+      "frame" : [
+        52,
+        152,
+        920,
+        436
+      ],
+      "fullScreen" : false,
+      "id" : 30,
+      "screen" : "",
+      "spaces" : [
+        1
+      ],
+      "standard" : true,
+      "tiled" : false,
+      "waiting" : false
+    }
+  ]
+}
