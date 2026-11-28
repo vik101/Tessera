@@ -1,0 +1,339 @@
+{
+  "autoTile" : {
+    "crowded" : [
+
+    ],
+    "currentLayouts" : {
+      "0-0-305419896" : "auto",
+      "32341-2-66" : "grid"
+    },
+    "currentSpaces" : [
+      "2:13",
+      "1:1"
+    ],
+    "desktops" : [
+      {
+        "current" : 1,
+        "display" : "DB32F47A-7705-4CEB-965F-EAF56E961A80",
+        "spaces" : [
+          {
+            "id" : 1,
+            "type" : 0
+          }
+        ]
+      },
+      {
+        "current" : 13,
+        "display" : "C7D21724-CE51-40A5-B4EF-F9186FBFD8E8",
+        "spaces" : [
+          {
+            "id" : 13,
+            "type" : 0
+          }
+        ]
+      }
+    ],
+    "floating" : [
+
+    ],
+    "frontLimit" : 0,
+    "kept" : [
+
+    ],
+    "lastUsed" : {
+      "31" : 1,
+      "32" : 2,
+      "33" : 6,
+      "34" : 4
+    },
+    "limits" : {
+      "0-0-305419896" : 3,
+      "32341-2-66" : 3
+    },
+    "minimums" : {
+
+    },
+    "moves" : 9,
+    "on" : true,
+    "order" : {
+      "0-0-305419896" : [
+        34,
+        32,
+        31
+      ],
+      "32341-2-66" : [
+        33
+      ]
+    },
+    "pendingLayout" : {
+
+    },
+    "pinned" : {
+
+    },
+    "plans" : {
+      "0-0-305419896" : {
+        "area" : [
+          0,
+          25,
+          1920,
+          982
+        ],
+        "fits" : true,
+        "frames" : [
+          [
+            0,
+            25,
+            960,
+            982
+          ],
+          [
+            960,
+            25,
+            960,
+            491
+          ],
+          [
+            960,
+            516,
+            960,
+            491
+          ]
+        ],
+        "ids" : [
+          34,
+          32,
+          31
+        ],
+        "style" : "auto"
+      },
+      "32341-2-66" : {
+        "area" : [
+          1920,
+          25,
+          1920,
+          1055
+        ],
+        "fits" : true,
+        "frames" : [
+          [
+            1920,
+            25,
+            1920,
+            1055
+          ]
+        ],
+        "ids" : [
+          33
+        ],
+        "style" : "grid"
+      }
+    },
+    "preselected" : {
+
+    },
+    "sizes" : {
+
+    },
+    "spaceLayouts" : {
+      "0-0-305419896#1" : "auto",
+      "32341-2-66#13" : "grid"
+    },
+    "spacesSupported" : true,
+    "trees" : {
+
+    },
+    "waiting" : {
+      "0-0-305419896" : [
+
+      ],
+      "32341-2-66" : [
+
+      ]
+    },
+    "zoomed" : [
+
+    ]
+  },
+  "autoTileSetting" : true,
+  "config" : {
+    "error" : "",
+    "exists" : false,
+    "path" : "\/Users\/runner\/.config\/tessera\/tessera.toml",
+    "rules" : 0,
+    "warnings" : [
+
+    ]
+  },
+  "decorations" : {
+    "border" : false,
+    "dim" : false
+  },
+  "desktop" : 1,
+  "displays" : [
+    {
+      "frame" : [
+        0,
+        0,
+        1920,
+        1080
+      ],
+      "id" : "0-0-305419896",
+      "name" : "Apple Virtual",
+      "number" : 1,
+      "visible" : [
+        0,
+        25,
+        1920,
+        982
+      ]
+    },
+    {
+      "frame" : [
+        1920,
+        0,
+        1920,
+        1080
+      ],
+      "id" : "32341-2-66",
+      "name" : "Tessera Test Display",
+      "number" : 2,
+      "visible" : [
+        1920,
+        25,
+        1920,
+        1055
+      ]
+    }
+  ],
+  "failedKeys" : [
+
+  ],
+  "failedShortcuts" : [
+
+  ],
+  "focused" : 33,
+  "gap" : 0,
+  "hotkeys" : 58,
+  "layouts" : {
+    "32341-2-66" : "grid",
+    "x-display" : "columns"
+  },
+  "log" : [
+    "2:59:15 PM I Test hooks on",
+    "2:59:15 PM I Desktops (Spaces) supported",
+    "2:59:15 PM I Move 34 (com.apple.finder) from {{-0, 25}, {1920, 981}} to {{0, 25}, {960, 982}}",
+    "2:59:15 PM I Move 33 (com.apple.TextEdit) from {{462, 192}, {646, 418}} to {{960, 25}, {960, 491}}",
+    "2:59:15 PM I Move 32 (com.apple.TextEdit) from {{364, 135}, {646, 418}} to {{960, 516}, {960, 491}}",
+    "2:59:15 PM I Move 31 (com.apple.TextEdit) from {{266, 78}, {646, 418}} to {{1919, 1079}, {646, 418}}",
+    "2:59:15 PM I Move 31 (com.apple.TextEdit) from {{1919, 1052}, {646, 418}} to {{-645, 1079}, {646, 418}}",
+    "2:59:15 PM I Window engine started",
+    "2:59:15 PM I Tessera 3.0.0 (11) started",
+    "2:59:15 PM I Command line tool: listening on \/tmp\/tessera-501.sock",
+    "2:59:25 PM I Test command: menu",
+    "2:59:29 PM I Shortcut: snap.nextDisplay",
+    "2:59:29 PM I Move 32 (com.apple.TextEdit) from {{960, 516}, {960, 491}} to {{960, 25}, {960, 491}}",
+    "2:59:29 PM I Move 31 (com.apple.TextEdit) from {{-645, 979}, {646, 418}} to {{960, 516}, {960, 491}}",
+    "2:59:29 PM I Move 33 (com.apple.TextEdit) from {{960, 25}, {960, 491}} to {{1920, 25}, {1920, 1055}}",
+    "2:59:32 PM I Shortcut: tile.nextLayout",
+    "2:59:33 PM I Shortcut: tile.nextLayout",
+    "2:59:35 PM I Shortcut: tile.nextLayout",
+    "2:59:37 PM I Test command: dump"
+  ],
+  "macEdgeTiling" : true,
+  "mode" : "main",
+  "modes" : [
+    "main"
+  ],
+  "path" : "\/Applications\/Tessera.app",
+  "picker" : {
+    "entries" : [
+
+    ],
+    "selection" : 0,
+    "showing" : false
+  },
+  "socket" : "\/tmp\/tessera-501.sock",
+  "trusted" : true,
+  "updates" : {
+    "automatic" : false,
+    "configured" : false,
+    "feed" : "",
+    "running" : false
+  },
+  "version" : "3.0.0 (11)",
+  "windows" : [
+    {
+      "app" : "com.apple.TextEdit",
+      "frame" : [
+        1920,
+        25,
+        1920,
+        1055
+      ],
+      "fullScreen" : false,
+      "id" : 33,
+      "screen" : "32341-2-66",
+      "spaces" : [
+        13
+      ],
+      "standard" : true,
+      "tiled" : true,
+      "waiting" : false
+    },
+    {
+      "app" : "com.apple.finder",
+      "frame" : [
+        0,
+        25,
+        960,
+        981
+      ],
+      "fullScreen" : false,
+      "id" : 34,
+      "screen" : "0-0-305419896",
+      "spaces" : [
+        1
+      ],
+      "standard" : true,
+      "tiled" : true,
+      "waiting" : false
+    },
+    {
+      "app" : "com.apple.TextEdit",
+      "frame" : [
+        960,
+        25,
+        960,
+        491
+      ],
+      "fullScreen" : false,
+      "id" : 32,
+      "screen" : "0-0-305419896",
+      "spaces" : [
+        1
+      ],
+      "standard" : true,
+      "tiled" : true,
+      "waiting" : false
+    },
+    {
+      "app" : "com.apple.TextEdit",
+      "frame" : [
+        960,
+        516,
+        960,
+        491
+      ],
+      "fullScreen" : false,
+      "id" : 31,
+      "screen" : "0-0-305419896",
+      "spaces" : [
+        1
+      ],
+      "standard" : true,
+      "tiled" : true,
+      "waiting" : false
+    }
+  ]
+}
