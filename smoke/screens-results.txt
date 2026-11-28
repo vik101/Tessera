@@ -1,0 +1,54 @@
+PASS 14 windows to spread across the screens  (7 before, 14 now)
+PASS Three screens: 49-inch, Dell and the main screen  ([[0, 0, 1920, 1080], [-1600, -1440, 5120, 1440], [-1600, 0, 1600, 1200]])
+PASS Home: 49-inch above, Dell left: every screen keeps its limit, nothing overlaps, waiting windows stay off every screen
+PASS Home: 49-inch above, Dell left: front windows sit inside their own screen
+PASS Home: 49-inch above, Dell left: no window is lost  ([])
+PASS Home: 49-inch above, Dell left: nothing moves once settled  (0 moves)
+PASS 49-inch: 6 in front, 2 waiting  (([48, 61, 322, 320, 318, 41], [324, 326]))
+PASS Dell: 3 in front, 1 waiting  (([59, 40, 39], [52]))
+PASS Walk past the main screen's left edge: the window goes to the Dell, in front  (window 330 on 32341-2-8, Dell front [59, 330, 39])
+PASS After walking onto the Dell: every screen keeps its limit, nothing overlaps, waiting windows stay off every screen
+PASS After walking onto the Dell: front windows sit inside their own screen
+PASS After walking onto the Dell: no window is lost  ([])
+PASS After walking onto the Dell: nothing moves once settled  (0 moves)
+PASS Columns on the 49-inch: every screen keeps its limit, nothing overlaps, waiting windows stay off every screen
+PASS Columns on the 49-inch: front windows sit inside their own screen
+PASS Columns on the 49-inch: no window is lost  ([])
+PASS Columns on the 49-inch: nothing moves once settled  (0 moves)
+PASS Only the 49-inch changed to Columns  ({'0-0-305419896': 'auto', '32341-2-7': 'columns', '32341-2-8': 'auto'})
+PASS 6 columns on the 49-inch are each at least 800 points wide  ([[-1600, -1409, 849, 1399], [-747, -1409, 854, 1409], [107, -1409, 853, 1409], [960, -1409, 853, 1409], [1813, -1409, 854, 1409], [2667, -1409, 853, 1409]])
+PASS Drag a window onto the Dell: it joins the Dell, in front  (Dell front [59, 328, 330])
+PASS After dragging onto the Dell: every screen keeps its limit, nothing overlaps, waiting windows stay off every screen
+PASS After dragging onto the Dell: front windows sit inside their own screen
+PASS After dragging onto the Dell: no window is lost  ([])
+PASS After dragging onto the Dell: nothing moves once settled  (0 moves)
+PASS App rule: a new TextEdit window opens on the Dell  (new [(416, '32341-2-8')], Dell 32341-2-8)
+PASS After the app rule: every screen keeps its limit, nothing overlaps, waiting windows stay off every screen
+PASS After the app rule: front windows sit inside their own screen
+PASS After the app rule: no window is lost  ([])
+PASS After the app rule: nothing moves once settled  (0 moves)
+PASS 49-inch moved to the right: every screen keeps its limit, nothing overlaps, waiting windows stay off every screen
+PASS 49-inch moved to the right: front windows sit inside their own screen
+PASS 49-inch moved to the right: no window is lost  ([])
+PASS 49-inch moved to the right: nothing moves once settled  (0 moves)
+PASS The Dell shows Rows before it's unplugged  (rows)
+PASS Dell unplugged: every screen keeps its limit, nothing overlaps, waiting windows stay off every screen
+PASS Dell unplugged: front windows sit inside their own screen
+PASS Dell unplugged: no window is lost  ([])
+PASS Dell unplugged: nothing moves once settled  (0 moves)
+PASS Two screens left
+PASS The Dell's windows went to another screen  (['0-0-305419896'])
+PASS Dell unplugged, 1920-wide screen: the windows used most lately are in front  (front [416, 328, 330], most lately used [416, 328, 330])
+PASS Dell plugged back in: every screen keeps its limit, nothing overlaps, waiting windows stay off every screen
+PASS Dell plugged back in: front windows sit inside their own screen
+PASS Dell plugged back in: no window is lost  ([])
+PASS Dell plugged back in: nothing moves once settled  (0 moves)
+PASS Dell plugged back in: it keeps its layout (Rows)  (rows)
+PASS Dell plugged back in: its windows come back to it  (had [39, 40, 52, 59, 328, 330, 416], now [39, 40, 52, 59, 328, 330, 416])
+PASS Dell plugged back in: the same windows in front, in the same order  (before [416, 328, 330], after [416, 328, 330])
+PASS Dell plugged back in: no window jumps back and forth
+PASS Back to one screen: every screen keeps its limit, nothing overlaps, waiting windows stay off every screen
+PASS Back to one screen: front windows sit inside their own screen
+PASS Back to one screen: no window is lost  ([])
+PASS Back to one screen: nothing moves once settled  (0 moves)
+PASS One screen: 3 in front, the rest waiting  (3 + 11)

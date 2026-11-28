@@ -1,0 +1,238 @@
+{
+ "autoTile": {
+  "crowded": [],
+  "currentLayouts": {
+   "0-0-305419896": "auto"
+  },
+  "currentSpaces": [
+   "1:1"
+  ],
+  "desktops": [
+   {
+    "current": 1,
+    "display": "EEBC8EBB-1747-4179-8CB3-7038F756154C",
+    "spaces": [
+     {
+      "id": 1,
+      "type": 0
+     }
+    ]
+   }
+  ],
+  "floating": [],
+  "frontLimit": 0,
+  "kept": [],
+  "lastUsed": {},
+  "limits": {
+   "0-0-305419896": 3
+  },
+  "minimums": {},
+  "moves": 0,
+  "on": false,
+  "order": {},
+  "pendingLayout": {},
+  "pinned": {},
+  "plans": {},
+  "preselected": {},
+  "sizes": {},
+  "spaceLayouts": {},
+  "spacesSupported": true,
+  "trees": {},
+  "waiting": {},
+  "zoomed": []
+ },
+ "autoTileSetting": false,
+ "config": {
+  "error": "",
+  "exists": false,
+  "path": "/Users/runner/.config/tessera/tessera.toml",
+  "rules": 0,
+  "warnings": []
+ },
+ "decorations": {
+  "border": false,
+  "dim": false
+ },
+ "desktop": 1,
+ "displays": [
+  {
+   "frame": [
+    0,
+    0,
+    1920,
+    1080
+   ],
+   "id": "0-0-305419896",
+   "name": "Apple Virtual",
+   "number": 1,
+   "visible": [
+    0,
+    31,
+    1920,
+    971
+   ]
+  }
+ ],
+ "failedKeys": [],
+ "failedShortcuts": [],
+ "focused": 61,
+ "gap": 0,
+ "hotkeys": 58,
+ "layouts": {},
+ "log": [
+  "2:33:20\u202fPM I Test hooks on",
+  "2:33:20\u202fPM I Desktops (Spaces) supported",
+  "2:33:20\u202fPM I Window engine started",
+  "2:33:20\u202fPM I Tessera 3.0.0 (11) started",
+  "2:33:20\u202fPM I Command line tool: listening on /tmp/tessera-501.sock",
+  "2:33:28\u202fPM I Test command: dump"
+ ],
+ "macEdgeTiling": true,
+ "mode": "main",
+ "modes": [
+  "main"
+ ],
+ "path": "/Users/runner/work/Tessera/Tessera/build/debug/Tessera.app",
+ "picker": {
+  "entries": [],
+  "selection": 0,
+  "showing": false
+ },
+ "socket": "/tmp/tessera-501.sock",
+ "trusted": true,
+ "updates": {
+  "automatic": false,
+  "configured": false,
+  "feed": "",
+  "running": false
+ },
+ "version": "3.0.0 (11)",
+ "windows": [
+  {
+   "app": "com.google.Chrome",
+   "frame": [
+    22,
+    53,
+    1200,
+    927
+   ],
+   "fullScreen": false,
+   "id": 61,
+   "screen": "",
+   "spaces": [
+    1
+   ],
+   "standard": true,
+   "tiled": false,
+   "waiting": false
+  },
+  {
+   "app": "com.apple.Safari",
+   "frame": [
+    298,
+    47,
+    1324,
+    940
+   ],
+   "fullScreen": false,
+   "id": 59,
+   "screen": "",
+   "spaces": [
+    1
+   ],
+   "standard": true,
+   "tiled": false,
+   "waiting": false
+  },
+  {
+   "app": "com.apple.finder",
+   "frame": [
+    500,
+    165,
+    920,
+    436
+   ],
+   "fullScreen": false,
+   "id": 52,
+   "screen": "",
+   "spaces": [
+    1
+   ],
+   "standard": true,
+   "tiled": false,
+   "waiting": false
+  },
+  {
+   "app": "com.apple.Terminal",
+   "frame": [
+    40,
+    51,
+    877,
+    499
+   ],
+   "fullScreen": false,
+   "id": 48,
+   "screen": "",
+   "spaces": [
+    1
+   ],
+   "standard": true,
+   "tiled": false,
+   "waiting": false
+  },
+  {
+   "app": "com.apple.TextEdit",
+   "frame": [
+    271,
+    136,
+    673,
+    439
+   ],
+   "fullScreen": false,
+   "id": 41,
+   "screen": "",
+   "spaces": [
+    1
+   ],
+   "standard": true,
+   "tiled": false,
+   "waiting": false
+  },
+  {
+   "app": "com.apple.TextEdit",
+   "frame": [
+    242,
+    107,
+    673,
+    439
+   ],
+   "fullScreen": false,
+   "id": 40,
+   "screen": "",
+   "spaces": [
+    1
+   ],
+   "standard": true,
+   "tiled": false,
+   "waiting": false
+  },
+  {
+   "app": "com.apple.TextEdit",
+   "frame": [
+    213,
+    78,
+    673,
+    439
+   ],
+   "fullScreen": false,
+   "id": 39,
+   "screen": "",
+   "spaces": [
+    1
+   ],
+   "standard": true,
+   "tiled": false,
+   "waiting": false
+  }
+ ]
+}

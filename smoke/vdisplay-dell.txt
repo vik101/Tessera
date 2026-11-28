@@ -1,0 +1,2 @@
+virtual display 6: 1600x1200
+placed at 1920 0: error 0, now 1920 0
