@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" width="900" height="500" role="img" aria-label="Where to drag a window to snap it">
+<title>Where to drag a window to snap it</title>
+<rect x="0.5" y="0.5" width="899" height="499" rx="12" fill="#ffffff" stroke="#d0d7de"/>
+<defs><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#59636e"/></marker></defs>
+<text x="450.0" y="40" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="#1f2328">Drag a window by its title bar to an edge or corner</text>
+<rect x="210" y="92" width="480" height="300" rx="6" fill="#eef1f5" stroke="#8a9bb3" stroke-width="1.5"/>
+<rect x="270" y="92" width="360" height="22" fill="#cfe3ff"/>
+<rect x="210" y="152" width="22" height="180" fill="#cfe3ff"/>
+<rect x="668" y="152" width="22" height="180" fill="#cfe3ff"/>
+<rect x="272.0" y="370" width="116.0" height="22" fill="#cfe3ff"/>
+<rect x="392.0" y="370" width="116.0" height="22" fill="#cfe3ff"/>
+<rect x="512.0" y="370" width="116.0" height="22" fill="#cfe3ff"/>
+<rect x="210" y="92" width="60" height="60" rx="4" fill="#4c9aff" opacity="0.55"/>
+<rect x="630" y="92" width="60" height="60" rx="4" fill="#4c9aff" opacity="0.55"/>
+<rect x="210" y="332" width="60" height="60" rx="4" fill="#4c9aff" opacity="0.55"/>
+<rect x="630" y="332" width="60" height="60" rx="4" fill="#4c9aff" opacity="0.55"/>
+<text x="450.0" y="236.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="middle" fill="#59636e">a window you drag</text>
+<text x="450.0" y="258.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="middle" fill="#59636e">(a blue outline shows where it goes)</text>
+<text x="450.0" y="80" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="middle" fill="#1f2328">top edge: maximise</text>
+<text x="196" y="247.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="end" fill="#1f2328">left edge:</text>
+<text x="196" y="267.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="end" fill="#1f2328">left half</text>
+<text x="704" y="247.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="start" fill="#1f2328">right edge:</text>
+<text x="704" y="267.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="start" fill="#1f2328">right half</text>
+<text x="450.0" y="418" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="middle" fill="#1f2328">bottom edge: a third (left, middle or right)</text>
+<text x="196" y="122" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="end" fill="#1f2328">corners:</text>
+<text x="196" y="142" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" text-anchor="end" fill="#1f2328">a quarter</text>
+<text x="450.0" y="478" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="middle" fill="#59636e">Drag a snapped window away and it gets its old size back.</text>
+</svg>

@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300" width="900" height="300" role="img" aria-label="Three Tree commands: join, move and accordion">
+<title>Three Tree commands: join, move and accordion</title>
+<rect x="0.5" y="0.5" width="899" height="299" rx="12" fill="#ffffff" stroke="#d0d7de"/>
+<defs><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#59636e"/></marker></defs>
+<text x="450.0" y="40" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="#1f2328">Changing the tree, one command at a time</text>
+<rect x="24" y="104" width="150" height="100" rx="6" fill="#eef1f5" stroke="#8a9bb3" stroke-width="1.5"/>
+<rect x="30.0" y="110.0" width="43.3" height="88.0" rx="4" fill="#c9d4e3" stroke="#8a9bb3" stroke-width="1.5"/>
+<text x="51.666666666666664" y="159.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#1f2328">a</text>
+<rect x="77.3" y="110.0" width="43.3" height="88.0" rx="4" fill="#4c9aff" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="99.0" y="159.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#ffffff">b</text>
+<rect x="124.7" y="110.0" width="43.3" height="88.0" rx="4" fill="#c9d4e3" stroke="#8a9bb3" stroke-width="1.5"/>
+<text x="146.33333333333331" y="159.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#1f2328">c</text>
+<text x="99.0" y="230" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14" font-weight="normal" text-anchor="middle" fill="#59636e">H[a b c]</text>
+<line x1="184" y1="154.0" x2="256" y2="154.0" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<text x="220.0" y="142.0" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="normal" text-anchor="middle" fill="#1f2328">join right</text>
+<rect x="266" y="104" width="150" height="100" rx="6" fill="#eef1f5" stroke="#8a9bb3" stroke-width="1.5"/>
+<rect x="272.0" y="110.0" width="67.0" height="88.0" rx="4" fill="#c9d4e3" stroke="#8a9bb3" stroke-width="1.5"/>
+<text x="305.5" y="159.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#1f2328">a</text>
+<rect x="343.0" y="110.0" width="67.0" height="42.0" rx="4" fill="#4c9aff" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="376.5" y="136.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#ffffff">b</text>
+<rect x="343.0" y="156.0" width="67.0" height="42.0" rx="4" fill="#c9d4e3" stroke="#8a9bb3" stroke-width="1.5"/>
+<text x="376.5" y="182.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#1f2328">c</text>
+<text x="341.0" y="230" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14" font-weight="normal" text-anchor="middle" fill="#59636e">H[a V[b c]]</text>
+<line x1="426" y1="154.0" x2="498" y2="154.0" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<text x="462.0" y="142.0" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="normal" text-anchor="middle" fill="#1f2328">move left</text>
+<rect x="508" y="104" width="150" height="100" rx="6" fill="#eef1f5" stroke="#8a9bb3" stroke-width="1.5"/>
+<rect x="514.0" y="110.0" width="43.3" height="88.0" rx="4" fill="#c9d4e3" stroke="#8a9bb3" stroke-width="1.5"/>
+<text x="535.6666666666666" y="159.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#1f2328">a</text>
+<rect x="561.3" y="110.0" width="43.3" height="88.0" rx="4" fill="#4c9aff" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="583.0" y="159.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#ffffff">c</text>
+<rect x="608.7" y="110.0" width="43.3" height="88.0" rx="4" fill="#c9d4e3" stroke="#8a9bb3" stroke-width="1.5"/>
+<text x="630.3333333333333" y="159.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#1f2328">b</text>
+<text x="583.0" y="230" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14" font-weight="normal" text-anchor="middle" fill="#59636e">H[a c b]</text>
+<line x1="668" y1="154.0" x2="740" y2="154.0" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<text x="704.0" y="125.0" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="normal" text-anchor="middle" fill="#1f2328">layout</text>
+<text x="704.0" y="142.0" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="normal" text-anchor="middle" fill="#1f2328">accordion</text>
+<rect x="750" y="104" width="150" height="100" rx="6" fill="#eef1f5" stroke="#8a9bb3" stroke-width="1.5"/>
+<rect x="756.0" y="110.0" width="108.0" height="88.0" rx="4" fill="#c9d4e3" stroke="#8a9bb3" stroke-width="1.5"/>
+<rect x="786.0" y="110.0" width="108.0" height="88.0" rx="4" fill="#c9d4e3" stroke="#8a9bb3" stroke-width="1.5"/>
+<rect x="771.0" y="110.0" width="108.0" height="88.0" rx="4" fill="#4c9aff" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="825.0" y="159.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#ffffff">c</text>
+<text x="763" y="159.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#1f2328">a</text>
+<text x="887" y="159.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#1f2328">b</text>
+<text x="825.0" y="230" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14" font-weight="normal" text-anchor="middle" fill="#59636e">HA[a c b]</text>
+<text x="450.0" y="278" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="middle" fill="#59636e">Blue is the window you're in; each command acts on it.</text>
+</svg>

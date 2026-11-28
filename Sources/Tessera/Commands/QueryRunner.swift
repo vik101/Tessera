@@ -77,7 +77,8 @@ enum QueryRunner {
         switch scope {
         case .focused:
             list = registry.focusedWindow().map { [$0] } ?? []
-        case .all:
+        case .all, .desktop:
+            // A desktop that isn't showing has no windows on screen: look through every window.
             registry.rescan()
             list = registry.windows.values.filter { $0.element.subrole == kAXStandardWindowSubrole }
         default:

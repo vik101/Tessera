@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400" width="900" height="400" role="img" aria-label="How a waiting window comes forward">
+<title>How a waiting window comes forward</title>
+<rect x="0.5" y="0.5" width="899" height="399" rx="12" fill="#ffffff" stroke="#d0d7de"/>
+<defs><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#59636e"/></marker></defs>
+<text x="450.0" y="40" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="#1f2328">A few windows sit in front; the rest wait off the edge</text>
+<rect x="40" y="80" width="330" height="200" rx="6" fill="#eef1f5" stroke="#8a9bb3" stroke-width="1.5"/>
+<rect x="48.0" y="86.0" width="102.0" height="188.0" rx="4" fill="#c9d4e3" stroke="#8a9bb3" stroke-width="1.5"/>
+<text x="99.0" y="184.9" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#1f2328">Safari</text>
+<rect x="154.0" y="86.0" width="102.0" height="188.0" rx="4" fill="#c9d4e3" stroke="#8a9bb3" stroke-width="1.5"/>
+<text x="205.0" y="184.9" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#1f2328">Terminal</text>
+<rect x="260.0" y="86.0" width="102.0" height="188.0" rx="4" fill="#c9d4e3" stroke="#8a9bb3" stroke-width="1.5"/>
+<text x="311.0" y="184.9" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#1f2328">TextEdit</text>
+<text x="46" y="318" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="start" fill="#59636e">waiting:</text>
+<rect x="120.0" y="296.0" width="100.0" height="34.0" rx="4" fill="#f3f4f6" stroke="#8a9bb3" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="170.0" y="317.55" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#1f2328">Chrome</text>
+<rect x="230.0" y="296.0" width="100.0" height="34.0" rx="4" fill="#f3f4f6" stroke="#8a9bb3" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="280.0" y="317.55" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#1f2328">Mail</text>
+<line x1="390" y1="180" x2="500" y2="180" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<text x="445" y="160" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" text-anchor="middle" fill="#59636e">click Chrome</text>
+<text x="445" y="206" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" text-anchor="middle" fill="#59636e">in the Dock</text>
+<rect x="530" y="80" width="330" height="200" rx="6" fill="#eef1f5" stroke="#8a9bb3" stroke-width="1.5"/>
+<rect x="538.0" y="86.0" width="102.0" height="188.0" rx="4" fill="#c9d4e3" stroke="#8a9bb3" stroke-width="1.5"/>
+<text x="589.0" y="184.9" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#1f2328">Safari</text>
+<rect x="644.0" y="86.0" width="102.0" height="188.0" rx="4" fill="#c9d4e3" stroke="#8a9bb3" stroke-width="1.5"/>
+<text x="695.0" y="184.9" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#1f2328">Terminal</text>
+<rect x="750.0" y="86.0" width="102.0" height="188.0" rx="4" fill="#4c9aff" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="801.0" y="184.9" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#ffffff">Chrome</text>
+<text x="536" y="318" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="start" fill="#59636e">waiting:</text>
+<rect x="610.0" y="296.0" width="100.0" height="34.0" rx="4" fill="#f3f4f6" stroke="#8a9bb3" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="660.0" y="317.55" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#1f2328">TextEdit</text>
+<rect x="720.0" y="296.0" width="100.0" height="34.0" rx="4" fill="#f3f4f6" stroke="#8a9bb3" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="770.0" y="317.55" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#1f2328">Mail</text>
+<text x="450.0" y="382" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="middle" fill="#59636e">Chrome takes the spot of the window you used least lately. Nothing else moves.</text>
+</svg>

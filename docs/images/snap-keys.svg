@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 700" width="900" height="700" role="img" aria-label="Tessera's snap keys and where each puts a window">
+<title>Tessera's snap keys and where each puts a window</title>
+<rect x="0.5" y="0.5" width="899" height="699" rx="12" fill="#ffffff" stroke="#d0d7de"/>
+<text x="450.0" y="40" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="#1f2328">Snap one window with a key (Rectangle's keys)</text>
+<rect x="42" y="70" width="150" height="94" rx="6" fill="#eef1f5" stroke="#8a9bb3" stroke-width="1.5"/>
+<rect x="45.0" y="73.0" width="72.0" height="88.0" rx="4" fill="#4c9aff" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="117.0" y="184" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#1f2328">Left Half</text>
+<text x="117.0" y="202" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="middle" fill="#59636e">⌃⌥←</text>
+<rect x="258" y="70" width="150" height="94" rx="6" fill="#eef1f5" stroke="#8a9bb3" stroke-width="1.5"/>
+<rect x="333.0" y="73.0" width="72.0" height="88.0" rx="4" fill="#4c9aff" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="333.0" y="184" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#1f2328">Right Half</text>
+<text x="333.0" y="202" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="middle" fill="#59636e">⌃⌥→</text>
+<rect x="474" y="70" width="150" height="94" rx="6" fill="#eef1f5" stroke="#8a9bb3" stroke-width="1.5"/>
+<rect x="477.0" y="73.0" width="144.0" height="44.0" rx="4" fill="#4c9aff" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="549.0" y="184" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#1f2328">Top Half</text>
+<text x="549.0" y="202" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="middle" fill="#59636e">⌃⌥↑</text>
+<rect x="690" y="70" width="150" height="94" rx="6" fill="#eef1f5" stroke="#8a9bb3" stroke-width="1.5"/>
+<rect x="693.0" y="117.0" width="144.0" height="44.0" rx="4" fill="#4c9aff" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="765.0" y="184" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#1f2328">Bottom Half</text>
+<text x="765.0" y="202" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="middle" fill="#59636e">⌃⌥↓</text>
+<rect x="42" y="216" width="150" height="94" rx="6" fill="#eef1f5" stroke="#8a9bb3" stroke-width="1.5"/>
+<rect x="45.0" y="219.0" width="72.0" height="44.0" rx="4" fill="#4c9aff" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="117.0" y="330" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#1f2328">Top Left</text>
+<text x="117.0" y="348" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="middle" fill="#59636e">⌃⌥U</text>
+<rect x="258" y="216" width="150" height="94" rx="6" fill="#eef1f5" stroke="#8a9bb3" stroke-width="1.5"/>
+<rect x="333.0" y="219.0" width="72.0" height="44.0" rx="4" fill="#4c9aff" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="333.0" y="330" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#1f2328">Top Right</text>
+<text x="333.0" y="348" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="middle" fill="#59636e">⌃⌥I</text>
+<rect x="474" y="216" width="150" height="94" rx="6" fill="#eef1f5" stroke="#8a9bb3" stroke-width="1.5"/>
+<rect x="477.0" y="263.0" width="72.0" height="44.0" rx="4" fill="#4c9aff" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="549.0" y="330" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#1f2328">Bottom Left</text>
+<text x="549.0" y="348" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="middle" fill="#59636e">⌃⌥J</text>
+<rect x="690" y="216" width="150" height="94" rx="6" fill="#eef1f5" stroke="#8a9bb3" stroke-width="1.5"/>
+<rect x="765.0" y="263.0" width="72.0" height="44.0" rx="4" fill="#4c9aff" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="765.0" y="330" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#1f2328">Bottom Right</text>
+<text x="765.0" y="348" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="middle" fill="#59636e">⌃⌥K</text>
+<rect x="42" y="362" width="150" height="94" rx="6" fill="#eef1f5" stroke="#8a9bb3" stroke-width="1.5"/>
+<rect x="45.0" y="365.0" width="48.0" height="88.0" rx="4" fill="#4c9aff" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="117.0" y="476" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#1f2328">First Third</text>
+<text x="117.0" y="494" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="middle" fill="#59636e">⌃⌥D</text>
+<rect x="258" y="362" width="150" height="94" rx="6" fill="#eef1f5" stroke="#8a9bb3" stroke-width="1.5"/>
+<rect x="309.0" y="365.0" width="48.0" height="88.0" rx="4" fill="#4c9aff" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="333.0" y="476" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#1f2328">Centre Third</text>
+<text x="333.0" y="494" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="middle" fill="#59636e">⌃⌥F</text>
+<rect x="474" y="362" width="150" height="94" rx="6" fill="#eef1f5" stroke="#8a9bb3" stroke-width="1.5"/>
+<rect x="573.0" y="365.0" width="48.0" height="88.0" rx="4" fill="#4c9aff" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="549.0" y="476" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#1f2328">Last Third</text>
+<text x="549.0" y="494" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="middle" fill="#59636e">⌃⌥G</text>
+<rect x="690" y="362" width="150" height="94" rx="6" fill="#eef1f5" stroke="#8a9bb3" stroke-width="1.5"/>
+<rect x="693.0" y="365.0" width="96.0" height="88.0" rx="4" fill="#4c9aff" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="765.0" y="476" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#1f2328">First Two Thirds</text>
+<text x="765.0" y="494" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="middle" fill="#59636e">⌃⌥E</text>
+<rect x="42" y="508" width="150" height="94" rx="6" fill="#eef1f5" stroke="#8a9bb3" stroke-width="1.5"/>
+<rect x="93.0" y="511.0" width="96.0" height="88.0" rx="4" fill="#4c9aff" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="117.0" y="622" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#1f2328">Last Two Thirds</text>
+<text x="117.0" y="640" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="middle" fill="#59636e">⌃⌥T</text>
+<rect x="258" y="508" width="150" height="94" rx="6" fill="#eef1f5" stroke="#8a9bb3" stroke-width="1.5"/>
+<rect x="261.0" y="511.0" width="144.0" height="88.0" rx="4" fill="#4c9aff" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="333.0" y="622" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#1f2328">Maximise</text>
+<text x="333.0" y="640" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="middle" fill="#59636e">⌃⌥↩</text>
+<rect x="474" y="508" width="150" height="94" rx="6" fill="#eef1f5" stroke="#8a9bb3" stroke-width="1.5"/>
+<rect x="520.2" y="511.0" width="57.6" height="88.0" rx="4" fill="#4c9aff" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="549.0" y="622" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#1f2328">Maximise Height</text>
+<text x="549.0" y="640" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="middle" fill="#59636e">⌃⌥⇧↑</text>
+<rect x="690" y="508" width="150" height="94" rx="6" fill="#eef1f5" stroke="#8a9bb3" stroke-width="1.5"/>
+<rect x="729.0" y="528.6" width="72.0" height="52.8" rx="4" fill="#4c9aff" stroke="#1f6feb" stroke-width="1.5"/>
+<text x="765.0" y="622" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#1f2328">Centre</text>
+<text x="765.0" y="640" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="middle" fill="#59636e">⌃⌥C</text>
+<text x="450.0" y="680" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" text-anchor="middle" fill="#59636e">Press ⌃⌥← or ⌃⌥→ again for ⅔, then ⅓. ⌃⌥⌫ puts the window back.</text>
+</svg>
