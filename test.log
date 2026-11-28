@@ -1,0 +1,431 @@
+[0/1] Planning build
+Building for debugging...
+[0/10] /Users/runner/work/Tessera/Tessera/.build/arm64-apple-macosx/debug/TesseraPackageTests.derived/runner.swift
+[0/10] Write sources
+[3/10] Write swift-version--79AA4F9932D1E87A.txt
+[5/15] Compiling TesseraCoreTests AeroSpaceSamples.swift
+[6/15] Compiling TesseraCoreTests CommandLanguageTests.swift
+[7/15] Compiling TesseraCoreTests ConfigTests.swift
+[8/15] Compiling TesseraCoreTests FrontWindowsTests.swift
+[9/15] Compiling TesseraCoreTests NavigationTests.swift
+[10/15] Compiling TesseraCoreTests RectangleParityTests.swift
+[11/15] Compiling TesseraCoreTests SnapTests.swift
+[12/15] Compiling TesseraCoreTests TOMLTests.swift
+[13/15] Emitting module TesseraCoreTests
+[14/18] Compiling TesseraCoreTests TileSizesTests.swift
+[15/18] Compiling TesseraCoreTests TileTests.swift
+[16/18] Compiling TesseraCoreTests TileTreeTests.swift
+[17/20] Emitting module TesseraPackageTests
+[18/20] Compiling TesseraPackageTests runner.swift
+[18/20] Write Objects.LinkFileList
+[19/20] Linking TesseraPackageTests
+Build complete! (21.14s)
+Test Suite 'All tests' started at 2026-11-28 14:31:15.823.
+Test Suite 'All tests' passed at 2026-11-28 14:31:15.827.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.004) seconds
+◇ Test run started.
+↳ Testing Library Version: 124.4
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite "Window order" started.
+◇ Suite "Saved setups" started.
+◇ Suite "Tree layout" started.
+◇ Suite "Links and settings files" started.
+◇ Suite "Config file" started.
+◇ Suite "Shortcuts" started.
+◇ Suite "Command line tool" started.
+◇ Suite "Command language" started.
+◇ Suite "Auto-tile layouts" started.
+◇ Suite "Snapping" started.
+◇ Suite "Making tiles larger and smaller" started.
+◇ Suite "App rules" started.
+◇ Suite "Front windows" started.
+◇ Suite "Space left by snapped windows" started.
+◇ Suite "Arranging many windows" started.
+◇ Suite "Rectangle's other actions" started.
+◇ Suite "Focus by direction and desktops" started.
+◇ Suite "TOML" started.
+◇ Test reconcileKeepsOrderAndAppendsNewWindows() started.
+◇ Test promoteAndSwap() started.
+◇ Test eachAppsWindowsTakeItsEntriesInOrder() started.
+◇ Test setupsSurviveASettingsFile() started.
+◇ Test swappingKeepsEverySpot() started.
+◇ Test placesAreSharesOfTheScreen() started.
+◇ Test accordionShowsAStripOfEachNeighbour() started.
+◇ Test splittingTheSameWayTakesHalfOfThatTileOnly() started.
+◇ Test aContainerWithOneWindowLeftIsReplacedByIt() started.
+◇ Test joiningFromInsideAContainerReachesItsNeighbour() started.
+◇ Test aWindowGoesBackBesideTheWholeSplitEvenWhenTidyingRemovedItsOwn() started.
+◇ Test aWindowThatWontShrinkGetsItsSizeAndTheRestShare() started.
+◇ Test fromFramesRebuildsEveryLayoutExactly() started.
+◇ Test resizeTakesFromTheSiblings() started.
+◇ Test mirrorAndRotate() started.
+◇ Test movingOutOfAColumnAtTheEnd() started.
+◇ Test popOutAndPopIn() started.
+◇ Test fromFramesOfOverlappingWindowsPutsThemSideBySide() started.
+◇ Test closingAWindowLetsItsNeighbourGrow() started.
+◇ Test movingAcrossARootThatRunsTheOtherWaySplitsIt() started.
+◇ Test movingPastAWindowSwapsThemAndSpotsKeepTheirSizes() started.
+◇ Test aHintWhoseAnchorIsGoneFallsBack() started.
+◇ Test aMissingTargetSplitsTheLastWindow() started.
+◇ Test aWindowPutBackReturnsToItsPlace() started.
+◇ Test reconcileKeepsExactlyTheWindowsPresent() started.
+◇ Test directionWords() started.
+◇ Test changingTheContainerWay() started.
+◇ Test movingIntoAColumn() started.
+◇ Test balanceAndFlatten() started.
+◇ Test theFirstWindowSetsTheRootWay() started.
+◇ Test resizeReachesTheNearestContainerThatRunsThatWay() started.
+◇ Test settingsFilesRoundTripAndStayInRange() started.
+◇ Test badLinksDoNothing() started.
+◇ Test normalisingKeepsFrames() started.
+◇ Test movingPastTheEdgeOfARowReturnsFalse() started.
+◇ Test linksRunActions() started.
+◇ Test secondWindowSplitsTheFirst() started.
+◇ Test linksForAppsAndFiles() started.
+◇ Test gapsMatchTheOtherLayouts() started.
+◇ Test everyCommandHasAUniqueURLName() started.
+◇ Test movingDownOutOfARow() started.
+◇ Test movingAnEdgeOnlyChangesTheNeighbourAcrossIt() started.
+◇ Test splittingLeftOrUpPutsTheNewWindowFirst() started.
+◇ Test replacingAWindowKeepsItsSpot() started.
+◇ Test readsAPersonalAeroSpaceConfig() started.
+◇ Test aHintWhoseBranchWasSplitUpUsesItsAnchor() started.
+◇ Test anAccordionNeverSqueezesAWindowBelowHalf() started.
+◇ Test readsAeroSpacesDefaultConfig() started.
+◇ Test firstWindowFillsTheArea() started.
+◇ Test mistakesBecomeWarningsNotFailures() started.
+◇ Test joiningMakesAColumnFromTwoNeighbours() started.
+◇ Test tesseraSettings() started.
+◇ Test brokenFilesSayWhere() started.
+◇ Test importingAnAeroSpaceConfigListsWhatWontWork() started.
+◇ Test testConditions() started.
+◇ Test presetsAddKeysAndTheFileWins() started.
+◇ Test theTemplateIsClean() started.
+◇ Test keyNames() started.
+◇ Test idsRoundTrip() started.
+◇ Test aDuplicateKeyInAModeIsReported() started.
+◇ Test assigningATakenComboMovesIt() started.
+◇ Test displayPatterns() started.
+◇ Test framesRoundTrip() started.
+◇ Test defaultsMatchRectangleAndNeverClash() started.
+◇ Test formats() started.
+◇ Test runLinks() started.
+◇ Test everyHelpExampleParses() started.
+◇ Test setupsOpenWhenTheirScreensConnect() started.
+◇ Test chains() started.
+◇ Test execTakesTheRestOfTheLineAsWritten() started.
+◇ Test placing() started.
+◇ Test layouts() started.
+◇ Test tesseraAndToolCommands() started.
+◇ Test focus() started.
+◇ Test treeCommands() started.
+◇ Test mistakesAreExplained() started.
+◇ Test toggles() started.
+◇ Test desktopsAndScreens() started.
+◇ Test queries() started.
+◇ Test windowState() started.
+◇ Test gapsAreEven() started.
+◇ Test noGapsWithoutAGapSetting(style:) started.
+◇ Test autoPicksSensibleArrangements() started.
+◇ Test waterFillGivesNeedsFirst() started.
+◇ Test neighboursMakeRoomForAWindowThatCannotShrink() started.
+◇ Test layoutsCycleBothWays() started.
+◇ Test partitionsListEverySplit() started.
+◇ Test everyWindowGetsItsOwnSpace(style:) started.
+◇ Test styles() started.
+◇ Test autoAdaptsToTheScreenShape() started.
+◇ Test whenNothingFitsItStillPlacesEveryWindow() started.
+◇ Test windowsThatCannotShrinkGetAnArrangementTheyFit() started.
+◇ Test everyStyleKeepsItsShapeWithRealAppSizes(style:) started.
+◇ Test aChosenStyleKeepsItsShapeEvenWhenWindowsCannotShrink() started.
+◇ Test largerAndSmaller() started.
+◇ Test mainRatioChangesTheMainWindow() started.
+◇ Test moveToEdgeKeepsSize() started.
+◇ Test halvesCycleThroughTwoThirdsAndOneThird() started.
+◇ Test thirdsOnLandscapeAndPortrait() started.
+◇ Test halves() started.
+◇ Test callerHandlesRestoreAndDisplays() started.
+◇ Test gapsLeaveEqualSpaceEverywhere() started.
+◇ Test quartersMeetWithoutGapsOrOverlap() started.
+◇ Test quartersAndSixths() started.
+◇ Test sizeActions() started.
+◇ Test everyRegionActionStaysOnScreen() started.
+◇ Test makingAColumnSmallerGivesItsRoomToTheOthers() started.
+◇ Test movingToAnotherDisplayKeepsTheSpot() started.
+◇ Test anySharesKeepEveryWindowOnScreenWithoutOverlaps(style:) started.
+◇ Test draggingTheScreenEdgeChangesNothing() started.
+◇ Test inAGridALargerWindowIsWiderAndItsRowTaller() started.
+◇ Test rowsWorkTheSameWayUpAndDown() started.
+◇ Test makingTheMiddleColumnLargerShrinksBothNeighbours() started.
+◇ Test sharesStopAtTheLimits() started.
+◇ Test neighboursKeepTheirMinimumSize() started.
+◇ Test draggingARowEdgeInAGridMovesTheWholeRow() started.
+◇ Test draggingTheEdgeBetweenTwoColumnsMovesOnlyThatEdge() started.
+◇ Test keepsTheMostRecentlyUsedUpToTheRoom() started.
+◇ Test emptyRulesAreDroppedFromFiles() started.
+◇ Test aFreeSpotGoesToTheMostRecentlyUsedWaitingWindow() started.
+◇ Test mainAndSideLargerMainIsWider() started.
+◇ Test bringingForwardAFrontWindowChangesNothing() started.
+◇ Test twoNewWindowsDontPushEachOtherBack() started.
+◇ Test autoNeverGetsStuffy() started.
+◇ Test autoFitsTheScreen() started.
+◇ Test waitingWindowsStayOffOtherScreens() started.
+◇ Test bringingForwardReplacesTheLeastRecentlyUsed() started.
+◇ Test waitingWindowsNeverShowOnAnotherScreen() started.
+◇ Test mergeKeepsOtherWindowsInPlace() started.
+◇ Test splitTakesTheFirstFew() started.
+◇ Test screensOnBothSidesStillLeaveAHidingPlace() started.
+◇ Test limitIsSavedAsANumber() started.
+◇ Test keptWindowsNeverLeave() started.
+◇ Test leftHalfLeavesTheRightHalf() started.
+◇ Test topHalfLeavesTheBottom() started.
+◇ Test afterScreensChangeTheMostRecentlyUsedAreInFront() started.
+◇ Test gapsCountAsTouchingTheEdge() started.
+◇ Test twoThirdsLeavesOneThird() started.
+◇ Test cornersAndMaximisedWindowsFloatAbove() started.
+◇ Test arrangeKeepsKeptAndWantedInFrontAndLinesUpTheRest() started.
+◇ Test arrangeWithRoomForEveryoneChangesNothing() started.
+◇ Test stacksAreWindowsOnTheSameSpot() started.
+◇ Test cascadeStepsDownAndRight() started.
+◇ Test gapsSitBetweenAndAround() started.
+◇ Test rowsAndColumnsUseUpToThreeLines() started.
+◇ Test tileAllMakesAGridWithNoEmptyCells() started.
+◇ Test reverseMirrorsLeftToRight() started.
+◇ Test cornerThirdsAreTwoThirdsWideAndHalfHigh() started.
+◇ Test ninthsMakeAThreeByThreeGrid() started.
+◇ Test everyActionHasRectanglesURLName() started.
+◇ Test specifiedSizeIsCentredAndFitsTheScreen() started.
+◇ Test eighthsAreFourAcrossTwoDownOrTwoAcrossFourDown() started.
+◇ Test desktopStepsSkipFullScreenApps() started.
+◇ Test centreProminentlySitsHigherThanCentre() started.
+◇ Test prefersWindowsInLineOverNearerOnes() started.
+◇ Test movesBetweenTiles() started.
+◇ Test worksWithOverlappingWindows() started.
+◇ Test moveActionsHaveKeysAndNames() started.
+◇ Test tablesDottedKeysAndArraysOfTables() started.
+◇ Test reportsMistakesWithTheirLine(text:line:) started.
+◇ Test inlineTablesAndMultilineArrays() started.
+◇ Test readsAeroSpacesDefaultConfig() started.
+◇ Test escapesAndMultilineStrings() started.
+◇ Test readsTheKindsOfValue() started.
+◇ Test remembersTheLineOfEachKey() started.
+◇ Passing 1 argument style → .auto to noGapsWithoutAGapSetting(style:)
+◇ Passing 1 argument style → .columns to noGapsWithoutAGapSetting(style:)
+◇ Passing 1 argument style → .rows to noGapsWithoutAGapSetting(style:)
+◇ Passing 1 argument style → .grid to noGapsWithoutAGapSetting(style:)
+◇ Passing 1 argument style → .mainAndSide to noGapsWithoutAGapSetting(style:)
+◇ Passing 1 argument style → .auto to everyWindowGetsItsOwnSpace(style:)
+◇ Passing 1 argument style → .columns to everyWindowGetsItsOwnSpace(style:)
+◇ Passing 1 argument style → .rows to everyWindowGetsItsOwnSpace(style:)
+◇ Passing 1 argument style → .grid to everyWindowGetsItsOwnSpace(style:)
+◇ Passing 1 argument style → .mainAndSide to everyWindowGetsItsOwnSpace(style:)
+◇ Passing 1 argument style → .tree to everyWindowGetsItsOwnSpace(style:)
+◇ Passing 1 argument style → .auto to everyStyleKeepsItsShapeWithRealAppSizes(style:)
+◇ Passing 1 argument style → .columns to everyStyleKeepsItsShapeWithRealAppSizes(style:)
+◇ Passing 1 argument style → .rows to everyStyleKeepsItsShapeWithRealAppSizes(style:)
+◇ Passing 1 argument style → .grid to everyStyleKeepsItsShapeWithRealAppSizes(style:)
+◇ Passing 1 argument style → .mainAndSide to everyStyleKeepsItsShapeWithRealAppSizes(style:)
+◇ Passing 1 argument style → .auto to anySharesKeepEveryWindowOnScreenWithoutOverlaps(style:)
+◇ Passing 1 argument style → .columns to anySharesKeepEveryWindowOnScreenWithoutOverlaps(style:)
+◇ Passing 1 argument style → .rows to anySharesKeepEveryWindowOnScreenWithoutOverlaps(style:)
+◇ Passing 1 argument style → .grid to anySharesKeepEveryWindowOnScreenWithoutOverlaps(style:)
+◇ Passing 1 argument style → .mainAndSide to anySharesKeepEveryWindowOnScreenWithoutOverlaps(style:)
+✔ Test reconcileKeepsOrderAndAppendsNewWindows() passed after 0.166 seconds.
+✔ Test promoteAndSwap() passed after 0.166 seconds.
+✔ Test eachAppsWindowsTakeItsEntriesInOrder() passed after 0.166 seconds.
+✔ Test placesAreSharesOfTheScreen() passed after 0.166 seconds.
+✔ Test accordionShowsAStripOfEachNeighbour() passed after 0.166 seconds.
+✔ Test swappingKeepsEverySpot() passed after 0.166 seconds.
+✔ Test splittingTheSameWayTakesHalfOfThatTileOnly() passed after 0.166 seconds.
+◇ Passing 2 arguments text → "a = ", line → 1 to reportsMistakesWithTheirLine(text:line:)
+◇ Passing 2 arguments text → "a = hello", line → 1 to reportsMistakesWithTheirLine(text:line:)
+◇ Passing 2 arguments text → "a = 1
+a = 2", line → 2 to reportsMistakesWithTheirLine(text:line:)
+◇ Passing 2 arguments text → "a = "open", line → 1 to reportsMistakesWithTheirLine(text:line:)
+◇ Passing 2 arguments text → "[t]
+[t]", line → 2 to reportsMistakesWithTheirLine(text:line:)
+◇ Passing 2 arguments text → "a = [1, 2", line → 1 to reportsMistakesWithTheirLine(text:line:)
+◇ Passing 2 arguments text → "a = 1 b = 2", line → 1 to reportsMistakesWithTheirLine(text:line:)
+◇ Passing 2 arguments text → "x = 1
+[x]", line → 2 to reportsMistakesWithTheirLine(text:line:)
+◇ Passing 2 arguments text → "a = { b = 1", line → 1 to reportsMistakesWithTheirLine(text:line:)
+◇ Passing 2 arguments text → "a = 007", line → 1 to reportsMistakesWithTheirLine(text:line:)
+◇ Passing 2 arguments text → "[[a]]
+[a]", line → 2 to reportsMistakesWithTheirLine(text:line:)
+✔ Test joiningFromInsideAContainerReachesItsNeighbour() passed after 0.170 seconds.
+✔ Test aContainerWithOneWindowLeftIsReplacedByIt() passed after 0.171 seconds.
+✔ Test aWindowThatWontShrinkGetsItsSizeAndTheRestShare() passed after 0.171 seconds.
+✔ Test aWindowGoesBackBesideTheWholeSplitEvenWhenTidyingRemovedItsOwn() passed after 0.171 seconds.
+✔ Test resizeTakesFromTheSiblings() passed after 0.171 seconds.
+✔ Test mirrorAndRotate() passed after 0.171 seconds.
+✔ Test movingOutOfAColumnAtTheEnd() passed after 0.171 seconds.
+✔ Test popOutAndPopIn() passed after 0.171 seconds.
+✔ Test setupsSurviveASettingsFile() passed after 0.171 seconds.
+✔ Test fromFramesOfOverlappingWindowsPutsThemSideBySide() passed after 0.171 seconds.
+✔ Test movingAcrossARootThatRunsTheOtherWaySplitsIt() passed after 0.171 seconds.
+✔ Test closingAWindowLetsItsNeighbourGrow() passed after 0.171 seconds.
+✔ Test aHintWhoseAnchorIsGoneFallsBack() passed after 0.171 seconds.
+✔ Test aMissingTargetSplitsTheLastWindow() passed after 0.171 seconds.
+✔ Test movingPastAWindowSwapsThemAndSpotsKeepTheirSizes() passed after 0.171 seconds.
+✔ Test reconcileKeepsExactlyTheWindowsPresent() passed after 0.171 seconds.
+✔ Test directionWords() passed after 0.171 seconds.
+✔ Test aWindowPutBackReturnsToItsPlace() passed after 0.171 seconds.
+✔ Test changingTheContainerWay() passed after 0.171 seconds.
+✔ Test movingIntoAColumn() passed after 0.171 seconds.
+✔ Test theFirstWindowSetsTheRootWay() passed after 0.171 seconds.
+✔ Test balanceAndFlatten() passed after 0.171 seconds.
+✔ Test resizeReachesTheNearestContainerThatRunsThatWay() passed after 0.171 seconds.
+✔ Test settingsFilesRoundTripAndStayInRange() passed after 0.171 seconds.
+✔ Test normalisingKeepsFrames() passed after 0.171 seconds.
+✔ Test movingPastTheEdgeOfARowReturnsFalse() passed after 0.171 seconds.
+✔ Test badLinksDoNothing() passed after 0.171 seconds.
+✔ Test secondWindowSplitsTheFirst() passed after 0.171 seconds.
+✔ Test linksForAppsAndFiles() passed after 0.171 seconds.
+✔ Test gapsMatchTheOtherLayouts() passed after 0.171 seconds.
+✔ Test linksRunActions() passed after 0.171 seconds.
+✔ Test movingDownOutOfARow() passed after 0.171 seconds.
+✔ Test movingAnEdgeOnlyChangesTheNeighbourAcrossIt() passed after 0.171 seconds.
+✔ Test splittingLeftOrUpPutsTheNewWindowFirst() passed after 0.171 seconds.
+✔ Test replacingAWindowKeepsItsSpot() passed after 0.171 seconds.
+✔ Test readsAPersonalAeroSpaceConfig() passed after 0.171 seconds.
+✔ Test aHintWhoseBranchWasSplitUpUsesItsAnchor() passed after 0.171 seconds.
+✔ Test anAccordionNeverSqueezesAWindowBelowHalf() passed after 0.171 seconds.
+✔ Test readsAeroSpacesDefaultConfig() passed after 0.171 seconds.
+✔ Test firstWindowFillsTheArea() passed after 0.171 seconds.
+✔ Test mistakesBecomeWarningsNotFailures() passed after 0.171 seconds.
+✔ Test joiningMakesAColumnFromTwoNeighbours() passed after 0.171 seconds.
+✔ Test tesseraSettings() passed after 0.171 seconds.
+✔ Test brokenFilesSayWhere() passed after 0.171 seconds.
+✔ Test importingAnAeroSpaceConfigListsWhatWontWork() passed after 0.171 seconds.
+✔ Test testConditions() passed after 0.171 seconds.
+✔ Test fromFramesRebuildsEveryLayoutExactly() passed after 0.171 seconds.
+✔ Test theTemplateIsClean() passed after 0.171 seconds.
+✔ Test keyNames() passed after 0.171 seconds.
+✔ Test idsRoundTrip() passed after 0.171 seconds.
+✔ Test aDuplicateKeyInAModeIsReported() passed after 0.171 seconds.
+✔ Test presetsAddKeysAndTheFileWins() passed after 0.171 seconds.
+✔ Test framesRoundTrip() passed after 0.171 seconds.
+✔ Test displayPatterns() passed after 0.171 seconds.
+✔ Test assigningATakenComboMovesIt() passed after 0.171 seconds.
+✔ Test formats() passed after 0.171 seconds.
+✔ Test defaultsMatchRectangleAndNeverClash() passed after 0.171 seconds.
+✔ Test runLinks() passed after 0.171 seconds.
+✔ Test setupsOpenWhenTheirScreensConnect() passed after 0.171 seconds.
+✔ Test chains() passed after 0.171 seconds.
+✔ Test execTakesTheRestOfTheLineAsWritten() passed after 0.171 seconds.
+✔ Test everyHelpExampleParses() passed after 0.171 seconds.
+✔ Test layouts() passed after 0.171 seconds.
+✔ Test placing() passed after 0.171 seconds.
+✔ Test tesseraAndToolCommands() passed after 0.171 seconds.
+✔ Test focus() passed after 0.171 seconds.
+✔ Test treeCommands() passed after 0.171 seconds.
+✔ Test toggles() passed after 0.171 seconds.
+✔ Test mistakesAreExplained() passed after 0.171 seconds.
+✔ Test queries() passed after 0.171 seconds.
+✔ Test desktopsAndScreens() passed after 0.171 seconds.
+✔ Test gapsAreEven() passed after 0.171 seconds.
+✔ Test windowState() passed after 0.171 seconds.
+✔ Test noGapsWithoutAGapSetting(style:) passed after 0.171 seconds.
+✔ Test everyCommandHasAUniqueURLName() passed after 0.171 seconds.
+✔ Test waterFillGivesNeedsFirst() passed after 0.171 seconds.
+✔ Test neighboursMakeRoomForAWindowThatCannotShrink() passed after 0.171 seconds.
+✔ Test layoutsCycleBothWays() passed after 0.171 seconds.
+✔ Test partitionsListEverySplit() passed after 0.171 seconds.
+✔ Test styles() passed after 0.171 seconds.
+✔ Test autoPicksSensibleArrangements() passed after 0.171 seconds.
+✔ Test autoAdaptsToTheScreenShape() passed after 0.171 seconds.
+✔ Test whenNothingFitsItStillPlacesEveryWindow() passed after 0.171 seconds.
+✔ Test windowsThatCannotShrinkGetAnArrangementTheyFit() passed after 0.171 seconds.
+✔ Test everyStyleKeepsItsShapeWithRealAppSizes(style:) passed after 0.171 seconds.
+✔ Test aChosenStyleKeepsItsShapeEvenWhenWindowsCannotShrink() passed after 0.171 seconds.
+✔ Test largerAndSmaller() passed after 0.171 seconds.
+✔ Test mainRatioChangesTheMainWindow() passed after 0.171 seconds.
+✔ Test moveToEdgeKeepsSize() passed after 0.171 seconds.
+✔ Test halvesCycleThroughTwoThirdsAndOneThird() passed after 0.171 seconds.
+✔ Test thirdsOnLandscapeAndPortrait() passed after 0.171 seconds.
+✔ Test halves() passed after 0.171 seconds.
+✔ Test callerHandlesRestoreAndDisplays() passed after 0.171 seconds.
+✔ Test gapsLeaveEqualSpaceEverywhere() passed after 0.171 seconds.
+✔ Test quartersMeetWithoutGapsOrOverlap() passed after 0.171 seconds.
+✔ Test quartersAndSixths() passed after 0.171 seconds.
+✔ Test sizeActions() passed after 0.171 seconds.
+✔ Test everyRegionActionStaysOnScreen() passed after 0.171 seconds.
+✔ Test makingAColumnSmallerGivesItsRoomToTheOthers() passed after 0.171 seconds.
+✔ Test movingToAnotherDisplayKeepsTheSpot() passed after 0.171 seconds.
+✔ Test draggingTheScreenEdgeChangesNothing() passed after 0.171 seconds.
+✔ Test inAGridALargerWindowIsWiderAndItsRowTaller() passed after 0.171 seconds.
+✔ Test anySharesKeepEveryWindowOnScreenWithoutOverlaps(style:) passed after 0.171 seconds.
+✔ Test rowsWorkTheSameWayUpAndDown() passed after 0.171 seconds.
+✔ Test sharesStopAtTheLimits() passed after 0.171 seconds.
+✔ Test makingTheMiddleColumnLargerShrinksBothNeighbours() passed after 0.171 seconds.
+✔ Test neighboursKeepTheirMinimumSize() passed after 0.171 seconds.
+✔ Test draggingARowEdgeInAGridMovesTheWholeRow() passed after 0.171 seconds.
+✔ Test draggingTheEdgeBetweenTwoColumnsMovesOnlyThatEdge() passed after 0.171 seconds.
+✔ Test keepsTheMostRecentlyUsedUpToTheRoom() passed after 0.171 seconds.
+✔ Test emptyRulesAreDroppedFromFiles() passed after 0.171 seconds.
+✔ Test aFreeSpotGoesToTheMostRecentlyUsedWaitingWindow() passed after 0.171 seconds.
+✔ Test mainAndSideLargerMainIsWider() passed after 0.171 seconds.
+✔ Test bringingForwardAFrontWindowChangesNothing() passed after 0.171 seconds.
+✔ Test twoNewWindowsDontPushEachOtherBack() passed after 0.171 seconds.
+✔ Test autoNeverGetsStuffy() passed after 0.171 seconds.
+✔ Test autoFitsTheScreen() passed after 0.171 seconds.
+✔ Test waitingWindowsStayOffOtherScreens() passed after 0.171 seconds.
+✔ Test bringingForwardReplacesTheLeastRecentlyUsed() passed after 0.171 seconds.
+✔ Test waitingWindowsNeverShowOnAnotherScreen() passed after 0.171 seconds.
+✔ Test mergeKeepsOtherWindowsInPlace() passed after 0.171 seconds.
+✔ Test splitTakesTheFirstFew() passed after 0.171 seconds.
+✔ Test screensOnBothSidesStillLeaveAHidingPlace() passed after 0.171 seconds.
+✔ Test limitIsSavedAsANumber() passed after 0.171 seconds.
+✔ Test keptWindowsNeverLeave() passed after 0.171 seconds.
+✔ Test leftHalfLeavesTheRightHalf() passed after 0.171 seconds.
+✔ Test topHalfLeavesTheBottom() passed after 0.171 seconds.
+✔ Test afterScreensChangeTheMostRecentlyUsedAreInFront() passed after 0.171 seconds.
+✔ Test gapsCountAsTouchingTheEdge() passed after 0.171 seconds.
+✔ Test cornersAndMaximisedWindowsFloatAbove() passed after 0.171 seconds.
+✔ Test twoThirdsLeavesOneThird() passed after 0.171 seconds.
+✔ Test arrangeKeepsKeptAndWantedInFrontAndLinesUpTheRest() passed after 0.171 seconds.
+✔ Test arrangeWithRoomForEveryoneChangesNothing() passed after 0.171 seconds.
+✔ Test stacksAreWindowsOnTheSameSpot() passed after 0.171 seconds.
+✔ Test cascadeStepsDownAndRight() passed after 0.171 seconds.
+✔ Test gapsSitBetweenAndAround() passed after 0.171 seconds.
+✔ Test rowsAndColumnsUseUpToThreeLines() passed after 0.171 seconds.
+✔ Test tileAllMakesAGridWithNoEmptyCells() passed after 0.171 seconds.
+✔ Test reverseMirrorsLeftToRight() passed after 0.171 seconds.
+✔ Test cornerThirdsAreTwoThirdsWideAndHalfHigh() passed after 0.171 seconds.
+✔ Test ninthsMakeAThreeByThreeGrid() passed after 0.171 seconds.
+✔ Test everyActionHasRectanglesURLName() passed after 0.171 seconds.
+✔ Test specifiedSizeIsCentredAndFitsTheScreen() passed after 0.171 seconds.
+✔ Test eighthsAreFourAcrossTwoDownOrTwoAcrossFourDown() passed after 0.171 seconds.
+✔ Test desktopStepsSkipFullScreenApps() passed after 0.171 seconds.
+✔ Test centreProminentlySitsHigherThanCentre() passed after 0.171 seconds.
+✔ Test prefersWindowsInLineOverNearerOnes() passed after 0.171 seconds.
+✔ Test movesBetweenTiles() passed after 0.171 seconds.
+✔ Test worksWithOverlappingWindows() passed after 0.171 seconds.
+✔ Test moveActionsHaveKeysAndNames() passed after 0.171 seconds.
+✔ Test tablesDottedKeysAndArraysOfTables() passed after 0.170 seconds.
+✔ Test reportsMistakesWithTheirLine(text:line:) passed after 0.170 seconds.
+✔ Test inlineTablesAndMultilineArrays() passed after 0.169 seconds.
+✔ Test readsAeroSpacesDefaultConfig() passed after 0.169 seconds.
+✔ Test escapesAndMultilineStrings() passed after 0.169 seconds.
+✔ Test readsTheKindsOfValue() passed after 0.169 seconds.
+✔ Test remembersTheLineOfEachKey() passed after 0.169 seconds.
+✔ Suite "Window order" passed after 0.174 seconds.
+✔ Suite "Saved setups" passed after 0.174 seconds.
+✔ Suite "Tree layout" passed after 0.174 seconds.
+✔ Suite "Links and settings files" passed after 0.174 seconds.
+✔ Suite "Config file" passed after 0.174 seconds.
+✔ Suite "Shortcuts" passed after 0.174 seconds.
+✔ Suite "Command line tool" passed after 0.174 seconds.
+✔ Suite "Command language" passed after 0.174 seconds.
+✔ Suite "Snapping" passed after 0.174 seconds.
+✔ Suite "Making tiles larger and smaller" passed after 0.174 seconds.
+✔ Suite "App rules" passed after 0.174 seconds.
+✔ Suite "Front windows" passed after 0.174 seconds.
+✔ Suite "Space left by snapped windows" passed after 0.174 seconds.
+✔ Suite "Arranging many windows" passed after 0.174 seconds.
+✔ Suite "Rectangle's other actions" passed after 0.174 seconds.
+✔ Suite "Focus by direction and desktops" passed after 0.174 seconds.
+✔ Suite "TOML" passed after 0.174 seconds.
+✔ Test everyWindowGetsItsOwnSpace(style:) passed after 0.363 seconds.
+✔ Suite "Auto-tile layouts" passed after 0.365 seconds.
+✔ Test run with 165 tests passed after 0.365 seconds.
