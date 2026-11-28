@@ -1,0 +1,361 @@
+{
+ "autoTile": {
+  "crowded": [],
+  "currentLayouts": {
+   "0-0-305419896": "mainAndSide"
+  },
+  "currentSpaces": [
+   "1:1"
+  ],
+  "desktops": [
+   {
+    "current": 1,
+    "display": "DB32F47A-7705-4CEB-965F-EAF56E961A80",
+    "spaces": [
+     {
+      "id": 1,
+      "type": 0
+     },
+     {
+      "id": 51,
+      "type": 0
+     }
+    ]
+   }
+  ],
+  "floating": [],
+  "frontLimit": -1,
+  "kept": [],
+  "lastUsed": {
+   "34": 197,
+   "35": 176,
+   "36": 123,
+   "39": 198,
+   "40": 200,
+   "53": 182,
+   "54": 199
+  },
+  "limits": {
+   "0-0-305419896": 0
+  },
+  "minimums": {
+   "34": "{101, 42}",
+   "35": "{101, 42}",
+   "36": "{101, 42}",
+   "39": "{460, 252}",
+   "40": "{165, 105}",
+   "53": "{574, 248}",
+   "54": "{500, 375}"
+  },
+  "moves": 782,
+  "on": false,
+  "order": {},
+  "pendingLayout": {},
+  "pinned": {},
+  "plans": {},
+  "preselected": {},
+  "sizes": {},
+  "spaceLayouts": {
+   "0-0-305419896#1": "mainAndSide",
+   "0-0-305419896#42": "columns",
+   "0-0-305419896#51": "rows"
+  },
+  "spacesSupported": true,
+  "trees": {},
+  "waiting": {},
+  "zoomed": []
+ },
+ "autoTileSetting": false,
+ "config": {
+  "error": "",
+  "exists": false,
+  "path": "/Users/runner/.config/tessera/tessera.toml",
+  "rules": 0,
+  "warnings": []
+ },
+ "decorations": {
+  "border": false,
+  "dim": false
+ },
+ "desktop": 1,
+ "displays": [
+  {
+   "frame": [
+    0,
+    0,
+    1920,
+    1080
+   ],
+   "id": "0-0-305419896",
+   "name": "Apple Virtual",
+   "number": 1,
+   "visible": [
+    0,
+    25,
+    1920,
+    982
+   ]
+  }
+ ],
+ "failedKeys": [],
+ "failedShortcuts": [],
+ "focused": 40,
+ "gap": 0,
+ "hotkeys": 58,
+ "layouts": {
+  "0-0-305419896": "mainAndSide"
+ },
+ "log": [
+  "2:45:33\u202fPM I Move 36 (com.apple.TextEdit) from {{1520, 25}, {200, 982}} to {{1919, 1079}, {200, 982}}",
+  "2:45:33\u202fPM I Move 40 (com.apple.Terminal) from {{1720, 25}, {200, 973}} to {{1919, 1079}, {200, 973}}",
+  "2:45:34\u202fPM I Link: import-settings",
+  "2:45:34\u202fPM I Settings imported",
+  "2:45:35\u202fPM I Move 53 (com.apple.Safari) from {{1919, 955}, {574, 982}} to {{1280, 25}, {640, 982}}",
+  "2:45:35\u202fPM I Move 35 (com.apple.TextEdit) from {{1280, 25}, {640, 982}} to {{1919, 1079}, {640, 982}}",
+  "2:45:38\u202fPM I Move 39 (com.apple.finder) from {{1919, 955}, {460, 982}} to {{0, 25}, {640, 982}}",
+  "2:45:38\u202fPM I Move 54 (com.google.Chrome) from {{-0, 25}, {640, 982}} to {{1919, 1079}, {640, 982}}",
+  "2:45:40\u202fPM I Move 54 (com.google.Chrome) from {{1919, 966}, {640, 982}} to {{640, 25}, {640, 982}}",
+  "2:45:40\u202fPM I Move 34 (com.apple.TextEdit) from {{640, 25}, {640, 982}} to {{1919, 1079}, {640, 982}}",
+  "2:45:42\u202fPM I Move 40 (com.apple.Terminal) from {{1919, 979}, {200, 973}} to {{0, 25}, {640, 982}}",
+  "2:45:42\u202fPM I Move 39 (com.apple.finder) from {{0, 25}, {640, 982}} to {{1919, 1079}, {640, 982}}",
+  "2:45:45\u202fPM I Test command: dump",
+  "2:45:46\u202fPM I Test command: dump",
+  "2:45:46\u202fPM I Link: import-settings",
+  "2:45:46\u202fPM I Settings imported",
+  "2:45:48\u202fPM I Move 34 (com.apple.TextEdit) from {{1919, 979}, {640, 982}} to {{1280, 25}, {640, 982}}",
+  "2:45:48\u202fPM I Move 53 (com.apple.Safari) from {{1280, 25}, {640, 982}} to {{1919, 1079}, {640, 982}}",
+  "2:45:50\u202fPM I Move 39 (com.apple.finder) from {{1919, 955}, {640, 982}} to {{640, 25}, {640, 982}}",
+  "2:45:50\u202fPM I Move 54 (com.google.Chrome) from {{640, 25}, {640, 982}} to {{1919, 1079}, {640, 982}}",
+  "2:45:52\u202fPM I Move 54 (com.google.Chrome) from {{1919, 966}, {640, 982}} to {{0, 25}, {640, 982}}",
+  "2:45:52\u202fPM I Move 40 (com.apple.Terminal) from {{0, 25}, {641, 973}} to {{1919, 1079}, {641, 973}}",
+  "2:45:54\u202fPM I Move 40 (com.apple.Terminal) from {{1919, 979}, {641, 973}} to {{1280, 25}, {640, 982}}",
+  "2:45:54\u202fPM I Move 34 (com.apple.TextEdit) from {{1280, 25}, {640, 982}} to {{1919, 1079}, {640, 982}}",
+  "2:45:57\u202fPM I Test command: dump",
+  "2:45:58\u202fPM I Test command: dump",
+  "2:45:58\u202fPM I Test command: set:frontLimit=none",
+  "2:45:58\u202fPM I Move 54 (com.google.Chrome) from {{0, 25}, {640, 982}} to {{0, 25}, {365, 982}}",
+  "2:45:58\u202fPM I Move 39 (com.apple.finder) from {{640, 25}, {640, 982}} to {{365, 25}, {336, 982}}",
+  "2:45:58\u202fPM I Move 40 (com.apple.Terminal) from {{1280, 25}, {641, 973}} to {{701, 25}, {200, 982}}",
+  "2:45:58\u202fPM I Move 34 (com.apple.TextEdit) from {{1919, 979}, {640, 982}} to {{901, 25}, {200, 982}}",
+  "2:45:58\u202fPM I Move 53 (com.apple.Safari) from {{1919, 955}, {640, 982}} to {{1101, 25}, {419, 982}}",
+  "2:45:58\u202fPM I Move 35 (com.apple.TextEdit) from {{1919, 979}, {640, 982}} to {{1520, 25}, {200, 982}}",
+  "2:45:58\u202fPM I Move 36 (com.apple.TextEdit) from {{1919, 979}, {200, 982}} to {{1720, 25}, {200, 982}}",
+  "2:45:59\u202fPM I Shortcut: layout.mainAndSide",
+  "2:45:59\u202fPM I Move 54 (com.google.Chrome) from {{-0, 25}, {500, 982}} to {{0, 25}, {960, 982}}",
+  "2:45:59\u202fPM I Move 39 (com.apple.finder) from {{365, 25}, {460, 982}} to {{960, 25}, {960, 252}}",
+  "2:45:59\u202fPM I Move 40 (com.apple.Terminal) from {{701, 25}, {200, 973}} to {{960, 277}, {960, 121}}",
+  "2:45:59\u202fPM I Move 34 (com.apple.TextEdit) from {{901, 25}, {200, 982}} to {{960, 398}, {960, 120}}",
+  "2:45:59\u202fPM I Move 53 (com.apple.Safari) from {{1101, 25}, {574, 982}} to {{960, 518}, {960, 248}}",
+  "2:45:59\u202fPM I Move 35 (com.apple.TextEdit) from {{1520, 25}, {200, 982}} to {{960, 766}, {960, 121}}",
+  "2:45:59\u202fPM I Move 36 (com.apple.TextEdit) from {{1720, 25}, {200, 982}} to {{960, 887}, {960, 120}}",
+  "2:46:00\u202fPM I Move 40 (com.apple.Terminal) from {{957, 277}, {963, 119}} to {{960, 277}, {957, 121}}",
+  "2:46:01\u202fPM I Test command: dump",
+  "2:46:02\u202fPM I Test command: dump",
+  "2:46:02\u202fPM I Shortcut: tile.toggleAutoTile",
+  "2:46:04\u202fPM I Test command: dump",
+  "2:46:04\u202fPM I Shortcut: tile.toggleAutoTile",
+  "2:46:04\u202fPM I Move 40 (com.apple.Terminal) from {{960, 277}, {956, 119}} to {{0, 25}, {960, 982}}",
+  "2:46:04\u202fPM I Move 54 (com.google.Chrome) from {{-0, 25}, {960, 982}} to {{960, 25}, {960, 270}}",
+  "2:46:04\u202fPM I Move 39 (com.apple.finder) from {{960, 25}, {960, 252}} to {{960, 295}, {960, 181}}",
+  "2:46:04\u202fPM I Move 34 (com.apple.TextEdit) from {{960, 398}, {960, 120}} to {{960, 476}, {960, 117}}",
+  "2:46:04\u202fPM I Move 35 (com.apple.TextEdit) from {{960, 766}, {960, 121}} to {{960, 593}, {960, 118}}",
+  "2:46:04\u202fPM I Move 36 (com.apple.TextEdit) from {{960, 887}, {960, 120}} to {{960, 711}, {960, 118}}",
+  "2:46:04\u202fPM I Move 53 (com.apple.Safari) from {{960, 518}, {960, 248}} to {{960, 829}, {960, 178}}",
+  "2:46:05\u202fPM I Move 40 (com.apple.Terminal) from {{0, 25}, {963, 973}} to {{0, 25}, {957, 982}}",
+  "2:46:06\u202fPM I Test command: dump",
+  "2:46:07\u202fPM I Test command: dump",
+  "2:46:07\u202fPM I Shortcut: tile.toggleAutoTile",
+  "2:46:08\u202fPM I Test command: dump"
+ ],
+ "macEdgeTiling": false,
+ "mode": "main",
+ "modes": [
+  "main"
+ ],
+ "path": "/Users/runner/work/Tessera/Tessera/build/debug/Tessera.app",
+ "picker": {
+  "entries": [
+   {
+    "app": "Google Chrome",
+    "id": 54,
+    "inFront": true,
+    "number": 1
+   },
+   {
+    "app": "TextEdit",
+    "id": 35,
+    "inFront": true,
+    "number": 2
+   },
+   {
+    "app": "Safari",
+    "id": 53,
+    "inFront": true,
+    "number": 3
+   },
+   {
+    "app": "TextEdit",
+    "id": 34,
+    "inFront": false,
+    "number": 4
+   },
+   {
+    "app": "Finder",
+    "id": 39,
+    "inFront": false,
+    "number": 5
+   },
+   {
+    "app": "TextEdit",
+    "id": 36,
+    "inFront": false,
+    "number": 6
+   },
+   {
+    "app": "Terminal",
+    "id": 40,
+    "inFront": false,
+    "number": 7
+   }
+  ],
+  "selection": 3,
+  "showing": false
+ },
+ "socket": "/tmp/tessera-501.sock",
+ "trusted": true,
+ "updates": {
+  "automatic": false,
+  "configured": false,
+  "feed": "",
+  "running": false
+ },
+ "version": "3.0.0 (11)",
+ "windows": [
+  {
+   "app": "com.apple.Terminal",
+   "frame": [
+    0,
+    25,
+    956,
+    973
+   ],
+   "fullScreen": false,
+   "id": 40,
+   "screen": "",
+   "spaces": [
+    1
+   ],
+   "standard": true,
+   "tiled": false,
+   "waiting": false
+  },
+  {
+   "app": "com.google.Chrome",
+   "frame": [
+    960,
+    25,
+    960,
+    375
+   ],
+   "fullScreen": false,
+   "id": 54,
+   "screen": "",
+   "spaces": [
+    1
+   ],
+   "standard": true,
+   "tiled": false,
+   "waiting": false
+  },
+  {
+   "app": "com.apple.finder",
+   "frame": [
+    960,
+    295,
+    960,
+    252
+   ],
+   "fullScreen": false,
+   "id": 39,
+   "screen": "",
+   "spaces": [
+    1
+   ],
+   "standard": true,
+   "tiled": false,
+   "waiting": false
+  },
+  {
+   "app": "com.apple.TextEdit",
+   "frame": [
+    960,
+    476,
+    960,
+    117
+   ],
+   "fullScreen": false,
+   "id": 34,
+   "screen": "",
+   "spaces": [
+    1
+   ],
+   "standard": true,
+   "tiled": false,
+   "waiting": false
+  },
+  {
+   "app": "com.apple.TextEdit",
+   "frame": [
+    960,
+    593,
+    960,
+    118
+   ],
+   "fullScreen": false,
+   "id": 35,
+   "screen": "",
+   "spaces": [
+    1
+   ],
+   "standard": true,
+   "tiled": false,
+   "waiting": false
+  },
+  {
+   "app": "com.apple.TextEdit",
+   "frame": [
+    960,
+    711,
+    960,
+    118
+   ],
+   "fullScreen": false,
+   "id": 36,
+   "screen": "",
+   "spaces": [
+    1
+   ],
+   "standard": true,
+   "tiled": false,
+   "waiting": false
+  },
+  {
+   "app": "com.apple.Safari",
+   "frame": [
+    960,
+    759,
+    960,
+    248
+   ],
+   "fullScreen": false,
+   "id": 53,
+   "screen": "",
+   "spaces": [
+    1
+   ],
+   "standard": true,
+   "tiled": false,
+   "waiting": false
+  }
+ ]
+}

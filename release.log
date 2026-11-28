@@ -1,0 +1,148 @@
+› Compiling (release)…
+0%: Compute target dependency graph
+Building targets in dependency order
+Target dependency graph (6 targets)
+0%: Gather provisioning inputs
+0%: Create build description
+0%: Discovering version info for swiftc
+0%: Discovering version info for clang
+0%: Discovering version info for ld
+Build description signature: 5e3d07e3cde2415d5833492c52ba4481
+
+Build description path: /Users/runner/work/Tessera/Tessera/.build/apple/Intermediates.noindex/XCBuildData/5e3d07e3cde2415d5833492c52ba4481.xcbuilddata
+
+0%: Create build directory $(TARGET_BUILD_DIR)
+0%: Build stat cache for /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk
+0%: Create build directory $(OBJROOT)
+2%: Create build directory $(TARGET_BUILD_DIR)/Release
+2%: Create build directory $(OBJROOT)/EagerLinkingTBDs/Release
+2%: Create build directory $(TARGET_BUILD_DIR)/Release/PackageFrameworks
+2%: Write TesseraCore_Module.DependencyStaticMetadataFileList
+2%: Write TesseraCore_Module.DependencyMetadataFileList
+2%: Write TesseraCore.modulemap
+2%: Write TesseraCore_Module_const_extract_protocols.json (x86_64)
+2%: Write TesseraCore_Module.SwiftFileList (x86_64)
+2%: Write TesseraCore_Module.SwiftConstValuesFileList
+2%: Write TesseraCore_Module.LinkFileList (x86_64)
+2%: Write TesseraCore_Module-OutputFileMap.json (x86_64)
+2%: Write TesseraCore_Module_const_extract_protocols.json (arm64)
+2%: Write TesseraCore_Module.SwiftFileList (arm64)
+2%: Write TesseraCore_Module.SwiftConstValuesFileList
+2%: Write TesseraCore_Module.LinkFileList (arm64)
+2%: Write TesseraCore_Module-OutputFileMap.json (arm64)
+2%: Copy TesseraCore.modulemap
+2%: Write TesseraCLI.DependencyStaticMetadataFileList
+2%: Write TesseraCLI.DependencyMetadataFileList
+2%: Write TesseraCLI_const_extract_protocols.json (x86_64)
+2%: Write TesseraCLI.SwiftFileList (x86_64)
+2%: Write TesseraCLI.LinkFileList (x86_64)
+2%: Write TesseraCLI-OutputFileMap.json (x86_64)
+2%: Write TesseraCLI_const_extract_protocols.json (arm64)
+2%: Write TesseraCLI.SwiftFileList (arm64)
+2%: Write TesseraCLI.LinkFileList (arm64)
+2%: Write TesseraCLI-OutputFileMap.json (arm64)
+2%: Process Sparkle.xcframework (macOS)
+32%: Write Tessera.DependencyStaticMetadataFileList
+32%: Write Tessera.DependencyMetadataFileList
+32%: Write Tessera_const_extract_protocols.json (x86_64)
+32%: Write Tessera.SwiftFileList (x86_64)
+32%: Write Tessera.LinkFileList (x86_64)
+32%: Write Tessera-OutputFileMap.json (x86_64)
+32%: Write Tessera_const_extract_protocols.json (arm64)
+32%: Write Tessera.SwiftFileList (arm64)
+32%: Write Tessera.LinkFileList (arm64)
+32%: Write Tessera-OutputFileMap.json (arm64)
+43%: Planning Swift module TesseraCore (arm64)
+43%: Planning Swift module TesseraCore (x86_64)
+44%: Compiling AppRule.swift, SettingsFile.swift, Setup.swift, URLCommand.swift, CommandHelp.swift, TextCommand.swift, Wire.swift, KeyNotation.swift, TOML.swift, TesseraConfig.swift, Geometry.swift, Commands.swift, KeyCombo.swift, Arrange.swift, Navigation.swift, SnapAction.swift, SnapCalculator.swift, FrontWindows.swift, TilePlanner.swift, TileSizes.swift, TileTree.swift
+44%: Compile TesseraCore_Module (arm64)
+44%: Compile TesseraCore_Module (x86_64)
+44%: Compiling AppRule.swift, SettingsFile.swift, Setup.swift, URLCommand.swift, CommandHelp.swift, TextCommand.swift, Wire.swift, KeyNotation.swift, TOML.swift, TesseraConfig.swift, Geometry.swift, Commands.swift, KeyCombo.swift, Arrange.swift, Navigation.swift, SnapAction.swift, SnapCalculator.swift, FrontWindows.swift, TilePlanner.swift, TileSizes.swift, TileTree.swift
+44%: Compile 21 Swift source files (x86_64)
+44%: Compile 21 Swift source files (arm64)
+47%: Discovering Swift tasks after 'Compiling AppRule.swift, SettingsFile.swift, Setup.swift, URLCommand.swift, CommandHelp.swift, TextCommand.swift, Wire.swift, KeyNotation.swift, TOML.swift, TesseraConfig.swift, Geometry.swift, Commands.swift, KeyCombo.swift, Arrange.swift, Navigation.swift, SnapAction.swift, SnapCalculator.swift, FrontWindows.swift, TilePlanner.swift, TileSizes.swift, TileTree.swift'
+47%: Unblock downstream dependents of TesseraCore_Module (arm64)
+47%: Copy TesseraCore.swiftmodule (arm64)
+47%: Copy TesseraCore.swiftdoc (arm64)
+47%: Copy TesseraCore.abi.json (arm64)
+47%: Copy TesseraCore.swiftsourceinfo (arm64)
+53%: Discovering Swift tasks after 'Compiling AppRule.swift, SettingsFile.swift, Setup.swift, URLCommand.swift, CommandHelp.swift, TextCommand.swift, Wire.swift, KeyNotation.swift, TOML.swift, TesseraConfig.swift, Geometry.swift, Commands.swift, KeyCombo.swift, Arrange.swift, Navigation.swift, SnapAction.swift, SnapCalculator.swift, FrontWindows.swift, TilePlanner.swift, TileSizes.swift, TileTree.swift'
+53%: Unblock downstream dependents of TesseraCore_Module (x86_64)
+53%: Copy TesseraCore.swiftmodule (x86_64)
+53%: Merge Objective-C generated interface headers
+53%: Copy TesseraCore.swiftdoc (x86_64)
+53%: Copy TesseraCore.abi.json (x86_64)
+53%: Copy TesseraCore.swiftsourceinfo (x86_64)
+53%: Link TesseraCore_Module.o (x86_64)
+53%: Link TesseraCore_Module.o (arm64)
+53%: Planning Swift module Tessera (x86_64)
+53%: Planning Swift module Tessera (arm64)
+53%: Compiling AXElement.swift, AXObserverHub.swift, Automation.swift, ConfigStore.swift, Settings.swift, Setups.swift, TesseraApp.swift, TestHooks.swift, Updater.swift, CommandLineTool.swift, CommandRunner.swift, CommandServer.swift, Events.swift, QueryRunner.swift, HotKeyCenter.swift, Shortcuts.swift, Arranger.swift, DragSnapper.swift, MouseFeatures.swift, SnapController.swift, Support.swift, AutoTiler.swift, Decorations.swift, Overlays.swift, PermissionWindow.swift, SettingsWindow.swift, StatusMenu.swift, WindowPicker.swift, Desktops.swift, KeyboardMoves.swift, Screens.swift, Spaces.swift, WindowActions.swift, WindowMover.swift, WindowRegistry.swift
+53%: Compiling AXElement.swift, AXObserverHub.swift, Automation.swift, ConfigStore.swift, Settings.swift, Setups.swift, TesseraApp.swift, TestHooks.swift, Updater.swift, CommandLineTool.swift, CommandRunner.swift, CommandServer.swift, Events.swift, QueryRunner.swift, HotKeyCenter.swift, Shortcuts.swift, Arranger.swift, DragSnapper.swift, MouseFeatures.swift, SnapController.swift, Support.swift, AutoTiler.swift, Decorations.swift, Overlays.swift, PermissionWindow.swift, SettingsWindow.swift, StatusMenu.swift, WindowPicker.swift, Desktops.swift, KeyboardMoves.swift, Screens.swift, Spaces.swift, WindowActions.swift, WindowMover.swift, WindowRegistry.swift
+60%: Planning Swift module TesseraCLI (x86_64)
+60%: Create universal binary TesseraCore_Module.o
+60%: Compiling main.swift
+60%: Compile 35 Swift source files (arm64)
+60%: Compile 35 Swift source files (x86_64)
+60%: Compile main.swift (x86_64)
+60%: Planning Swift module TesseraCLI (arm64)
+64%: Discovering Swift tasks after 'Compiling main.swift'
+64%: Unblock downstream dependents of TesseraCLI (x86_64)
+64%: Compiling main.swift
+64%: Compile main.swift (arm64)
+64%: Copy TesseraCLI.swiftmodule (x86_64)
+66%: Discovering Swift tasks after 'Compiling main.swift'
+66%: Copy TesseraCLI.swiftdoc (x86_64)
+66%: Unblock downstream dependents of TesseraCLI (arm64)
+66%: Copy TesseraCLI.abi.json (x86_64)
+66%: Copy TesseraCLI.swiftmodule (arm64)
+66%: Copy TesseraCLI.swiftdoc (arm64)
+66%: Copy TesseraCLI.abi.json (arm64)
+66%: Copy TesseraCLI.swiftsourceinfo (x86_64)
+66%: Copy TesseraCLI.swiftsourceinfo (arm64)
+66%: Compile Tessera (x86_64)
+66%: Compile Tessera (arm64)
+66%: Compile TesseraCLI (x86_64)
+66%: Compile TesseraCLI (arm64)
+66%: Extract app intents metadata
+2026-11-28 14:55:35.822 appintentsmetadataprocessor[50466:127504] Starting appintentsmetadataprocessor export
+2026-11-28 14:55:35.928 appintentsmetadataprocessor[50466:127504] Extracted no relevant App Intents symbols, skipping writing output
+
+78%: Register execution policy exception for TesseraCore_Module.o
+78%: Link TesseraCLI (x86_64)
+80%: Link TesseraCLI (arm64)
+81%: Copy Sparkle.framework
+not stripping binary because it is signed: /Users/runner/work/Tessera/Tessera/.build/artifacts/sparkle/Sparkle/Sparkle.xcframework/macos-arm64_x86_64/Sparkle.framework/Versions/B/Autoupdatewarning: not stripping binary because it is signed: /Users/runner/work/Tessera/Tessera/.build/artifacts/sparkle/Sparkle/Sparkle.xcframework/macos-arm64_x86_64/Sparkle.framework/Versions/B/Updater.app/Contents/MacOS/Updaterwarning: not stripping binary because it is signed: /Users/runner/work/Tessera/Tessera/.build/artifacts/sparkle/Sparkle/Sparkle.xcframework/macos-arm64_x86_64/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc/Contents/MacOS/Downloaderwarning: not stripping binary because it is signed: /Users/runner/work/Tessera/Tessera/.build/artifacts/sparkle/Sparkle/Sparkle.xcframework/macos-arm64_x86_64/Sparkle.framework/Versions/B/XPCServices/Installer.xpc/Contents/MacOS/Installerwarning: not stripping binary because it is signed: /Users/runner/work/Tessera/Tessera/.build/artifacts/sparkle/Sparkle/Sparkle.xcframework/macos-arm64_x86_64/Sparkle.framework/Versions/B/Sparkle
+81%: Create universal binary TesseraCLI
+83%: Generate TesseraCLI.dSYM for TesseraCLI
+84%: Register execution policy exception for TesseraCLI
+85%: Discovering Swift tasks after 'Compiling AXElement.swift, AXObserverHub.swift, Automation.swift, ConfigStore.swift, Settings.swift, Setups.swift, TesseraApp.swift, TestHooks.swift, Updater.swift, CommandLineTool.swift, CommandRunner.swift, CommandServer.swift, Events.swift, QueryRunner.swift, HotKeyCenter.swift, Shortcuts.swift, Arranger.swift, DragSnapper.swift, MouseFeatures.swift, SnapController.swift, Support.swift, AutoTiler.swift, Decorations.swift, Overlays.swift, PermissionWindow.swift, SettingsWindow.swift, StatusMenu.swift, WindowPicker.swift, Desktops.swift, KeyboardMoves.swift, Screens.swift, Spaces.swift, WindowActions.swift, WindowMover.swift, WindowRegistry.swift'
+85%: Unblock downstream dependents of Tessera (arm64)
+85%: Link Tessera (arm64)
+85%: Copy Tessera.swiftmodule (arm64)
+85%: Copy Tessera.swiftdoc (arm64)
+85%: Copy Tessera.abi.json (arm64)
+85%: Copy Tessera.swiftsourceinfo (arm64)
+91%: Discovering Swift tasks after 'Compiling AXElement.swift, AXObserverHub.swift, Automation.swift, ConfigStore.swift, Settings.swift, Setups.swift, TesseraApp.swift, TestHooks.swift, Updater.swift, CommandLineTool.swift, CommandRunner.swift, CommandServer.swift, Events.swift, QueryRunner.swift, HotKeyCenter.swift, Shortcuts.swift, Arranger.swift, DragSnapper.swift, MouseFeatures.swift, SnapController.swift, Support.swift, AutoTiler.swift, Decorations.swift, Overlays.swift, PermissionWindow.swift, SettingsWindow.swift, StatusMenu.swift, WindowPicker.swift, Desktops.swift, KeyboardMoves.swift, Screens.swift, Spaces.swift, WindowActions.swift, WindowMover.swift, WindowRegistry.swift'
+91%: Unblock downstream dependents of Tessera (x86_64)
+91%: Link Tessera (x86_64)
+91%: Copy Tessera.swiftmodule (x86_64)
+91%: Copy Tessera.swiftdoc (x86_64)
+91%: Copy Tessera.abi.json (x86_64)
+91%: Copy Tessera.swiftsourceinfo (x86_64)
+96%: Create universal binary Tessera
+96%: Generate Tessera.dSYM for Tessera
+99%: Register execution policy exception for Tessera
+100%: Build succeeded
+Build complete!
+› Assembling build/release/Tessera.app
+› Signing with: - (Apple-issued: no)
+build/release/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc: replacing existing signature
+build/release/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc: replacing existing signature
+build/release/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate: replacing existing signature
+build/release/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app: replacing existing signature
+build/release/Tessera.app/Contents/Frameworks/Sparkle.framework: replacing existing signature
+build/release/Tessera.app/Contents/Resources/bin/tessera: replacing existing signature
+build/release/Tessera.app: replacing existing signature
+✓ Built build/release/Tessera.app
+Architectures in the fat file: build/release/Tessera.app/Contents/MacOS/Tessera are: x86_64 arm64 

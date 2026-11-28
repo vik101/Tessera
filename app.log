@@ -1,0 +1,16 @@
+› Compiling (debug)…
+[0/1] Planning build
+Building for debugging...
+[0/5] Write swift-version--79AA4F9932D1E87A.txt
+Build complete! (0.86s)
+› Assembling build/debug/Tessera.app
+/Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/install_name_tool: warning: changes being made to the file will invalidate the code signature in: build/debug/Tessera.app/Contents/MacOS/Tessera
+› Signing with: - (Apple-issued: no)
+build/debug/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc: replacing existing signature
+build/debug/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc: replacing existing signature
+build/debug/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate: replacing existing signature
+build/debug/Tessera.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app: replacing existing signature
+build/debug/Tessera.app/Contents/Frameworks/Sparkle.framework: replacing existing signature
+build/debug/Tessera.app/Contents/Resources/bin/tessera: replacing existing signature
+build/debug/Tessera.app: replacing existing signature
+✓ Built build/debug/Tessera.app

@@ -1,0 +1,157 @@
+132 of 132 passed
+
+PASS The command line tool is in the app  (/Users/runner/work/Tessera/Tessera/build/debug/Tessera.app/Contents/Resources/bin/tessera)
+PASS tessera version answers  (0: Tessera 3.0.0 (11))
+PASS tessera help lists the commands  (0, 4310 characters)
+PASS tessera help explains one command (by an AeroSpace name too)  (desktop N|next|prev|last
+  Switch to a desktop on this screen.
+  Example: tessera desktop 2
+  Also: workspace N, space N)
+PASS An unknown command exits 3 and says so  (3: tessera: unknown command “frobnicate”. Run `tessera help` for the list)
+PASS A bad argument exits 3 and says why  (3: tessera: “sideways” isn't a direction: use left, right, up or down (or west, east, north, south))
+PASS A window that doesn't exist exits 1  (1: tessera: No window 999999 (see `tessera list-windows`))
+PASS list-windows --json is a list with ids, apps, titles, desktops and states  ([{'app-bundle-id': 'com.apple.TextEdit', 'app-name': 'TextEdit', 'app-pid': 2973, 'desktop': 1, 'display-name': 'Apple Virtual', 'display-number': 1, 'focused': True, 'frame': [0, 516, 640, 491], 'state': 'tiled', 'window-id': 34, 'window-title': 'doc3.txt'}, {'app-bundle-id': 'com.apple.TextEdit', )
+PASS list-windows --count matches the list  (7 vs 7)
+PASS list-windows --format fills placeholders  (34:TextEdit
+35:TextEdit
+36:TextEdit
+40:Terminal
+54:Google Chrome
+39:Finder
+53:Safari
+)
+PASS list-displays --json names the main screen  ([{'desktop': 1, 'display-id': '0-0-305419896', 'display-name': 'Apple Virtual', 'display-number': 1, 'focused': True, 'frame': [0, 0, 1920, 1080], 'front-limit': 0, 'layout': 'auto', 'main': True, 'visible-frame': [0, 25, 1920, 982]}])
+PASS list-desktops --json shows the desktop on screen  ([{'current': ' (showing)', 'desktop': 1, 'display-name': 'Apple Virtual', 'display-number': 1, 'focused': True, 'layout': 'auto', 'showing': True, 'window-count': 7}, {'current': '', 'desktop': 2, 'display-name': 'Apple Virtual', 'display-number': 1, 'focused': False, 'layout': '', 'showing': False,)
+PASS list-apps --json includes TextEdit
+PASS list-modes --current is main  (main)
+PASS A command line with || runs the fallback  (0: fallback)
+PASS A command line with && and ; runs every part  (both
+end)
+PASS Three TextEdit windows for the tree checks  ([34, 35, 36])
+PASS Switching Columns → Tree moves nothing  (moved []: [])
+PASS The tree is the three columns  (H[a b c])
+PASS join right makes a column of b and c  (H[a V[b c]])
+PASS …b sits above c, right of a  (a [0, 25, 640, 981] b [640, 25, 1280, 491] c [640, 516, 1280, 491])
+PASS …a keeps its third, the column takes two  (a [0, 25, 640, 981] on [0, 25, 1920, 982])
+PASS move left takes c out of the column, beside a  (H[a c b])
+PASS swap right trades c and b  (H[a b c])
+PASS layout tiles vertical: the root runs top to bottom  (V[a b c])
+PASS …three rows  ([[0, 25, 1920, 218], [0, 243, 1920, 328], [0, 571, 1920, 436]])
+PASS layout horizontal turns it back  (H[a b c])
+PASS Accordion: each window spans the screen less a strip per neighbour  (HA[a b c] widths [1860, 1890, 1890] on 1920)
+PASS resize width +100 grows the tile by 100 points  (427 → 527)
+PASS balance evens them out  ([640, 640, 640])
+PASS mirror horizontal reverses them  (H[c b a])
+PASS rotate 90 makes rows  (V[c b a])
+PASS rotate 270 turns them back  (H[c b a])
+PASS preselect down: the new window opens below the one you're in  (H[V[a d] b c] a [0, 25, 640, 491] d [0, 516, 640, 491])
+PASS Closing it gives its space back  (H[a b c] a [0, 25, 640, 981])
+PASS Minimising b lets a and c fill the space  (H[a c])
+PASS Bringing b back puts it in the same spot  ([640, 25, 640, 981] vs [640, 25, 640, 981], H[a b c])
+PASS float on takes b out of the tree  (H[a c])
+PASS float off puts it back where it was  (H[a b c] [640, 25, 640, 981] vs [640, 25, 640, 981])
+PASS zoom: the window fills the desktop  ([0, 25, 1920, 981] vs [0, 25, 1920, 982])
+PASS zoom again: back to its tile  ([0, 25, 640, 981] vs [0, 25, 640, 981])
+PASS A hand snap in the Tree layout keeps its spot  ([0, 25, 960, 981])
+PASS Picking Tree again puts it back in the tree  (H[34 36 35])
+PASS Tree windows never overlap
+PASS Dropping a near c's bottom edge puts it below c  (H[b V[c a]])
+PASS Dropping a on the middle of b swaps them  (H[a V[c b]])
+PASS fn-drag from the middle of a tile onto another swaps them  (H[b V[c a]])
+PASS Snapping a floating window keeps it floating  (state floating, pinned {})
+PASS fn-drag moves a floating window from anywhere in it  ([320, 26, 1280, 981] → [170, 106, 1280, 981])
+PASS A floating window you snapped and dragged goes back to its own spot when it tiles again  (H[b V[c a]])
+PASS Stack: every window fills the desktop  ([[0, 25, 1920, 981], [0, 25, 1920, 982], [0, 25, 1920, 981]] vs [0, 25, 1920, 982])
+PASS stack next shows the next window  (focused 36)
+PASS …and it's on top  (front [36, 34, 35])
+PASS Float layout: windows stay where you put them  ([([0, 25, 1920, 981], [0, 25, 1920, 981]), ([480, 25, 960, 982], [480, 25, 960, 982]), ([0, 25, 1920, 981], [0, 25, 1920, 981])])
+PASS …and none of them counts as tiled  (36 floating
+34 floating
+35 floating)
+PASS Back to Tree: tiled again, no overlaps
+PASS …and the tree is the one from before Stack and Float  (H[z V[y x]] → H[z V[y x]])
+PASS move-mouse window-force-center puts the pointer in the middle of the window  (pointer 1600,515 window [1280, 25, 640, 981])
+PASS focus left goes to the tile on the left  (36 want 36)
+PASS focus back returns to the window before  (35 want 35)
+PASS focus right --wrap-around goes round to the left-most  (36 want 36)
+PASS focus next follows the layout order  (35)
+PASS minimize (by window id) minimises it
+PASS close (by window id) closes it
+PASS native-fullscreen on  (state fullscreen)
+PASS native-fullscreen off: tiled again  (state tiled)
+PASS …and it stays tiled, not taken for a window maximised by hand  (state tiled, [[0, 25, 640, 981], [640, 25, 640, 981], [1280, 25, 640, 981]])
+PASS Dim and border are off by default  ({'border': False, 'dim': False})
+PASS dim on and border on show them  ({'border': True, 'dim': True})
+PASS A click on a dimmed window still reaches it  (focused 35 want 35)
+PASS …and the border follows the focus
+PASS …and off again  ({'border': False, 'dim': False})
+PASS exec-and-forget runs a shell command with TESSERA_WINDOW_ID  ('36' want 36)
+PASS ⌃⌥6 picks Tree  (tree)
+PASS ⌃⌥7 picks Stack  (stack)
+PASS ⌃⌥8 picks Float  (float)
+PASS ⌃⌥6 picks Tree  (tree)
+PASS ⌃⌥L from Tree goes to Auto (it steps through the auto layouts only)  (auto)
+PASS ⌃⌥⇧L from Auto goes to Main + Side  (mainAndSide)
+PASS tessera://run?command=layout stack works  (stack)
+PASS …and runs a command line with ; in it  (tree)
+PASS 12 command line calls at once all answer, and agree  ([(0, '3'), (0, '3'), (0, '3'), (0, '3'), (0, '3'), (0, '3'), (0, '3'), (0, '3'), (0, '3'), (0, '3'), (0, '3'), (0, '3')])
+PASS Tree + Safari after balance: no window overlaps another  ([[897, 25, 449, 981], [0, 25, 449, 981], [449, 25, 448, 981], [1346, 25, 574, 981]])
+PASS …every window is on the screen  ([[897, 25, 449, 981], [0, 25, 449, 981], [449, 25, 448, 981], [1346, 25, 574, 981]] on [0, 25, 1920, 982])
+PASS …and Safari keeps the room it needs  (Safari [1346, 25, 574, 981])
+PASS Shrinking a neighbour past Safari's minimum: still no overlaps  ([[1213, 25, 101, 981], [0, 25, 606, 981], [606, 25, 607, 981], [1314, 25, 606, 981]])
+PASS Hiding Safari: the other three fill the space again  (H[36 35 34])
+PASS subscribe focus-changed prints a JSON line per focus change  ({"app-bundle-id":"com.apple.TextEdit","app-name":"TextEdit","event":"focus-changed","window-id":36})
+PASS Tessera looks for its config file in ~/.config/tessera  (/Users/runner/.config/tessera/tessera.toml)
+PASS reload-config reads a good file  (0: Config loaded )
+PASS …with no problems  ({'error': '', 'exists': True, 'path': '/Users/runner/.config/tessera/tessera.toml', 'rules': 1, 'warnings': []})
+PASS …and every key in it is Tessera's  (taken: [])
+PASS …and its modes are known  (['main', 'resize'])
+PASS Gaps from the file: 20 at the screen's edges  (left-most x 20, screen [0, 25, 1920, 982])
+PASS …and 10 between windows  (10)
+PASS A key from the file replaces Tessera's own key on it (⌃⌥C: columns, not Centre)  (columns, window [20, 45, 605, 942])
+PASS …and another (tree)  (tree)
+PASS A key switches to the resize mode  (resize)
+PASS In the resize mode only its 3 keys are held  (3 keys)
+PASS In resize mode, h makes the window 50 points narrower  (618 → 568)
+PASS esc goes back to main  (main)
+PASS The status menu knows the mode is main again
+PASS Back in main, the plain keys h and l are let go (typing works again)  (60 keys, 60 before)
+PASS mode with an unknown name fails and lists the modes  (1: tessera: There's no mode “nosuch”. Modes: main, resize)
+PASS A rule from the file floats the matching window  ([{'app-bundle-id': 'com.apple.TextEdit', 'app-name': 'TextEdit', 'app-pid': 2973, 'desktop': 1, 'display-name': 'Apple Virtual', 'display-number': 1, 'focused': True, 'frame': [1332, 521, 568, 466], 'state': 'floating', 'window-id': 479, 'window-title': 'float-me.txt'}])
+PASS on-focus-changed runs, with the window's id  (['34', '479', '36', '35'])
+PASS A broken file: reload-config fails and says where  (1: tessera: Config not loaded — ~/.config/tessera/tessera.toml line 2, column 6: expected “]” to close the table name. The last good config stays.)
+PASS …and the last good config stays (gaps still 20)  ([[1332, 45, 568, 942], [20, 45, 643, 942], [673, 45, 649, 942]])
+PASS tessera config shows the problem  (error: ~/.config/tessera/tessera.toml line 2, column 6: expected “]” to close the table name
+exists: true
+keys-taken: 
+modes: main,resize
+path: /Users/runner/.config/tessera/tessera.toml
+preset: tessera
+rules: 1
+warnings:)
+PASS Importing an AeroSpace config writes Tessera's file and lists what won't work  (# Imported from AeroSpace on 2026-11-28.
+# Tessera reads AeroSpace's settings and commands. Workspaces are your macOS desktops, numbered 1, 2, 3…
+# These parts don't work in Tessera and are skipped:
+#   - line 11: mode.main.binding.alt-shift-a: “move-node-to-workspace A” — “A” isn't a desktop. Tessera uses your macOS desktops, numbered 1, 2, 3… (named workspaces aren't supported))
+PASS …and keeps the old file as .bak
+PASS …and Tessera reads it  ({'error': '', 'exists': True, 'path': '/Users/runner/.config/tessera/tessera.toml', 'rules': 1, 'warnings': ["line 16: mode.main.binding.alt-shift-a: “move-node-to-workspace A” — “A” isn't a desktop. Tessera uses your macOS desktops, numbered 1, 2, 3… (named workspaces aren't supported)"]})
+PASS …with its gaps  ([[1334, 31, 580, 970], [6, 31, 656, 970], [668, 31, 660, 970]])
+PASS Without a config file, Settings rule again (no gaps)  (0: No config file at ~/.config/tessera/tessera.toml; using Settings [[1331, 25, 589, 981], [0, 25, 665, 981], [665, 25, 666, 981]])
+PASS …and ⌃⌥C is Tessera's Centre again  (window [0, 25, 665, 981] → [628, 26, 665, 981])
+PASS desktop 2 switches to desktop 2  (now 51, desktop 2 is 51)
+PASS desktop last goes back  (now 1, home 1)
+PASS Switching desktops by command: no window jumped (Tree layout)
+PASS …and Tessera moved nothing  (0 moves)
+PASS desktop next  (now 51)
+PASS desktop prev  (now 1)
+PASS send-to-desktop 2 takes the window there, and you with it  (window on [51], now 51; on screen [('TextEdit', 35, [0, 25, 1920, 981])]; 2:53:40 PM I Send: grab point on AXWindow at 144,14 in the window | 2:53:40 PM I Send: holding window 35 at 644,39, try 1: it follows the pointer)
+PASS move-node-to-workspace 1 (AeroSpace's) sends it back and you stay  (now 51)
+PASS The window is back on desktop 1
+PASS send-to-display right puts the window on the Dell  (window [1920, 25, 1600, 1055], Dell [1920, 0, 1600, 1200])
+PASS setup save works from the command line  (0: )
+PASS Unplugging the Dell brings its window to the main screen  (window [0, 25, 960, 491])
+PASS Plugging the Dell back in opens the setup: a TextEdit window is on the Dell again  (on the Dell [35]; frames {36: [0, 25, 960, 243], 35: [1920, 25, 1600, 1055], 34: [960, 25, 960, 981]}; Dell [1920, 0, 1600, 1200]; 2:54:05 PM I Setup saved: 4 windows | 2:54:20 PM I Screens connected: opening setup “Desk” | 2:54:24 PM I Setup opened: 4 windows)
+PASS Tessera is still running after the 3.0 checks
+PASS With Tessera quit, the command line tool exits 2 and says so  (2: tessera: Tessera isn't running (or is older than 3.0). Open Tessera, then try again.)
+PASS …but help still works
+PASS …and a typo is still explained (exit 3)  (3: tessera: “nowhere” isn't a direction: use left, right, up or down (or west, east, north, south))
